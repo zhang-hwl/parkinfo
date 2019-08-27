@@ -1,0 +1,48 @@
+
+server:
+  port: 8070
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  redis:
+    host: 47.102.207.156
+    database: 2
+    port: 6379
+    timeout: 1000
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        max-wait: -1
+        min-idle: 0
+    password: Lynkbey888
+  datasource:
+    url: jdbc:log4jdbc:mysql://47.102.207.156:3306/parkinfo?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&failOverReadOnly=false&zeroDateTimeBehavior=convertToNull&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true
+    #    url: jdbc:mysql://47.102.207.156:3306/lingouu?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&failOverReadOnly=false&zeroDateTimeBehavior=convertToNull&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true
+    username: root
+    password: Lynkbey888
+    #    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: net.sf.log4jdbc.DriverSpy
+    jpa:
+      database: mysql
+      show-sql: true
+      hibernate:
+        ddl-auto: update
+        naming:
+          physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+      open-in-view: true
+      database-platform: org.hibernate.dialect.MySQL57InnoDBDialect  #不加这句则默认为myisam引擎
+logging:
+  level:
+    jdbc:
+      sqlonly: info
+      audit: off
+      resultset: off
+      connection: off
+      sqltiming: off
+    com:
+      hhsj:
+        mybatis: DEBUG
+  path: /parkinfo/jar/logs/parinfo-web
+  pattern:
+    file: '%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{15} - %msg%n'
