@@ -1,29 +1,27 @@
 package com.parkinfo.entity.archiveInfo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.parkinfo.entity.base.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
+import lombok.EqualsAndHashCode;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
-import java.io.Serializable;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.Date;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
 @Table(name = "c_declare_paper")
 @EntityListeners(AuditingEntityListener.class)
 @ApiModel(value = "DeclarePaper", description = "存档资料-申报材料")
-public class DeclarePaper implements Serializable {
-
-    @Id
-    @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "uuid")
-    private String id;
+public class DeclarePaper extends BaseEntity {
 
     @ApiModelProperty(value = "申报材料类型")
     private String declareType;

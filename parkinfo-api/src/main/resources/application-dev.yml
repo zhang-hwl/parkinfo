@@ -24,15 +24,15 @@ spring:
     password: Lynkbey888
     #    driver-class-name: com.mysql.cj.jdbc.Driver
     driver-class-name: net.sf.log4jdbc.DriverSpy
-    jpa:
-      database: mysql
-      show-sql: true
-      hibernate:
-        ddl-auto: update
-        naming:
-          physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
-      open-in-view: true
-      database-platform: org.hibernate.dialect.MySQL57InnoDBDialect  #不加这句则默认为myisam引擎
+  jpa:
+    database: mysql
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+    open-in-view: true
+    database-platform: org.hibernate.dialect.MySQL57InnoDBDialect  #不加这句则默认为myisam引擎
 logging:
   level:
     jdbc:
