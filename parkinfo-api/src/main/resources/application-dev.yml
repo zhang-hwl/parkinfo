@@ -1,6 +1,6 @@
 
 server:
-  port: 8070
+  port: 8050
 spring:
   main:
     allow-bean-definition-overriding: true
