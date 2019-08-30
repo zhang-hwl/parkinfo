@@ -1,10 +1,10 @@
 package com.parkinfo.service.archiveInfo.impl;
 
 import com.parkinfo.common.Result;
-import com.parkinfo.entity.archiveInfo.PolicyPaper;
 import com.parkinfo.exception.NormalException;
-import com.parkinfo.repository.archiveInfo.PolicyPaperRepository;
-import com.parkinfo.request.archiveInfo.QueryPolicyPaperRequest;
+import com.parkinfo.repository.archiveInfo.ArchiveInfoRepository;
+import com.parkinfo.request.archiveInfo.QueryArchiveInfoRequest;
+import com.parkinfo.response.PolicyPaperResponse;
 import com.parkinfo.service.archiveInfo.IPolicyPaperService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,19 +25,16 @@ import java.util.Optional;
 public class PolicyPaperServiceImpl implements IPolicyPaperService {
 
     @Autowired
-    private PolicyPaperRepository policyPaperRepository;
+    private ArchiveInfoRepository policyPaperRepository;
 
     @Override
-    public Result<Page<PolicyPaper>> search(QueryPolicyPaperRequest request) {
-        PolicyPaper policyPaper = new PolicyPaper();
+    public Result<Page<PolicyPaperResponse>> search(QueryArchiveInfoRequest request) {
+        PolicyPaperResponse policyPaper = new PolicyPaperResponse();
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.DEFAULT_DIRECTION.DESC, "uploadTime");
-        Specification<PolicyPaper> specification = new Specification<PolicyPaper>() {
+        Specification<PolicyPaperResponse> specification = new Specification<PolicyPaperResponse>() {
             @Override
-            public Predicate toPredicate(Root<PolicyPaper> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder cb) {
+            public Predicate toPredicate(Root<PolicyPaperResponse> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder cb) {
                 List<Predicate> predicates = new ArrayList<>();
-                if(StringUtils.isNotBlank(request.getPolicyType())){
-                    predicates.add(cb.equal(root.get("policyType").as(String.class), request.getPolicyType())); //根据政策文件类型
-                }
                 if(request.getStartTime() != null){
                     predicates.add(cb.greaterThanOrEqualTo(root.get("uploadTime").as(Date.class), request.getStartTime()));  //大于等于开始时间
                 }
@@ -50,28 +47,28 @@ public class PolicyPaperServiceImpl implements IPolicyPaperService {
                 return cb.and(predicates.toArray(new Predicate[predicates.size()]));
             }
         };
-        Page<PolicyPaper> all = policyPaperRepository.findAll(specification, pageable);
-        return Result.<Page<PolicyPaper>>builder().success().data(all).build();
+        Page<PolicyPaperResponse> all = policyPaperRepository.findAll(specification, pageable);
+        return Result.<Page<PolicyPaperResponse>>builder().success().data(all).build();
     }
 
     @Override
-    public Result<List<PolicyPaper>> findAll(String policyType) {
-        List<PolicyPaper> all = policyPaperRepository.findAllByPolicyType(policyType);
-        return Result.<List<PolicyPaper>>builder().success().data(all).build();
+    public Result<List<PolicyPaperResponse>> findAll(String policyType) {
+        List<PolicyPaperResponse> all = policyPaperRepository.findAllByPolicyType(policyType);
+        return Result.<List<PolicyPaperResponse>>builder().success().data(all).build();
     }
 
     @Override
-    public Result<PolicyPaper> findById(String id) {
-        Optional<PolicyPaper> byId = policyPaperRepository.findById(id);
+    public Result<PolicyPaperResponse> findById(String id) {
+        Optional<PolicyPaperResponse> byId = policyPaperRepository.findById(id);
         if(!byId.isPresent()){
             throw new NormalException("文件不存在");
         }
-        return Result.<PolicyPaper>builder().success().data(byId.get()).build();
+        return Result.<PolicyPaperResponse>builder().success().data(byId.get()).build();
     }
 
     @Override
     public Result<String> deletePolicyPaper(String id) {
-        Optional<PolicyPaper> byId = policyPaperRepository.findById(id);
+        Optional<PolicyPaperResponse> byId = policyPaperRepository.findById(id);
         if(!byId.isPresent()){
             throw new NormalException("文件不存在");
         }
@@ -80,15 +77,15 @@ public class PolicyPaperServiceImpl implements IPolicyPaperService {
     }
 
     @Override
-    public Result<String> addPolicyPaper(PolicyPaper policyPaper) {
+    public Result<String> addPolicyPaper(PolicyPaperResponse policyPaper) {
         //TODO
         policyPaperRepository.save(policyPaper);
         return Result.<String>builder().success().data("新增成功").build();
     }
 
     @Override
-    public Result<String> editPolicyPaper(String id, PolicyPaper policyPaper) {
-        Optional<PolicyPaper> byId = policyPaperRepository.findById(id);
+    public Result<String> editPolicyPaper(String id, PolicyPaperResponse policyPaper) {
+        Optional<PolicyPaperResponse> byId = policyPaperRepository.findById(id);
         if(!byId.isPresent()){
             throw new NormalException("文件不存在");
         }

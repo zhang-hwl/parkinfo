@@ -1,23 +1,23 @@
 package com.parkinfo.service.archiveInfo;
 
 import com.parkinfo.common.Result;
-import com.parkinfo.entity.archiveInfo.PolicyPaper;
-import com.parkinfo.request.archiveInfo.QueryPolicyPaperRequest;
+import com.parkinfo.request.archiveInfo.QueryArchiveInfoRequest;
+import com.parkinfo.response.PolicyPaperResponse;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 public interface IPolicyPaperService {
 
-    Result<Page<PolicyPaper>> search(QueryPolicyPaperRequest request);
+    Result<Page<PolicyPaperResponse>> search(QueryArchiveInfoRequest request);
 
-    Result<List<PolicyPaper>> findAll(String policyType);
+    Result<List<PolicyPaperResponse>> findAll(String policyType);
 
-    Result<PolicyPaper> findById(String id);
+    Result<PolicyPaperResponse> findById(String id);
 
-    Result<String> addPolicyPaper(PolicyPaper policyPaper);
+    Result<String> addPolicyPaper(PolicyPaperResponse policyPaper);
 
-    Result<String> editPolicyPaper(String id, PolicyPaper policyPaper);
+    Result<String> editPolicyPaper(String id, PolicyPaperResponse policyPaper);
 
     Result<String> deletePolicyPaper(String id);
 

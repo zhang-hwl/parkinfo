@@ -9,19 +9,16 @@ import java.util.Date;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class QueryDeclarePaperRequest extends PageRequest {
+public class QueryArchiveInfoRequest extends PageRequest {
 
-    @ApiModelProperty(value = "申报材料类型", notes = "前端根据页面添加")
-    private String declareType;
+    @ApiModelProperty(value = "具体文件类型")
+    private String finalMenu;
 
-    @ApiModelProperty(value = "项目名称")
-    private String projectName;
+    @ApiModelProperty(value = "二级文件类型")
+    private String subMenu;
 
-    @ApiModelProperty(value = "企业名称")
-    private String firmName;
-
-    @ApiModelProperty(value = "状态")
-    private String status;
+    @ApiModelProperty(value = "文件名称")
+    private String fileName;
 
     @ApiModelProperty(value = "开始时间")
     private Date startTime;
