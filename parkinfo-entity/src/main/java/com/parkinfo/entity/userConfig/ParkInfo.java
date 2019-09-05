@@ -1,14 +1,18 @@
 package com.parkinfo.entity.userConfig;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.parkinfo.entity.base.BaseEntity;
+import com.parkinfo.entity.parkService.meetingRoom.MeetingRoom;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Table;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -39,4 +43,9 @@ public class ParkInfo extends BaseEntity {
     @ManyToMany(mappedBy = "parks")
     @JsonIgnore
     private Set<ParkUser> users = new HashSet<>();
+
+    @OneToMany(mappedBy = "parkInfo")
+    @JsonIgnoreProperties("parkInfo")
+    private List<MeetingRoom> meetingRooms = new ArrayList<>();
+
 }
