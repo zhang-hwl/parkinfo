@@ -17,11 +17,6 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.googlecode.log4jdbc</groupId>
-            <artifactId>log4jdbc</artifactId>
-            <version>1.2</version>
-        </dependency>
-        <dependency>
             <groupId>com.parkinfo</groupId>
             <artifactId>parkinfo-entity</artifactId>
             <version>${parkinfo.version}</version>

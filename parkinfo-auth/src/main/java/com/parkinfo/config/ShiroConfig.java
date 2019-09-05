@@ -1,4 +1,4 @@
-package com.parkinfo;
+package com.parkinfo.config;
 
 import com.parkinfo.filter.TokenFilter;
 import com.parkinfo.shiro.UserRealm;
