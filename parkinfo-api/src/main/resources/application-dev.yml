@@ -44,6 +44,6 @@ logging:
     com:
       hhsj:
         mybatis: DEBUG
-  path: /parkinfo/jar/logs/parinfo-web
+#  path: /parkinfo/jar/logs/parinfo-web
   pattern:
     file: '%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{15} - %msg%n'

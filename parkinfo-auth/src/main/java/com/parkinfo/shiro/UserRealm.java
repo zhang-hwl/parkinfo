@@ -1,5 +1,7 @@
 package com.parkinfo.shiro;
 
+import com.parkinfo.dto.ParkUserDTO;
+import com.parkinfo.dto.ParkUserPermissionDTO;
 import com.parkinfo.token.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationException;
@@ -13,6 +15,8 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.stream.Collectors;
 
 
 /**
@@ -41,10 +45,11 @@ public class UserRealm extends AuthorizingRealm {
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         log.info("权限配置-->doGetAuthorizationInfo()");
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
-//        AppUser loginUser = tokenUtils.getLoginUser(principals.toString());
-//        if (loginUser == null){
-//            throw new AuthorizationException("token已过期或不存在");
-//        }
+        ParkUserDTO loginUser = tokenUtils.getLoginUserDTO(principals.toString());
+        if (loginUser == null){
+            throw new AuthorizationException("token已过期或不存在");
+        }
+        authorizationInfo.addStringPermissions(loginUser.getPermissions().stream().map(ParkUserPermissionDTO::getName).collect(Collectors.toSet()));
         // 赋权
         return authorizationInfo;
     }
@@ -61,10 +66,10 @@ public class UserRealm extends AuthorizingRealm {
         log.info("登录验证->doGetAuthenticationInfo()");
         String token = (String) authenticationToken.getCredentials();
         // 解密获得username，用于和数据库进行对比
-//        AppUser adminUser = tokenUtils.getLoginUser(token);
-//        if (adminUser == null){
-//            throw new AuthenticationException("token已过期或不存在！");
-//        }
+        ParkUserDTO loginUser = tokenUtils.getLoginUserDTO(token);
+        if (loginUser == null){
+            throw new AuthenticationException("token已过期或不存在！");
+        }
         return new SimpleAuthenticationInfo(token, token, "UserRealm");
     }
 }

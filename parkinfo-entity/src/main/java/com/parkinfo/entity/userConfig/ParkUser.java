@@ -33,6 +33,16 @@ public class ParkUser extends BaseEntity {
     private String account;
 
     /**
+     * 昵称
+     */
+    private String nickname;
+
+    /**
+     * 头像
+     */
+    private String avatar;
+
+    /**
      * 盐值
      */
     private String salt;

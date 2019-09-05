@@ -47,7 +47,7 @@ public class TokenUtils {
      *
      * @return
      */
-    public ParkUserDTO getLoginUser(String token) {
+    public ParkUserDTO getLoginUserDTO(String token) {
         final ParkUserDTO user = (ParkUserDTO) redisCacheTemplate.opsForValue().get(TOKEN_PREFIX + token);
         if (user != null) {
             if ((TOKEN_PREFIX + token).equals(redisCacheTemplate.opsForValue().get(USER_SURVIVE + user.getId()))) {
@@ -62,14 +62,23 @@ public class TokenUtils {
      *
      * @return
      */
-    public ParkUserDTO getLoginUser() {
+    public ParkUserDTO getLoginUserDTO() {
         try {
             String token = SecurityUtils.getSubject().getPrincipal().toString();
-            return this.getLoginUser(token);
+            return this.getLoginUserDTO(token);
         } catch (Exception e) {   //token不存在
             return null;
         }
     }
+
+    public ParkUser getLoginUser(){
+        ParkUserDTO parkUserDTO = this.getLoginUserDTO();
+        if (parkUserDTO!=null){
+            return this.convertParkUserDTO(parkUserDTO);
+        }
+        return null;
+    }
+
 
 
     public String getToken() {
@@ -100,7 +109,7 @@ public class TokenUtils {
     public ParkUserDTO getUserInfo() {
         try {
             String token = SecurityUtils.getSubject().getPrincipal().toString();
-            ParkUserDTO loginUser = this.getLoginUser(token);
+            ParkUserDTO loginUser = this.getLoginUserDTO(token);
             return this.getUserInfo(loginUser.getId());
         } catch (Exception e) {  //token不存在
             return null;
@@ -174,6 +183,12 @@ public class TokenUtils {
         }
         parkUserDTO.setPermissions(permissionDTOList);
         return parkUserDTO;
+    }
+
+    private ParkUser convertParkUserDTO(ParkUserDTO parkUserDTO){
+        ParkUser parkUser = new ParkUser();
+        BeanUtils.copyProperties(parkUserDTO,parkUser);
+        return parkUser;
     }
 
     private ParkUserPermissionDTO convertParkPermission(ParkPermission parkPermission){
