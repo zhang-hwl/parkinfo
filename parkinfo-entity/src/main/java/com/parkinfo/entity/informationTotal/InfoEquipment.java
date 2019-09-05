@@ -13,7 +13,7 @@ import javax.persistence.Table;
 //信息化设备
 @Data
 @Entity
-@Table(name = "c_info-equipment")
+@Table(name = "c_info_equipment")
 @ApiModel(value = "InfoEquipment", description = "信息统计-信息化设备")
 public class InfoEquipment extends BaseEntity {
 
