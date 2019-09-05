@@ -1,7 +1,9 @@
 package com.parkinfo.entity.userConfig;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.parkinfo.entity.base.BaseEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Table;
 
 import javax.persistence.*;
@@ -15,10 +17,11 @@ import java.util.Set;
  * @author cnyuchu@gmail.com
  * @create 2019-09-05 09:52
  **/
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Entity(name = "c_park_role")
 @Table(appliesTo = "c_park_role",comment = "园区权限表")
-public class ParkPermission {
+public class ParkPermission extends BaseEntity {
 
     /**
      * 权限名称
