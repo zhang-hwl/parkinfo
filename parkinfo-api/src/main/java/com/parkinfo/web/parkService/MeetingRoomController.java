@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/parkService/meetingRoom")
-@Api(value = "/api/parkService/meetingRoom", tags = {"园区服务-会议室预定"})
+@RequestMapping("/parkService/meetingRoom")
+@Api(value = "/parkService/meetingRoom", tags = {"园区服务-会议室预定"})
 public class MeetingRoomController {
 
     @Autowired
