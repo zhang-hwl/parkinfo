@@ -5,16 +5,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface ArchiveInfoRepository<T extends ArchiveInfo> extends JpaRepository<T, String> {
+public interface ArchiveInfoRepository extends JpaRepository<ArchiveInfo, String>, JpaSpecificationExecutor<ArchiveInfo> {
 
-    Page<T> findAll(Specification<ArchiveInfo> staffSalarySpecification, Pageable pageable);
+    Optional<ArchiveInfo> findByIdAndDeleteIsFalse(String id);
 
-    Optional<T> findById(String id);
+    Page<ArchiveInfo> findAll(Specification<ArchiveInfo> specification, Pageable pageable);
 
-    List<T> findAllByPolicyType(String policyType);
+    List<ArchiveInfo> findAllByDeleteIsFalse();
+
+
 
 }

@@ -11,11 +11,11 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = true)
 public class QueryArchiveInfoRequest extends PageRequest {
 
-    @ApiModelProperty(value = "具体文件类型")
-    private String finalMenu;
+    @ApiModelProperty(value = "文件大类")
+    private String general;
 
-    @ApiModelProperty(value = "二级文件类型")
-    private String subMenu;
+    @ApiModelProperty(value = "文件种类")
+    private String kind;
 
     @ApiModelProperty(value = "文件名称")
     private String fileName;
@@ -25,5 +25,15 @@ public class QueryArchiveInfoRequest extends PageRequest {
 
     @ApiModelProperty(value = "结束时间")
     private Date endTime;
+
+    @ApiModelProperty(value = "园区名称")
+    private String gradenName;
+
+    @ApiModelProperty(value = "文档说明")
+    private String remark;
+
+    @ApiModelProperty(value = "是否对外")
+    private Boolean external;
+
 
 }
