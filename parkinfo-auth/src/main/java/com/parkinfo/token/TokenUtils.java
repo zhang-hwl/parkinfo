@@ -172,7 +172,7 @@ public class TokenUtils {
     private ParkUserDTO convertParkUser(ParkUser parkUser){
         ParkUserDTO parkUserDTO = new ParkUserDTO();
         BeanUtils.copyProperties(parkUser,parkUserDTO);
-        List<ParkUserPermissionDTO> permissionDTOList = Lists.newLinkedList();
+        List<ParkUserPermissionDTO> permissionDTOList = Lists.newArrayList();
         if (parkUser.getRoles()!=null){
             parkUser.getRoles().forEach(parkRole -> {
                 parkRole.getPermissions().forEach(parkPermission -> {

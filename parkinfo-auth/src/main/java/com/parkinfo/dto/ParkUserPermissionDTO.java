@@ -13,6 +13,9 @@ import lombok.Data;
 @Data
 public class ParkUserPermissionDTO {
 
+    @ApiModelProperty(value = "权限id")
+    private String id;
+
     /**
      * 权限名称
      */

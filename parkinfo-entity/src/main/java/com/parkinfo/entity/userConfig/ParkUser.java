@@ -21,7 +21,7 @@ import java.util.Set;
  * @author cnyuchu@gmail.com
  * @create 2019-09-05 09:30
  **/
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true,exclude = {"roles","parks","meetingRooms","meetingRoomReserves"})
 @Data
 @Entity(name = "c_park_user")
 @org.hibernate.annotations.Table(appliesTo = "c_park_user",comment = "园区用户表")

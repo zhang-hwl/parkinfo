@@ -17,7 +17,7 @@ import java.util.Set;
  * @author cnyuchu@gmail.com
  * @create 2019-09-05 09:52
  **/
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true,exclude = {"parent","children"})
 @Data
 @Entity(name = "c_park_permission")
 @Table(appliesTo = "c_park_permission",comment = "园区权限表")
