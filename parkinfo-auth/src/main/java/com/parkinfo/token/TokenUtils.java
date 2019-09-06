@@ -3,9 +3,11 @@ package com.parkinfo.token;
 import com.google.common.collect.Lists;
 import com.parkinfo.dto.ParkUserDTO;
 import com.parkinfo.dto.ParkUserPermissionDTO;
+import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.entity.userConfig.ParkPermission;
 import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.exception.NormalException;
+import com.parkinfo.repository.userConfig.ParkInfoRepository;
 import com.parkinfo.repository.userConfig.ParkUserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
@@ -41,6 +43,9 @@ public class TokenUtils {
     @Autowired
     private ParkUserRepository parkUserRepository;
 
+    @Autowired
+    private ParkInfoRepository parkInfoRepository;
+
 
     /**
      * 根据token从redis获取用户
@@ -75,6 +80,17 @@ public class TokenUtils {
         ParkUserDTO parkUserDTO = this.getLoginUserDTO();
         if (parkUserDTO!=null){
             return this.convertParkUserDTO(parkUserDTO);
+        }
+        return null;
+    }
+
+    public ParkInfo getCurrentParkInfo(){
+        ParkUserDTO loginUserDTO = this.getLoginUserDTO();
+        if (loginUserDTO != null){
+            Optional<ParkInfo> parkInfoOptional = parkInfoRepository.findFirstByDeleteIsFalseAndAvailableIsTrueAndId(loginUserDTO.getCurrentParkId());
+            if (parkInfoOptional.isPresent()){
+                return parkInfoOptional.get();
+            }
         }
         return null;
     }
