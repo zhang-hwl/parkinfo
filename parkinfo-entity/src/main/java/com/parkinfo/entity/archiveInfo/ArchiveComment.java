@@ -20,9 +20,9 @@ public class ArchiveComment extends BaseEntity {
     private String comment;
 
     @ApiModelProperty(value = "评论人姓名")
-    private String name;
+    private String nickname;
 
     @ApiModelProperty(value = "评论人头像")
-    private String img;
+    private String avatar;
 
 }

@@ -19,10 +19,10 @@ import java.util.Date;
 public class ArchiveReadRecord extends BaseEntity {
 
     @ApiModelProperty(value = "阅读人头像")
-    private String img;
+    private String avatar;
 
     @ApiModelProperty(value = "阅读人姓名")
-    private String name;
+    private String nickname;
 
     @ApiModelProperty(value = "书名")
     private String bookName;
@@ -30,4 +30,7 @@ public class ArchiveReadRecord extends BaseEntity {
     @ApiModelProperty(value = "阅读日期")
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date readDate;
+
+    //冗余文件id，分页查询用
+    private String fileId;
 }

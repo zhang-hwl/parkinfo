@@ -50,6 +50,22 @@ public class ArchiveInfo extends BaseEntity {
     @ApiModelProperty(value = "种类")
     private String kind;
 
+    @Column(name = "`parkManager`", columnDefinition = "tinyint(1)")
+    @ApiModelProperty(value = "本园区员工是否有查看权限")
+    private Boolean parkPerson;
+
+    @Column(name = "`otherParkPerson`", columnDefinition = "tinyint(1)")
+    @ApiModelProperty(value = "其他园区员工是否有查看权限")
+    private Boolean otherParkPerson;
+
+    @Column(name = "`government`", columnDefinition = "tinyint(1)")
+    @ApiModelProperty(value = "政府官员是否有查看权限")
+    private Boolean government;
+
+    @Column(name = "`hrOrgan`", columnDefinition = "tinyint(1)")
+    @ApiModelProperty(value = "HR机构是否有查询权限")
+    private Boolean hrOrgan;
+
     @ManyToOne
     @JoinColumn(name = "parkInfo_id")
     //关联园区信息
