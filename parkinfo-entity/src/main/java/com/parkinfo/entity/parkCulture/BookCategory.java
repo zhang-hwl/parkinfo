@@ -1,7 +1,8 @@
-package com.parkinfo.entity.userConfig;
+package com.parkinfo.entity.parkCulture;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.parkinfo.entity.base.BaseEntity;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Table;
@@ -15,36 +16,26 @@ import java.util.Set;
  * Now, God only knows
  *
  * @author cnyuchu@gmail.com
- * @create 2019-09-05 09:52
+ * @create 2019-09-05 14:54
  **/
-@EqualsAndHashCode(callSuper = true,exclude = {"parent","children"})
+@EqualsAndHashCode(callSuper = true)
 @Data
-@Entity(name = "c_park_permission")
-@Table(appliesTo = "c_park_permission",comment = "园区权限表")
-public class ParkPermission extends BaseEntity {
+@Entity(name = "c_book_category")
+@Table(appliesTo = "c_book_category",comment = "图书分类表")
+public class BookCategory extends BaseEntity {
 
-    /**
-     * 权限名称
-     */
+    @ApiModelProperty(value = "分类名")
     private String name;
 
-    /**
-     * 权限描述
-     */
-    private String remark;
+    @ApiModelProperty(value = "分类描述")
+    private String intro;
 
-    /**
-     * 上级权限
-     */
     @ManyToOne(fetch= FetchType.LAZY)
     @JoinColumn(name="parent_id")
-    private ParkPermission parent;
+    @JsonIgnoreProperties("children")
+    private BookCategory parent;
 
-    /**
-     * 下级权限
-     */
     @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="parent")
     @JsonIgnoreProperties("parent")
-    private Set<ParkPermission> children = new HashSet<>(0);
-
+    private Set<BookCategory> children = new HashSet<>(0);
 }

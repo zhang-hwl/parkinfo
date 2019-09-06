@@ -16,7 +16,7 @@ import java.util.Set;
  * @author cnyuchu@gmail.com
  * @create 2019-09-05 09:48
  **/
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true,exclude = "permissions")
 @Data
 @Entity(name = "c_park_role")
 @Table(appliesTo = "c_park_role",comment = "园区权限表")
@@ -32,7 +32,7 @@ public class ParkRole extends BaseEntity {
      */
     private String remark;
 
-    @ManyToMany(targetEntity = ParkPermission.class, fetch = FetchType.EAGER)
+    @ManyToMany(targetEntity = ParkPermission.class, fetch = FetchType.LAZY)
     @JoinTable(name = "c_role_permission", joinColumns = {@JoinColumn(name = "role_id")}, inverseJoinColumns = {@JoinColumn(name = "permission_id")})
     private Set<ParkPermission> permissions = new HashSet<>();
 
