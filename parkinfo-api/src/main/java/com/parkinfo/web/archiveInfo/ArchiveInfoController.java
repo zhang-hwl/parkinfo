@@ -2,7 +2,12 @@ package com.parkinfo.web.archiveInfo;
 
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.archiveInfo.ArchiveInfo;
+import com.parkinfo.entity.archiveInfo.ArchiveReadRecord;
+import com.parkinfo.request.archiveInfo.AddArchiveInfoRequest;
+import com.parkinfo.request.archiveInfo.ReadRecordRequest;
 import com.parkinfo.request.archiveInfo.QueryArchiveInfoRequest;
+import com.parkinfo.response.archiveInfo.ArchiveInfoCommentResponse;
+import com.parkinfo.response.archiveInfo.ArchiveInfoResponse;
 import com.parkinfo.service.archiveInfo.IArchiveInfoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -18,42 +23,60 @@ import java.util.List;
 public class ArchiveInfoController {
 
     @Autowired
-    private IArchiveInfoService policyPaperService;
+    private IArchiveInfoService archiveInfoService;
 
     @GetMapping("/all")
     @ApiOperation(value = "查询所有文件")
-    public Result<List<ArchiveInfo>> findAll(){
-        return policyPaperService.findAll();
+    public Result<List<ArchiveInfoResponse>> findAll(){
+        return archiveInfoService.findAll();
     }
 
     @PostMapping("/search")
     @ApiOperation(value = "根据查询条件分页查询文件")
-    public Result<Page<ArchiveInfo>> search(@RequestBody QueryArchiveInfoRequest request){
-        return policyPaperService.search(request);
+    public Result<Page<ArchiveInfoResponse>> search(@RequestBody QueryArchiveInfoRequest request){
+        return archiveInfoService.search(request);
     }
 
     @GetMapping("/detail/{id}")
-    @ApiOperation(value = "根据id查询文件")
-    public Result<ArchiveInfo> findById(@PathVariable("id") String id){
-        return policyPaperService.findById(id);
+    @ApiOperation(value = "根据id查询文件(带评论)")
+    public Result<ArchiveInfoCommentResponse> findById(@PathVariable("id") String id){
+        return archiveInfoService.findById(id);
     }
 
     @GetMapping("/delete/{id}")
-    @ApiOperation(value = "根据id删除文件")
+    @ApiOperation(value = "删除文件")
     public Result<String> delete(@PathVariable("id") String id){
-        return policyPaperService.deletePolicyPaper(id);
+        return archiveInfoService.deleteArchiveInfo(id);
     }
 
     @PostMapping("/add")
-    @ApiOperation(value = "根据文件类型新增文件")
-    public Result<String> add(@RequestBody ArchiveInfo archiveInfo){
-        return policyPaperService.addPolicyPaper(archiveInfo);
+    @ApiOperation(value = "新增文件")
+    public Result<String> add(@RequestBody AddArchiveInfoRequest request){
+        return archiveInfoService.addArchiveInfo(request);
     }
 
     @PostMapping("/edit")
-    @ApiOperation(value = "根据id编辑文件")
+    @ApiOperation(value = "编辑文件")
     public Result<String> edit(@RequestBody ArchiveInfo archiveInfo){
-        return policyPaperService.editPolicyPaper(archiveInfo);
+        return archiveInfoService.editArchiveInfo(archiveInfo);
+    }
+
+    @PostMapping("/add/comment")
+    @ApiOperation(value = "新增评论")
+    public Result<String> addComment(@RequestBody ReadRecordRequest readRecordRequest){
+        return archiveInfoService.addComment(readRecordRequest);
+    }
+
+    @GetMapping("/add/record/{id}")
+    @ApiOperation(value = "新增阅读记录")
+    public Result<String> addReadRecord(@PathVariable("id") String id){
+        return archiveInfoService.addReadRecord(id);
+    }
+
+    @GetMapping("/search/{id}")
+    @ApiOperation(value = "查询阅读记录")
+    public Result<Page<ArchiveReadRecord>> findReadRecord(@PathVariable("id") String id){
+        return archiveInfoService.findReadRecord(id);
     }
 
 }

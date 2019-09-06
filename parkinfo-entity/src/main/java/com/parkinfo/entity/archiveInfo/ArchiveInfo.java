@@ -2,15 +2,19 @@ package com.parkinfo.entity.archiveInfo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.parkinfo.entity.base.BaseEntity;
+import com.parkinfo.entity.userConfig.ParkInfo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "c_archive_info", indexes = {@Index(name = "index_general", columnList = "general"), @Index(name = "index_kind", columnList = "kind")})
 @EntityListeners(AuditingEntityListener.class)
@@ -33,9 +37,6 @@ public class ArchiveInfo extends BaseEntity {
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date uploadTime;
 
-    @ApiModelProperty(value = "园区名称")
-    private String gradenName;
-
     @Column(name = "`external`", columnDefinition = "tinyint(1)")
     @ApiModelProperty(value = "是否对外")
     private Boolean external;
@@ -49,6 +50,18 @@ public class ArchiveInfo extends BaseEntity {
     @ApiModelProperty(value = "种类")
     private String kind;
 
-    //关联园区 todo
+    @ManyToOne
+    @JoinColumn(name = "parkInfo_id")
+    //关联园区信息
+    private ParkInfo parkInfo;
 
+    @OneToMany
+    @JoinColumn(name = "archiveInfo_id")
+    //评论
+    private List<ArchiveComment> archiveComments;
+
+    @OneToMany
+    @JoinColumn(name = "archiveInfo_id")
+    //阅读记录
+    private List<ArchiveReadRecord> archiveReadRecords;
 }
