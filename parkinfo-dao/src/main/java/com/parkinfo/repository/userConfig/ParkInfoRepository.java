@@ -10,4 +10,5 @@ public interface ParkInfoRepository extends JpaRepository<ParkInfo,String> {
 
     Optional<ParkInfo> findByIdAndDeleteIsFalse(String id);
 
+    Optional<ParkInfo> findFirstByDeleteIsFalseAndAvailableIsTrueAndId(String parkId);
 }

@@ -1,17 +1,12 @@
-package com.parkinfo.response.parkService;
+package com.parkinfo.request.parkService;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.util.List;
+import javax.persistence.Column;
 
 @Data
-public class MeetingRoomResponse {
-    @ApiModelProperty("当天预约记录")
-    private List<MeetingRoomReserveResponse> reserveResponse;
-
-    @ApiModelProperty("会议室id")
-    private String id;
+public class AddMeetingRoomRequest {
 
     @ApiModelProperty(value = "会议室名称")
     private String roomName;
@@ -25,6 +20,4 @@ public class MeetingRoomResponse {
     @ApiModelProperty(value = "备注")
     private String remark;
 
-    @ApiModelProperty(value = "创建人名称")
-    private String userName;
 }
