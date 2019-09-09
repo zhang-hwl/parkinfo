@@ -5,6 +5,7 @@ import com.parkinfo.entity.base.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -12,6 +13,7 @@ import javax.persistence.Table;
 //园区大事件
 @Data
 @Entity
+@EqualsAndHashCode(callSuper = true)
 @Table(name = "c_big_event")
 @ApiModel(value = "BigEvent", description = "信息统计-园区大事件")
 public class BigEvent extends BaseEntity {

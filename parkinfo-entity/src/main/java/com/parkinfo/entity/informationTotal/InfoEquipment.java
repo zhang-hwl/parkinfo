@@ -6,12 +6,14 @@ import com.parkinfo.entity.base.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 //信息化设备
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "c_info_equipment")
 @ApiModel(value = "InfoEquipment", description = "信息统计-信息化设备")

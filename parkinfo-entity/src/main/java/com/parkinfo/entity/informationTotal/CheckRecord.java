@@ -6,12 +6,14 @@ import com.parkinfo.entity.base.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 //点检记录
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "c_check_record")
 @ApiModel(value = "CheckRecord", description = "信息统计-点检记录表")
