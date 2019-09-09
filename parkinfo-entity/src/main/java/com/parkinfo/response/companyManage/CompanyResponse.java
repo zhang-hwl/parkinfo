@@ -29,8 +29,8 @@ public class CompanyResponse {
     @ApiModelProperty(value = "主要业务")
     private String mainBusiness;
 
-    @ApiModelProperty(value = "需求数量")
-    private String requireNumber;
+    @ApiModelProperty(value = "需求面积")
+    private String requireArea;
 
     @ApiModelProperty(value = "需求位置")
     private String requireSite;

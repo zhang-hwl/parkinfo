@@ -2,6 +2,7 @@ package com.parkinfo.service.companyManage.impl;
 
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.companyManage.CompanyDetail;
+import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.companyManage.CompanyDetailRepository;
 import com.parkinfo.request.compayManage.QueryCompanyRequest;
@@ -10,6 +11,7 @@ import com.parkinfo.request.compayManage.SetCompanyRequireRequest;
 import com.parkinfo.response.companyManage.CompanyDetailResponse;
 import com.parkinfo.response.companyManage.CompanyResponse;
 import com.parkinfo.service.companyManage.ICompanyDetailService;
+import com.parkinfo.token.TokenUtils;
 import com.parkinfo.util.ExcelUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -20,6 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
@@ -33,6 +37,9 @@ public class CompanyDetailServiceImpl implements ICompanyDetailService {
     @Autowired
     private CompanyDetailRepository companyDetailRepository;
 
+    @Autowired
+    private TokenUtils tokenUtils;
+
     @Override
     public Result companyImport(MultipartFile file) {
         String fileName = file.getOriginalFilename();
@@ -43,6 +50,8 @@ public class CompanyDetailServiceImpl implements ICompanyDetailService {
             List<CompanyDetail> companyDetails = ExcelUtils.importExcel(file, CompanyDetail.class);
             if(companyDetails != null){
                 companyDetails.forEach(companyDetail -> {
+                    ParkInfo parkInfo = tokenUtils.getCurrentParkInfo();
+                    companyDetail.setParkInfo(parkInfo);
                     companyDetail.setAvailable(true);
                     companyDetail.setDelete(false);
                     companyDetailRepository.save(companyDetail);
@@ -72,6 +81,7 @@ public class CompanyDetailServiceImpl implements ICompanyDetailService {
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
         Specification<CompanyDetail> specification = (Specification<CompanyDetail>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
+            ParkInfo parkInfo = tokenUtils.getCurrentParkInfo();
             if (StringUtils.isNotBlank(request.getLinkMan())) {
                 predicates.add(criteriaBuilder.like(root.get("linkMan").as(String.class), "%" + request.getLinkMan() + "%"));
             }
@@ -81,8 +91,10 @@ public class CompanyDetailServiceImpl implements ICompanyDetailService {
             if (null != request.getCheckStatus()) {
                 predicates.add(criteriaBuilder.equal(root.get("checkStatus").as(Integer.class), request.getCheckStatus().ordinal()));
             }
+            Join<CompanyDetail, ParkInfo> join = root.join(root.getModel().getSingularAttribute("parkInfo", ParkInfo.class), JoinType.LEFT);
+            predicates.add(criteriaBuilder.equal(join.get("id").as(String.class), parkInfo.getId()));
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
-            predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
+            //predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
         Page<CompanyDetail> companyDetailPage = companyDetailRepository.findAll(specification, pageable);
@@ -133,7 +145,7 @@ public class CompanyDetailServiceImpl implements ICompanyDetailService {
     }
 
     private CompanyDetail checkCompany(String id) {
-        Optional<CompanyDetail> companyDetailOptional = companyDetailRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(id);
+        Optional<CompanyDetail> companyDetailOptional = companyDetailRepository.findByIdAndDeleteIsFalse(id);
         if (!companyDetailOptional.isPresent()) {
             throw new NormalException("企业不存在");
         }

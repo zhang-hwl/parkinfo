@@ -2,8 +2,11 @@ package com.parkinfo.entity.companyManage;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.parkinfo.entity.base.BaseEntity;
+import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.enums.CheckStatus;
+import com.parkinfo.enums.EnterStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -29,6 +32,9 @@ public class CompanyDetail extends BaseEntity{
     @ApiModelProperty(value = "公司地址")
     private String companyAddress;
 
+    @ApiModelProperty(value = "公司注册资金")
+    private String registerMoney;
+
     @Excel(name = "联系人", width = 15)
     @ApiModelProperty(value = "联系人")
     private String linkMan;
@@ -45,13 +51,13 @@ public class CompanyDetail extends BaseEntity{
     @ApiModelProperty(value = "主要业务")
     private String mainBusiness;
 
-    @Excel(name = "公司名称", width = 15)
+    @Excel(name = "需求类型", width = 15)
     @ApiModelProperty(value = "需求类型")
     private String requireType;
 
-    @Excel(name = "需求数量", width = 15)
-    @ApiModelProperty(value = "需求数量")
-    private String requireNumber;
+    @Excel(name = "需求面积", width = 15)
+    @ApiModelProperty(value = "需求面积")
+    private String requireArea;
 
     @Excel(name = "需求时间", width = 15)
     @ApiModelProperty(value = "需求时间")
@@ -70,11 +76,48 @@ public class CompanyDetail extends BaseEntity{
     @Column(columnDefinition = "text")
     private String requireDetail;
 
+    @Excel(name = "续约次数", width = 15)
+    @ApiModelProperty(value = "续约次数")
+    private Integer number;
+
     @ApiModelProperty(value = "申请日期")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date applyTime;
 
+    @ApiModelProperty(value = "公司成立日期")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    private Date foundTime;
+
     @ApiModelProperty(value = "审核状态")
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.ORDINAL)//APPLYING,AGREE,REFUSE 申请中,同意,拒绝
     private CheckStatus checkStatus;
+
+    @ApiModelProperty(value = "入驻状态")
+    @Enumerated(EnumType.ORDINAL)//WAITING,ENTERED,LEAVE  未入住,已入住,已离园
+    private EnterStatus enterStatus;
+
+    @Excel(name = "百强企业", width = 15)
+    @ApiModelProperty(value = "是否为百强企业")
+    private String hundredCompany;
+
+    @Excel(name = "本地企业", width = 15)
+    @ApiModelProperty(value = "是否为本地企业")
+    private String localCompany;
+
+    @ManyToOne()
+    @JoinColumn(name = "park_id")
+    @JsonIgnore
+    private ParkInfo parkInfo;
+
+    @OneToOne(mappedBy = "companyDetail",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_detail_id")
+    @JsonIgnore
+    @ApiModelProperty(value = "对接详情")
+    private ConnectDetail connectDetail;
+
+    @OneToOne(mappedBy = "companyDetail",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_detail_id")
+    @JsonIgnore
+    @ApiModelProperty(value = "洽谈详情")
+    private DiscussDetail discussDetail;
 }
