@@ -27,5 +27,10 @@
             <artifactId>parkinfo-entity</artifactId>
             <version>${parkinfo.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.parkinfo</groupId>
+            <artifactId>parkinfo-tools</artifactId>
+            <version>${parkinfo.version}</version>
+        </dependency>
     </dependencies>
 </project>

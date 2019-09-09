@@ -13,17 +13,12 @@ import java.util.Date;
  * Now, God only knows
  *
  * @author cnyuchu@gmail.com
- * @create 2019-09-06 17:23
+ * @create 2019-09-09 17:57
  **/
+
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class QueryVideoListRequest extends PageRequest {
-
-    @ApiModelProperty(value = "大类id")
-    private String firstCategoryId;
-
-    @ApiModelProperty(value = "小类id")
-    private String secondCategoryId;
+public class QueryVideoManageRequest extends PageRequest {
 
     @ApiModelProperty(value = "视频名称")
     private String name;
