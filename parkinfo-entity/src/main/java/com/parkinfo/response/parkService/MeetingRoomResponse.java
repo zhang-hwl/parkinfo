@@ -11,7 +11,7 @@ public class MeetingRoomResponse {
     private List<MeetingRoomReserveResponse> reserveResponse;
 
     @ApiModelProperty("会议室id")
-    private String meetingRoomId;
+    private String id;
 
     @ApiModelProperty(value = "会议室名称")
     private String roomName;

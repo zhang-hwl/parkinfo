@@ -17,6 +17,6 @@ public class SearchMeetingRoomReverseRequest {
 
     @ApiModelProperty(value = "查询时间",example = "1997-05-09")
     @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
-    @NotEmpty(message = "查询时间不能为空")
+    @NotNull(message = "查询时间不能为空")
     private Date searchTime;
 }

@@ -13,9 +13,9 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
-@RestController
-@RequestMapping("/infoTotal/competeGradenInfo")
-@Api(value = "/infoTotal/competeGradenInfo", tags = {"信息统计-竞争园区信息"})
+//@RestController
+//@RequestMapping("/infoTotal/competeGradenInfo")
+//@Api(value = "/infoTotal/competeGradenInfo", tags = {"信息统计-竞争园区信息"})
 public class CompeteGradenInfoController {
 
     @Autowired

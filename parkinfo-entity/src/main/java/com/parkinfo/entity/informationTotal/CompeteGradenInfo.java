@@ -5,12 +5,14 @@ import com.parkinfo.entity.base.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 //竞争园区信息
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "c_comptete_graden_info")
 @ApiModel(value = "CompeteGradenInfo", description = "信息统计-园区关键信息")

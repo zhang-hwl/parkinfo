@@ -22,16 +22,14 @@ import java.util.List;
 @Api(value = "/parkService/meetingRoom", tags = {"园区服务-会议室预定"})
 public class MeetingRoomController {
 
-    private final IMeetingRoomService meetingRoomService;
+    @Autowired
+    private IMeetingRoomService meetingRoomService;
 
-    public MeetingRoomController(IMeetingRoomService meetingRoomService) {
-        this.meetingRoomService = meetingRoomService;
-    }
 
     @PostMapping("/search")
     @ApiOperation(value = "分页获取本园区的会议室")
     @RequiresPermissions("parkService:meetingRoomReserve:meetingRoom:search")
-    private Result<Page<MeetingRoomResponse>> searchMeetingRoom(@Valid @RequestBody SearchMeetingRoomRequest request, BindingResult result){
+    public Result<Page<MeetingRoomResponse>> searchMeetingRoom(@Valid @RequestBody SearchMeetingRoomRequest request, BindingResult result){
         if (result.hasErrors()){
             for (ObjectError error:result.getAllErrors()) {
                 return Result.<Page<MeetingRoomResponse>>builder().fail().code(500).message(error.getDefaultMessage()).build();
@@ -43,7 +41,7 @@ public class MeetingRoomController {
     @PostMapping("/reserve/search")
     @ApiOperation(value = "查询会议室当天的预定记录")
     @RequiresPermissions("parkService:meetingRoomReserve:meetingRoom:reserveSearch")
-    private Result<List<MeetingRoomReserveResponse>> searchMeetingRoomResrve(@Valid @RequestBody SearchMeetingRoomReverseRequest request, BindingResult result){
+    public Result<List<MeetingRoomReserveResponse>> searchMeetingRoomResrve(@Valid @RequestBody SearchMeetingRoomReverseRequest request, BindingResult result){
         if (result.hasErrors()){
             for (ObjectError error:result.getAllErrors()) {
                 return Result.<List<MeetingRoomReserveResponse>>builder().fail().code(500).message(error.getDefaultMessage()).build();
@@ -55,7 +53,7 @@ public class MeetingRoomController {
     @PostMapping("/reverse")
     @ApiOperation(value = "预约会议室")
     @RequiresPermissions("parkService:meetingRoomReserve:meetingRoom:reverse")
-    private Result<String> reverseMeetingRoom(@Valid @RequestBody ReverseMeetingRoomRequest request, BindingResult result){
+    public Result<String> reverseMeetingRoom(@Valid @RequestBody ReverseMeetingRoomRequest request, BindingResult result){
         if (result.hasErrors()){
             for (ObjectError error:result.getAllErrors()) {
                 return Result.<String>builder().fail().code(500).message(error.getDefaultMessage()).build();
@@ -67,7 +65,7 @@ public class MeetingRoomController {
     @PostMapping("/add")
     @ApiOperation(value = "创建园区会议室")
     @RequiresPermissions("parkService:meetingRoomReserve:meetingRoomManage:add")
-    private Result<String> addMeetingRoom(@Valid @RequestBody AddMeetingRoomRequest request, BindingResult result){
+    public Result<String> addMeetingRoom(@Valid @RequestBody AddMeetingRoomRequest request, BindingResult result){
         if (result.hasErrors()){
             for (ObjectError error:result.getAllErrors()) {
                 return Result.<String>builder().fail().code(500).message(error.getDefaultMessage()).build();
@@ -79,7 +77,7 @@ public class MeetingRoomController {
     @PostMapping("/edit")
     @ApiOperation(value = "修改园区会议室")
     @RequiresPermissions("parkService:meetingRoomReserve:meetingRoomManage:edit")
-    private Result<String> editMeetingRoom(@Valid @RequestBody EditMeetingRoomRequest request, BindingResult result){
+    public Result<String> editMeetingRoom(@Valid @RequestBody EditMeetingRoomRequest request, BindingResult result){
         if (result.hasErrors()){
             for (ObjectError error:result.getAllErrors()) {
                 return Result.<String>builder().fail().code(500).message(error.getDefaultMessage()).build();
@@ -91,7 +89,7 @@ public class MeetingRoomController {
     @PostMapping("/delete/{id}")
     @ApiOperation(value = "删除园区会议室")
     @RequiresPermissions("parkService:meetingRoomReserve:meetingRoomManage:delete")
-    private Result<String> deleteMeetingRoom(@PathVariable("id") String id){
+    public Result<String> deleteMeetingRoom(@PathVariable("id") String id){
         return meetingRoomService.deleteMeetingRoom(id);
     }
 }

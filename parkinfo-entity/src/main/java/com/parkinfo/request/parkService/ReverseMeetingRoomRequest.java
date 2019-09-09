@@ -6,6 +6,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Data
@@ -15,12 +16,12 @@ public class ReverseMeetingRoomRequest {
     private String meetingRoomId;
 
     @ApiModelProperty("开始时间")
-    @NotEmpty(message = "开始时间不能为空")
+    @NotNull(message = "开始时间不能为空")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date startTime;
 
     @ApiModelProperty("结束时间")
-    @NotEmpty(message = "结束时间不能为空")
+    @NotNull(message = "结束时间不能为空")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date endTime;
 }
