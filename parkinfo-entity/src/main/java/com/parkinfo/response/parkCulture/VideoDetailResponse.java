@@ -11,22 +11,16 @@ import java.util.Date;
  * Now, God only knows
  *
  * @author cnyuchu@gmail.com
- * @create 2019-09-06 17:25
+ * @create 2019-09-09 15:43
  **/
 @Data
-public class VideoListResponse {
+public class VideoDetailResponse {
 
     @ApiModelProperty(value = "视频id")
     private String id;
 
-    @ApiModelProperty(value = "封面")
-    private String cover;
-
     @ApiModelProperty(value = "视频名称")
     private String name;
-
-    @ApiModelProperty(value = "上传人姓名")
-    private String uploader;
 
     @ApiModelProperty(value = "观看量")
     private Integer readNum;
@@ -35,4 +29,6 @@ public class VideoListResponse {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
 
+    @ApiModelProperty(value = "视频id")
+    private String videoId;
 }
