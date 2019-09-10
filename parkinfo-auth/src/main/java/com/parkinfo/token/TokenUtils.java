@@ -164,7 +164,7 @@ public class TokenUtils {
             BASE64Encoder be = new BASE64Encoder();
             String key = be.encode(b);
             redisCacheTemplate.opsForValue().set(TOKEN_PREFIX + key, parkUserDTO);
-            redisCacheTemplate.expire(TOKEN_PREFIX + key, 30, TimeUnit.DAYS);
+            redisCacheTemplate.expire(TOKEN_PREFIX + key, 6, TimeUnit.HOURS);
             redisCacheTemplate.opsForValue().set(USER_SURVIVE + parkUserDTO.getId(), TOKEN_PREFIX + key);  //存活的token更新
             return key;
         } catch (NoSuchAlgorithmException e) {
