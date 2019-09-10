@@ -1,4 +1,4 @@
-package com.parkinfo.request.parkService;
+package com.parkinfo.request.parkService.meetingRoom;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
