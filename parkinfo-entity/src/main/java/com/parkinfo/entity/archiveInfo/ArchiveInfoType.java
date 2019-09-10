@@ -19,7 +19,7 @@ public class ArchiveInfoType extends BaseEntity {
     //类型
     private String type;
 
-    private String reamrk;
+    private String remark;
 
     //上一级分类类型
     @ManyToOne(fetch= FetchType.LAZY)
