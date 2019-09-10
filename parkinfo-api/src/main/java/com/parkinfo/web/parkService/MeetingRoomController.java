@@ -1,7 +1,7 @@
 package com.parkinfo.web.parkService;
 
 import com.parkinfo.common.Result;
-import com.parkinfo.request.parkService.*;
+import com.parkinfo.request.parkService.meetingRoom.*;
 import com.parkinfo.response.parkService.MeetingRoomReserveResponse;
 import com.parkinfo.response.parkService.MeetingRoomResponse;
 import com.parkinfo.service.parkService.IMeetingRoomService;

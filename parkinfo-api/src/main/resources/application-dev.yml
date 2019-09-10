@@ -5,6 +5,11 @@ server:
 spring:
   main:
     allow-bean-definition-overriding: true
+  mail:
+    host:
+    username:
+    password:
+    default-encoding: UTF-8
   redis:
     host: 47.102.207.156
     database: 2
@@ -23,7 +28,7 @@ spring:
     username: root
     password: Lynkbey888
     driver-class-name: com.mysql.cj.jdbc.Driver
-#    driver-class-name: net.sf.log4jdbc.DriverSpy
+  #    driver-class-name: net.sf.log4jdbc.DriverSpy
   jpa:
     database: mysql
     show-sql: true
@@ -44,6 +49,6 @@ logging:
     com:
       hhsj:
         mybatis: DEBUG
-#  path: /parkinfo/jar/logs/parinfo-web
+  #  path: /parkinfo/jar/logs/parinfo-web
   pattern:
     file: '%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{15} - %msg%n'

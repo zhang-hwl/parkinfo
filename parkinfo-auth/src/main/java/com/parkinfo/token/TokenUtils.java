@@ -164,7 +164,7 @@ public class TokenUtils {
             BASE64Encoder be = new BASE64Encoder();
             String key = be.encode(b);
             redisCacheTemplate.opsForValue().set(TOKEN_PREFIX + key, parkUserDTO);
-            redisCacheTemplate.expire(TOKEN_PREFIX + key, 30, TimeUnit.DAYS);
+            redisCacheTemplate.expire(TOKEN_PREFIX + key, 6, TimeUnit.HOURS);
             redisCacheTemplate.opsForValue().set(USER_SURVIVE + parkUserDTO.getId(), TOKEN_PREFIX + key);  //存活的token更新
             return key;
         } catch (NoSuchAlgorithmException e) {
@@ -189,14 +189,17 @@ public class TokenUtils {
         ParkUserDTO parkUserDTO = new ParkUserDTO();
         BeanUtils.copyProperties(parkUser,parkUserDTO);
         List<ParkUserPermissionDTO> permissionDTOList = Lists.newArrayList();
+        List<String> roleList = Lists.newArrayList();
         if (parkUser.getRoles()!=null){
             parkUser.getRoles().forEach(parkRole -> {
                 parkRole.getPermissions().forEach(parkPermission -> {
                     ParkUserPermissionDTO parkUserPermissionDTO = this.convertParkPermission(parkPermission);
                     permissionDTOList.add(parkUserPermissionDTO);
                 });
+                roleList.add(parkRole.getName());
             });
         }
+        parkUserDTO.setRole(roleList);
         parkUserDTO.setPermissions(permissionDTOList);
         return parkUserDTO;
     }
