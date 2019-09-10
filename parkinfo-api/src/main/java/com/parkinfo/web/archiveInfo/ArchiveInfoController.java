@@ -46,21 +46,21 @@ public class ArchiveInfoController {
     }
 
     @GetMapping("/delete/{id}")
-//    @RequiresPermissions(value = "archiveInfo:info_delete")
+    @RequiresPermissions(value = "archiveInfo:info_delete")
     @ApiOperation(value = "删除文件")
     public Result<String> delete(@PathVariable("id") String id){
         return archiveInfoService.deleteArchiveInfo(id);
     }
 
     @PostMapping("/add")
-//    @RequiresPermissions(value = "archiveInfo:info_add")
+    @RequiresPermissions(value = "archiveInfo:info_add")
     @ApiOperation(value = "新增文件")
     public Result<String> add(@RequestBody AddArchiveInfoRequest request){
         return archiveInfoService.addArchiveInfo(request);
     }
 
     @PostMapping("/edit/{id}")
-//    @RequiresPermissions(value = "archiveInfo:info_edit")
+    @RequiresPermissions(value = "archiveInfo:info_edit")
     @ApiOperation(value = "编辑文件")
     public Result<String> edit(@PathVariable("id")String id, @RequestBody AddArchiveInfoRequest request){
         return archiveInfoService.editArchiveInfo(id, request);

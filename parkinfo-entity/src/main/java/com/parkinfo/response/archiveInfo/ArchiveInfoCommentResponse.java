@@ -12,7 +12,6 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @ApiModel(value = "ArchiveInfoCommentResponse", description = "存档资料评论返回数据")
 public class ArchiveInfoCommentResponse extends ArchiveInfoResponse {
-
     @ApiModelProperty(value = "评论")
     private List<ArchiveComment> archiveComments;
 

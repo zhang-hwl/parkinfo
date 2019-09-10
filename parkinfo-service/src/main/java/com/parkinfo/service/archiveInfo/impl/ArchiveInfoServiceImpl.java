@@ -6,6 +6,7 @@ import com.parkinfo.entity.archiveInfo.ArchiveComment;
 import com.parkinfo.entity.archiveInfo.ArchiveInfo;
 import com.parkinfo.entity.archiveInfo.ArchiveReadRecord;
 import com.parkinfo.entity.userConfig.ParkInfo;
+import com.parkinfo.entity.userConfig.ParkRole;
 import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.archiveInfo.ArchiveInfoRepository;
@@ -31,10 +32,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ArchiveInfoServiceImpl implements IArchiveInfoService {
@@ -52,6 +50,8 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
 
     @Override
     public Result<Page<ArchiveInfoResponse>> search(QueryArchiveInfoRequest request) {
+        //todo 权限判断
+        Set<ParkRole> roles = tokenUtils.getLoginUser().getRoles();
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.DEFAULT_DIRECTION.DESC, "uploadTime");
         Specification<ArchiveInfo> specification = new Specification<ArchiveInfo>() {
             @Override
@@ -90,7 +90,9 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
         all.getContent().forEach(temp->{
             ArchiveInfoResponse archiveInfoResponse = new ArchiveInfoCommentResponse();
             BeanUtils.copyProperties(temp, archiveInfoResponse);
-            response.add(archiveInfoResponse);
+            if(temp.getOtherParkPerson()){
+                response.add(archiveInfoResponse);
+            }
         });
         Page<ArchiveInfoResponse> result = new PageImpl<>(response, all.getPageable(), all.getTotalElements());
         BeanUtils.copyProperties(all, result);
@@ -235,6 +237,13 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
         };
         Page<ArchiveReadRecord> all = archiveReadRecordRepository.findAll(specification, pageable);
         return Result.<Page<ArchiveReadRecord>>builder().success().data(all).build();
+    }
+
+    //判断是否有权限
+    public boolean judgeLimit(){
+        boolean flag = false;
+        Set<ParkRole> roles = tokenUtils.getLoginUser().getRoles();
+        return flag;
     }
 
 }

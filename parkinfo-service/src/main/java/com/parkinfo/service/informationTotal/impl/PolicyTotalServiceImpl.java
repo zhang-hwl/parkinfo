@@ -1,11 +1,18 @@
 package com.parkinfo.service.informationTotal.impl;
 
+import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.informationTotal.PolicyTotal;
+import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.informationTotal.PolicyTotalRepository;
+import com.parkinfo.repository.userConfig.ParkInfoRepository;
+import com.parkinfo.repository.userConfig.ParkUserRepository;
+import com.parkinfo.request.infoTotalRequest.PolicyTotalRequest;
 import com.parkinfo.service.informationTotal.IPolicyTotalService;
+import com.parkinfo.token.TokenUtils;
 import com.parkinfo.util.ExcelUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,11 +29,22 @@ public class PolicyTotalServiceImpl implements IPolicyTotalService {
 
     @Autowired
     private PolicyTotalRepository policyTotalRepository;
+    @Autowired
+    private TokenUtils tokenUtils;
+    @Autowired
+    private ParkInfoRepository parkInfoRepository;
 
     @Override
-    public Result<String> addPolicyTotal(PolicyTotal policyTotal) {
-        //todo 设置园区ID
-        String gradenId = "";
+    public Result<String> addPolicyTotal(PolicyTotalRequest request) {
+        PolicyTotal policyTotal = new PolicyTotal();
+        BeanUtils.copyProperties(request, policyTotal);
+        String parkId = tokenUtils.getLoginUserDTO().getCurrentParkId();
+        Optional<ParkInfo> byIdAndDeleteIsFalse = parkInfoRepository.findByIdAndDeleteIsFalse(parkId);
+        if(!byIdAndDeleteIsFalse.isPresent()){
+            throw new NormalException("该园区不存在");
+        }
+        ParkInfo parkInfo = byIdAndDeleteIsFalse.get();
+        policyTotal.setParkInfo(parkInfo);
         policyTotal.setDelete(false);
         policyTotal.setAvailable(true);
         policyTotalRepository.save(policyTotal);
@@ -34,25 +52,39 @@ public class PolicyTotalServiceImpl implements IPolicyTotalService {
     }
 
     @Override
-    public Result<String> editPolicyTotal(PolicyTotal policyTotal) {
-        Optional<PolicyTotal> byId = policyTotalRepository.findById(policyTotal.getId());
+    public Result<String> editPolicyTotal(PolicyTotalRequest request) {
+        Optional<PolicyTotal> byId = policyTotalRepository.findByIdAndDeleteIsFalse(request.getId());
         if(byId.isPresent()){
             throw new NormalException("文件不存在");
         }
+        PolicyTotal policyTotal = new PolicyTotal();
+        BeanUtils.copyProperties(request, policyTotal);
+        policyTotal.setParkInfo(byId.get().getParkInfo());
         policyTotalRepository.save(policyTotal);
         return Result.<String>builder().success().data("编辑成功").build();
     }
 
     @Override
-    public Result<List<PolicyTotal>> findByVersion(String version) {
+    public Result<List<PolicyTotalRequest>> findByVersion(String version) {
         List<PolicyTotal> byVersion = policyTotalRepository.findByVersionAndDeleteIsFalse(version);
-        return Result.<List<PolicyTotal>>builder().success().data(byVersion).build();
+        List<PolicyTotalRequest> list = Lists.newArrayList();
+        byVersion.forEach(temp -> {
+            PolicyTotalRequest request = new PolicyTotalRequest();
+            BeanUtils.copyProperties(temp, request);
+            list.add(request);
+        });
+        return Result.<List<PolicyTotalRequest>>builder().success().data(list).build();
     }
 
     @Override
     @Transactional
     public Result<String> policyTotalImport(MultipartFile file){
-        //todo 设置园区
+        String parkId = tokenUtils.getLoginUserDTO().getCurrentParkId();
+        Optional<ParkInfo> byIdAndDeleteIsFalse = parkInfoRepository.findByIdAndDeleteIsFalse(parkId);
+        if(!byIdAndDeleteIsFalse.isPresent()){
+            throw new NormalException("该园区不存在");
+        }
+        ParkInfo parkInfo = byIdAndDeleteIsFalse.get();
         String fileName = file.getOriginalFilename();
         if (!Objects.requireNonNull(fileName).matches("^.+\\.(?i)(xls)$") && !fileName.matches("^.+\\.(?i)(xlsx)$")) {
             throw new NormalException("上传文件格式不正确");
@@ -61,6 +93,7 @@ public class PolicyTotalServiceImpl implements IPolicyTotalService {
             List<PolicyTotal> policyTotals = ExcelUtils.importExcel(file, PolicyTotal.class);
             if(policyTotals != null){
                 policyTotals.forEach(policyTotal -> {
+                    policyTotal.setParkInfo(parkInfo);
                     policyTotal.setDelete(false);
                     policyTotal.setAvailable(true);
                     policyTotalRepository.save(policyTotal);
@@ -87,10 +120,20 @@ public class PolicyTotalServiceImpl implements IPolicyTotalService {
     }
 
     @Override
-    public Result<List<PolicyTotal>> findAll() {
-        //todo 根据园区
+    public Result<List<PolicyTotalRequest>> findAll() {
+        String parkId = tokenUtils.getLoginUserDTO().getCurrentParkId();
+        Optional<ParkInfo> byIdAndDeleteIsFalse = parkInfoRepository.findByIdAndDeleteIsFalse(parkId);
+        if(!byIdAndDeleteIsFalse.isPresent()){
+            throw new NormalException("该园区不存在");
+        }
         List<PolicyTotal> allByDeleteIsFalse = policyTotalRepository.findAllByDeleteIsFalse();
-        return Result.<List<PolicyTotal>>builder().success().data(allByDeleteIsFalse).build();
+        List<PolicyTotalRequest> list = Lists.newArrayList();
+        allByDeleteIsFalse.forEach(temp -> {
+            PolicyTotalRequest request = new PolicyTotalRequest();
+            BeanUtils.copyProperties(temp, request);
+            list.add(request);
+        });
+        return Result.<List<PolicyTotalRequest>>builder().success().data(list).build();
     }
 
     @Override
@@ -99,7 +142,16 @@ public class PolicyTotalServiceImpl implements IPolicyTotalService {
         if(!byId.isPresent()){
             throw new NormalException("文件不存在");
         }
-        policyTotalRepository.delete(byId.get());
+        PolicyTotal policyTotal = byId.get();
+        policyTotal.setDelete(true);
+        policyTotalRepository.save(policyTotal);
         return Result.<String>builder().success().data("删除成功").build();
+    }
+
+    //判断是否有权限
+    public boolean judgeLimit(){
+        boolean flag = false;
+        
+        return flag;
     }
 }
