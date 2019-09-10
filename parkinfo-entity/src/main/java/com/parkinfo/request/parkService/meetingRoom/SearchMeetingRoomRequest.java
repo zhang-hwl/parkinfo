@@ -1,4 +1,4 @@
-package com.parkinfo.request.parkService;
+package com.parkinfo.request.parkService.meetingRoom;
 
 import com.parkinfo.request.base.PageRequest;
 import io.swagger.annotations.ApiModelProperty;
