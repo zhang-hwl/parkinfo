@@ -1,11 +1,12 @@
 package com.parkinfo.service.parkCulture;
 
+import com.aliyuncs.exceptions.ClientException;
+import com.aliyuncs.vod.model.v20170321.CreateUploadVideoResponse;
 import com.aliyuncs.vod.model.v20170321.GetPlayInfoResponse;
+import com.aliyuncs.vod.model.v20170321.RefreshUploadVideoResponse;
 import com.parkinfo.common.Result;
 import com.parkinfo.request.parkCulture.*;
-import com.parkinfo.response.parkCulture.VideoCommentListResponse;
-import com.parkinfo.response.parkCulture.VideoDetailResponse;
-import com.parkinfo.response.parkCulture.VideoListResponse;
+import com.parkinfo.response.parkCulture.*;
 import org.springframework.data.domain.Page;
 
 public interface IVideoService {
@@ -39,11 +40,18 @@ public interface IVideoService {
     Result addComment(AddVideoCommentRequest request);
 
     /**
-     * 根据video获取视频播放地址
+     * 根据videoId获取视频播放地址
      * @param videoId 视频id
      * @return
      */
     Result<GetPlayInfoResponse> getPlayInfo(String videoId);
+
+    /**
+     * 查看视频观看记录
+     * @param request
+     * @return
+     */
+    Result<Page<VideoRecordListResponse>> getRecordList(QueryVideoRecordListRequest request);
 
     /**
      * 管理员添加视频
@@ -53,11 +61,18 @@ public interface IVideoService {
     Result addVideo(AddVideoRequest request);
 
     /**
+     * 设置视频状态
+     * @param videoId
+     * @return
+     */
+    Result setVideoStatus(String videoId);
+
+    /**
      * 管理员管理视频列表
      * @param request
      * @return
      */
-    Result manageVideo(QueryVideoManageRequest request);
+    Result<Page<VideoManageListResponse>> manageVideo(QueryVideoManageRequest request);
 
     /**
      * 管理员编辑视频
@@ -65,4 +80,21 @@ public interface IVideoService {
      * @return
      */
     Result setVideo(SetVideoRequest request);
+
+    /**
+     *
+     * 获取上传视频所需参数
+     * @param request
+     * @return
+     */
+    Result<CreateUploadVideoResponse> createUploadVideo(CreateUploadVideoRequest request);
+
+    /**
+     * 刷新视频上传凭证
+     * @return RefreshUploadVideoResponse 刷新视频上传凭证响应数据
+     * @throws Exception
+     */
+    Result<RefreshUploadVideoResponse> refreshUploadVideo(String videoId) throws Exception;
+
+
 }
