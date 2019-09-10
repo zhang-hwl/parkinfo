@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class MailServiceImpl implements IMailService {
 
-//    @Autowired
-//    private JavaMailSender javaMailSender;
+    @Autowired
+    private JavaMailSender javaMailSender;
 
     @Autowired
     private ToolsProperties toolsProperties;
@@ -24,12 +24,12 @@ public class MailServiceImpl implements IMailService {
         message.setSubject(subject);
         message.setText(content);
 
-//        try {
-//            javaMailSender.send(message);
-//            log.info("邮件已经发送");
-//        } catch (Exception e) {
-//            log.error("发送邮件时发生异常！", e);
-//        }
+        try {
+            javaMailSender.send(message);
+            log.info("邮件已经发送");
+        } catch (Exception e) {
+            log.error("发送邮件时发生异常！", e);
+        }
 
     }
 }
