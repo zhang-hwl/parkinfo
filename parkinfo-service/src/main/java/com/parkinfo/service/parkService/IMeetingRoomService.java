@@ -1,7 +1,7 @@
 package com.parkinfo.service.parkService;
 
 import com.parkinfo.common.Result;
-import com.parkinfo.request.parkService.*;
+import com.parkinfo.request.parkService.meetingRoom.*;
 import com.parkinfo.response.parkService.MeetingRoomReserveResponse;
 import com.parkinfo.response.parkService.MeetingRoomResponse;
 import org.springframework.data.domain.Page;

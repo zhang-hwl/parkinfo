@@ -10,7 +10,7 @@ import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.parkService.MeetingRoomRepository;
 import com.parkinfo.repository.parkService.MeetingRoomReserveRepository;
-import com.parkinfo.request.parkService.*;
+import com.parkinfo.request.parkService.meetingRoom.*;
 import com.parkinfo.response.parkService.MeetingRoomReserveResponse;
 import com.parkinfo.response.parkService.MeetingRoomResponse;
 import com.parkinfo.service.parkService.IMeetingRoomService;
@@ -20,7 +20,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
