@@ -22,13 +22,13 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/parkService/serviceFlow")
+@RequestMapping("/parkService/serviceFlowImg")
 @Api(value = "/parkService/serviceFlow", tags = {"园区服务-园区服务流程查询"})
 public class ServiceFlowController {
     @Autowired
     private IServiceFlowService serviceFlowService;
 
-    @PostMapping("/serviceFlowImg/search")
+    @PostMapping("/search")
     @ApiOperation(value = "获取园区服务流程图")
     @RequiresPermissions("parkService:serviceFlow:serviceFlow:search")
     public Result<ServiceFlowImg> searchServiceFlowImg(@Valid @RequestBody SearchServiceFlowImgRequest request, BindingResult result){
@@ -40,7 +40,7 @@ public class ServiceFlowController {
         return serviceFlowService.searchServiceFlowImg(request);
     }
 
-    @PostMapping("/serviceFlowImg/edit")
+    @PostMapping("/edit")
     @ApiOperation(value = "新增/编辑园区服务流程图")
     @RequiresPermissions("parkService:serviceFlow:serviceFlow:edit")
     public Result<String> editServiceFlowImg(@Valid @RequestBody AddServiceFlowImgRequest request, BindingResult result){

@@ -6,6 +6,7 @@ import com.parkinfo.repository.parkService.ServiceFlowImgRepository;
 import com.parkinfo.request.parkService.serviceFlow.AddServiceFlowImgRequest;
 import com.parkinfo.request.parkService.serviceFlow.SearchServiceFlowImgRequest;
 import com.parkinfo.service.parkService.IServiceFlowService;
+import com.parkinfo.token.TokenUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,10 +18,12 @@ public class ServiceFlowServiceImpl implements IServiceFlowService {
 
     @Autowired
     private ServiceFlowImgRepository serviceFlowImgRepository;
+    @Autowired
+    private TokenUtils tokenUtils;
     @Override
     public Result<ServiceFlowImg> searchServiceFlowImg(SearchServiceFlowImgRequest request) {
         ServiceFlowImg response = new ServiceFlowImg();
-        Optional<ServiceFlowImg> serviceFlowImgOptional = serviceFlowImgRepository.findByDeleteIsFalseAndImgType(request.getImgType());
+        Optional<ServiceFlowImg> serviceFlowImgOptional = serviceFlowImgRepository.findFirstByDeleteIsFalseAndImgTypeAndParkInfo(request.getImgType(),tokenUtils.getCurrentParkInfo());
         if (serviceFlowImgOptional.isPresent()){
             response = serviceFlowImgOptional.get();
         }
@@ -37,6 +40,7 @@ public class ServiceFlowServiceImpl implements IServiceFlowService {
                 serviceFlowImg = byId.get();
             }
         }
+        serviceFlowImg.setParkInfo(tokenUtils.getCurrentParkInfo());
         serviceFlowImg.setPath(request.getPath());
         serviceFlowImg.setDelete(Boolean.FALSE);
         serviceFlowImg.setAvailable(Boolean.TRUE);

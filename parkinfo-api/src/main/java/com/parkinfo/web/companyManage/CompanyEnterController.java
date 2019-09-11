@@ -1,0 +1,111 @@
+package com.parkinfo.web.companyManage;
+
+import com.parkinfo.common.Result;
+import com.parkinfo.entity.companyManage.EnclosureTotal;
+import com.parkinfo.entity.companyManage.EnteredInfo;
+import com.parkinfo.request.compayManage.*;
+import com.parkinfo.response.companyManage.EnterDetailResponse;
+import com.parkinfo.response.companyManage.EnterResponse;
+import com.parkinfo.service.companyManage.ICompanyEnterService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+
+@RestController
+@RequestMapping("/companyManage/enter")
+@Api(value = "/companyManage/enter", tags = {"供需信息-入驻企业管理"})
+public class CompanyEnterController {
+    @Autowired
+    private ICompanyEnterService companyEnterService;
+
+    @PostMapping("/enterImport")
+    @ApiOperation("导入入驻企业信息")
+    public Result enterImport(@RequestBody MultipartFile file) {
+        return companyEnterService.enterImport(file);
+    }
+
+    @PostMapping("/enterExport")
+    @ApiOperation("导出入驻企业信息")
+    public Result enterExport(HttpServletResponse response) {
+        return companyEnterService.enterExport(response);
+    }
+
+    @PostMapping("/findAll")
+    @ApiOperation("查询所有入驻后企业")
+    public Result<Page<EnterResponse>> findAll(@RequestBody QueryEnterRequest request) {
+        return companyEnterService.findAll(request);
+    }
+
+    @PostMapping("/modify")
+    @ApiOperation("修改分页查询的企业信息")
+    public Result modify(@RequestBody SetEnterRequest request) {
+        return companyEnterService.modify(request);
+    }
+
+    @PostMapping("/setCompany")
+    @ApiOperation("修改入驻企业详情")
+    public Result setCompany(@RequestBody ModifyCompanyRequest request) {
+        return companyEnterService.setCompany(request);
+    }
+
+    @PostMapping("/addEnter")
+    @ApiOperation("添加入驻信息")
+    public Result addEnter(@RequestBody AddEnterDetailRequest request) {
+        return companyEnterService.addEnter(request);
+    }
+
+    @PostMapping("/set")
+    @ApiOperation("修改入驻信息")
+    public Result set(@RequestBody SetEnterDetailRequest request) {
+        return companyEnterService.set(request);
+    }
+
+    @PostMapping("/deleteEnter/{id}")
+    @ApiOperation("删除入驻信息")
+    public Result deleteEnter(@PathVariable("id") String id) {
+        return companyEnterService.deleteEnter(id);
+    }
+
+    @PostMapping("/query/{id}")
+    @ApiOperation("查询入驻企业详情")
+    public Result<EnterDetailResponse> query(@PathVariable("id") String id) {
+        return companyEnterService.query(id);
+    }
+
+    @PostMapping("/queryEnter/{id}")
+    @ApiOperation("查询该企业所有入驻信息")
+    public Result<List<EnteredInfo>> queryEnter(@PathVariable("id") String id) {
+        return companyEnterService.queryEnter(id);
+    }
+
+    @PostMapping("/find/{id}")
+    @ApiOperation("查询所有附件")
+    public Result<List<EnclosureTotal>> find(@PathVariable("id") String id) {
+        return companyEnterService.find(id);
+    }
+
+    @PostMapping("/delete/{id}")
+    @ApiOperation("删除入驻企业")
+    public Result delete(@PathVariable("id") String id) {
+        return companyEnterService.delete(id);
+    }
+
+    @PostMapping("/uploadFile")
+    @ApiOperation("上传文件")
+    public Result<String> uploadFile(HttpServletRequest request) {
+        return companyEnterService.uploadFile(request);
+    }
+
+    @PostMapping("/addFile")
+    @ApiOperation("添加附件")
+    public Result addFile(@RequestBody AddFileRequest request) {
+        return companyEnterService.addFile(request);
+    }
+}
