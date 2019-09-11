@@ -1,6 +1,7 @@
 package com.parkinfo.entity.parkService.businessAmuse;
 
 import com.parkinfo.entity.base.BaseEntity;
+import com.parkinfo.entity.userConfig.ParkInfo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -23,6 +24,10 @@ public class BusinessAmuse extends BaseEntity {
 
     @ApiModelProperty("企业logo")
     private String logo;
+
+    @ManyToOne
+    @JoinColumn(name = "park_id")
+    private ParkInfo parkInfo;
 
     @ApiModelProperty("企业名称")
     private String companyName;

@@ -3,6 +3,7 @@ package com.parkinfo.entity.parkService.businessAmuse;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.parkinfo.entity.archiveInfo.ArchiveInfoType;
 import com.parkinfo.entity.base.BaseEntity;
+import com.parkinfo.entity.userConfig.ParkInfo;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,6 +24,10 @@ public class BusinessAmuseType extends BaseEntity {
     private String type;
 
     private String remark;
+
+    @ManyToOne
+    @JoinColumn(name = "park_id")
+    private ParkInfo parkInfo;
 
     //上一级分类类型
     @ManyToOne(fetch= FetchType.LAZY)
