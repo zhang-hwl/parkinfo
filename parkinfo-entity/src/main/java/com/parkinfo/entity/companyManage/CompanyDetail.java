@@ -3,7 +3,6 @@ package com.parkinfo.entity.companyManage;
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.parkinfo.entity.base.BaseEntity;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.enums.CheckStatus;
@@ -147,33 +146,13 @@ public class CompanyDetail extends BaseEntity{
     @JsonIgnore
     private ParkInfo parkInfo;
 
-    @OneToMany
-    @JoinColumn(name = "company_detail_id")
+    @OneToMany(mappedBy = "companyDetail",fetch = FetchType.LAZY)
     @JsonIgnore
     @ApiModelProperty(value = "入驻信息")
     private Set<EnteredInfo> enteredInfos = new HashSet<>();
 
-    @OneToMany
-    @JoinColumn(name = "company_detail_id")
+    @OneToMany(mappedBy = "companyDetail",fetch = FetchType.LAZY)
     @JsonIgnore
     @ApiModelProperty(value = "企业附件")
     private Set<EnclosureTotal> enclosureTotals = new HashSet<>();
-
-   /* @OneToOne(mappedBy = "companyDetail",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    @JoinColumn(name = "company_detail_id")
-    @JsonIgnore
-    @ApiModelProperty(value = "入驻企业")
-    private CompanyEnter companyEnter;*/
-
-    /*@OneToOne(mappedBy = "companyDetail",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    @JoinColumn(name = "company_detail_id")
-    @JsonIgnore
-    @ApiModelProperty(value = "对接详情")
-    private ConnectDetail connectDetail;
-
-    @OneToOne(mappedBy = "companyDetail",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    @JoinColumn(name = "company_detail_id")
-    @JsonIgnore
-    @ApiModelProperty(value = "洽谈详情")
-    private DiscussDetail discussDetail;*/
 }
