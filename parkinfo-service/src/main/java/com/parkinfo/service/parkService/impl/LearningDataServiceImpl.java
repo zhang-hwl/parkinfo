@@ -12,6 +12,7 @@ import com.parkinfo.request.parkService.learningData.EditLearningDataRequest;
 import com.parkinfo.response.parkService.LearningDateResponse;
 import com.parkinfo.request.parkService.learningData.SearchLearningDateRequest;
 import com.parkinfo.service.parkService.ILearningDataService;
+import com.parkinfo.token.TokenUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,8 @@ public class LearningDataServiceImpl implements ILearningDataService {
     private LearningDataRepository learningDataRepository;
     @Autowired
     private ArchiveInfoTypeRepository archiveInfoTypeRepository;
+    @Autowired
+    private TokenUtils tokenUtils;
 
     @Override
     public Result<Page<LearningDateResponse>> searchLearningData(SearchLearningDateRequest request) {
@@ -37,6 +40,7 @@ public class LearningDataServiceImpl implements ILearningDataService {
             exampleData.setFileName(request.getFileName());
             exampleMatcher = exampleMatcher.withMatcher("fileName",ExampleMatcher.GenericPropertyMatchers.contains());
         }
+        exampleData.setParkInfo(tokenUtils.getCurrentParkInfo());
         exampleData.setDelete(Boolean.FALSE);
         exampleData.setAvailable(Boolean.TRUE);
         Example<LearningData> example = Example.of(exampleData, exampleMatcher);
@@ -55,6 +59,7 @@ public class LearningDataServiceImpl implements ILearningDataService {
             ArchiveInfoType type = this.checkArchiveInfoType(request.getTypeId());
             learningData.setArchiveInfoType(type);
         }
+        learningData.setParkInfo(tokenUtils.getCurrentParkInfo());
         learningDataRepository.save(learningData);
         return Result.<String>builder().success().message("新增成功").build();
     }

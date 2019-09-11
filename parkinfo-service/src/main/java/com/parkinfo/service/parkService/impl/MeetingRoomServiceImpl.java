@@ -43,9 +43,7 @@ public class MeetingRoomServiceImpl implements IMeetingRoomService {
         if (StringUtils.isNotBlank(request.getMeetingRoomId())){
             exampleData.setId(request.getMeetingRoomId());
         }
-        ParkInfo parkInfo = new ParkInfo();
-        parkInfo.setId(loginUser.getCurrentParkId());
-        exampleData.setParkInfo(parkInfo);
+        exampleData.setParkInfo(tokenUtils.getCurrentParkInfo());
         Example<MeetingRoom> example = Example.of(exampleData);
         Page<MeetingRoom> meetingRooms = meetingRoomRepository.findAll(example, pageable);
         Page<MeetingRoomResponse> responses = this.convertMeetingRoomResponse(meetingRooms);
