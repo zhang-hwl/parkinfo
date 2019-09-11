@@ -6,6 +6,7 @@ import com.parkinfo.request.infoTotalRequest.RoomInfoRequest;
 import com.parkinfo.service.informationTotal.IBigEventService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -68,5 +69,10 @@ public class BigEventController {
         return bigEventService.export(response);
     }
 
+    @PostMapping("/download")
+    @ApiOperation(value = "文件导出")
+    public void download(HttpServletResponse response, @RequestBody String version){
+        bigEventService.download(response, version);
+    }
 
 }

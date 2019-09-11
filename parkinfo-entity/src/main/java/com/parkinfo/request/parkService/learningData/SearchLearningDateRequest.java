@@ -10,4 +10,10 @@ import lombok.EqualsAndHashCode;
 public class SearchLearningDateRequest extends PageRequest {
     @ApiModelProperty("文件名称")
     private String fileName;
+
+    @ApiModelProperty("大类 id")
+    private String bigTypeId;
+
+    @ApiModelProperty("小类 id")
+    private String smallTypeId;
 }

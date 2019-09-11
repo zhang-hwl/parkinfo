@@ -2,6 +2,7 @@ package com.parkinfo.entity.parkService.serviceFlow;
 
 
 import com.parkinfo.entity.base.BaseEntity;
+import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.enums.ServiceFlowImgType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -26,4 +27,8 @@ public class ServiceFlowImg extends BaseEntity {
     @ApiModelProperty("图片地址")
     @Column(columnDefinition = "text")
     private String path;
+
+    @ManyToOne()
+    @JoinColumn(name = "park_id")
+    private ParkInfo parkInfo;
 }

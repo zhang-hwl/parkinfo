@@ -64,4 +64,10 @@ public class CompeteGradenInfoController {
         return competeGradenInfoService.competeGradenInfoExport(response);
     }
 
+    @PostMapping("/download")
+    @ApiOperation(value = "文件导出")
+    public void download(HttpServletResponse response, @RequestBody String version){
+        competeGradenInfoService.download(response, version);
+    }
+
 }

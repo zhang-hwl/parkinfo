@@ -26,4 +26,6 @@ public interface ICompeteGradenInfoService {
 
     Result<String> deleteCompeteGradenInfo(String id);
 
+    void download(HttpServletResponse response, String version);
+
 }

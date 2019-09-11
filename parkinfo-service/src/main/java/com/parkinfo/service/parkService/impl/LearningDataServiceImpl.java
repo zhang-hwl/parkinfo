@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.archiveInfo.ArchiveInfoType;
 import com.parkinfo.entity.parkService.learningData.LearningData;
+import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.archiveInfo.ArchiveInfoTypeRepository;
 import com.parkinfo.repository.parkService.LearningDataRepository;
@@ -12,14 +13,18 @@ import com.parkinfo.request.parkService.learningData.EditLearningDataRequest;
 import com.parkinfo.response.parkService.LearningDateResponse;
 import com.parkinfo.request.parkService.learningData.SearchLearningDateRequest;
 import com.parkinfo.service.parkService.ILearningDataService;
+import com.parkinfo.token.TokenUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.*;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class LearningDataServiceImpl implements ILearningDataService {
@@ -27,20 +32,32 @@ public class LearningDataServiceImpl implements ILearningDataService {
     private LearningDataRepository learningDataRepository;
     @Autowired
     private ArchiveInfoTypeRepository archiveInfoTypeRepository;
+    @Autowired
+    private TokenUtils tokenUtils;
 
     @Override
     public Result<Page<LearningDateResponse>> searchLearningData(SearchLearningDateRequest request) {
         Pageable pageable = PageRequest.of(request.getPageNum(),request.getPageSize(), Sort.Direction.DESC,"createTime");
-        LearningData exampleData = new LearningData();
-        ExampleMatcher exampleMatcher = ExampleMatcher.matching();
-        if (StringUtils.isNotBlank(request.getFileName())){
-            exampleData.setFileName(request.getFileName());
-            exampleMatcher = exampleMatcher.withMatcher("fileName",ExampleMatcher.GenericPropertyMatchers.contains());
-        }
-        exampleData.setDelete(Boolean.FALSE);
-        exampleData.setAvailable(Boolean.TRUE);
-        Example<LearningData> example = Example.of(exampleData, exampleMatcher);
-        Page<LearningData> learningDataPage = learningDataRepository.findAll(example, pageable);
+        Specification<LearningData> specification = (Specification<LearningData>) (root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicateLists = Lists.newArrayList();
+            if (StringUtils.isNotBlank(request.getFileName())){
+                predicateLists.add(criteriaBuilder.like(root.get("fileName").as(String.class),"%"+request.getFileName()+"%"));
+            }
+            if (StringUtils.isNotBlank(request.getSmallTypeId())){
+                predicateLists.add(criteriaBuilder.equal(root.get("archiveInfoType").as(ArchiveInfoType.class),this.checkArchiveInfoType(request.getSmallTypeId())));
+            }else if (StringUtils.isNotBlank(request.getBigTypeId())){
+                ArchiveInfoType type = this.checkArchiveInfoType(request.getBigTypeId());
+                CriteriaBuilder.In<ArchiveInfoType> in = criteriaBuilder.in(root.get("archiveInfoType").as(ArchiveInfoType.class));
+                Set<ArchiveInfoType> children = type.getChildren();
+                children.forEach(in::value);
+                predicateLists.add(in);
+            }
+            predicateLists.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class),Boolean.FALSE));
+            predicateLists.add(criteriaBuilder.equal(root.get("available").as(Boolean.class),Boolean.TRUE));
+            predicateLists.add(criteriaBuilder.equal(root.get("parkInfo").as(ParkInfo.class),tokenUtils.getCurrentParkInfo()));
+            return criteriaBuilder.and(predicateLists.toArray(new Predicate[0]));
+        };
+        Page<LearningData> learningDataPage = learningDataRepository.findAll(specification,pageable);
         Page<LearningDateResponse> responses = this.convertLearningDateResponsePage(learningDataPage);
         return Result.<Page<LearningDateResponse>>builder().success().data(responses).build();
     }
@@ -55,6 +72,7 @@ public class LearningDataServiceImpl implements ILearningDataService {
             ArchiveInfoType type = this.checkArchiveInfoType(request.getTypeId());
             learningData.setArchiveInfoType(type);
         }
+        learningData.setParkInfo(tokenUtils.getCurrentParkInfo());
         learningDataRepository.save(learningData);
         return Result.<String>builder().success().message("新增成功").build();
     }

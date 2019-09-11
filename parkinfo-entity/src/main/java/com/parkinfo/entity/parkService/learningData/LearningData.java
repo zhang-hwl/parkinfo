@@ -2,6 +2,7 @@ package com.parkinfo.entity.parkService.learningData;
 
 import com.parkinfo.entity.archiveInfo.ArchiveInfoType;
 import com.parkinfo.entity.base.BaseEntity;
+import com.parkinfo.entity.userConfig.ParkInfo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -22,6 +23,11 @@ public class LearningData extends BaseEntity {
 
     @ApiModelProperty("文件名称")
     private String fileName;
+
+    @ApiModelProperty("关联园区")
+    @ManyToOne()
+    @JoinColumn(name = "park_id")
+    private ParkInfo parkInfo;
 
     @ApiModelProperty("书籍分类")
     @ManyToOne()

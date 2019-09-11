@@ -25,4 +25,6 @@ public interface IPolicyTotalService {
 
     Result<String> deletePolicyTotal(String id);
 
+    void download(HttpServletResponse response, String version);
+
 }

@@ -68,4 +68,10 @@ public class CheckRecordController {
         return checkRecordService.checkRecordExport(response);
     }
 
+    @PostMapping("/download")
+    @ApiOperation(value = "文件导出")
+    public void download(HttpServletResponse response, @RequestBody String version){
+        checkRecordService.download(response, version);
+    }
+
 }

@@ -67,4 +67,10 @@ public class PolicyTotalController {
         return policyTotalService.policyTotalExport(response);
     }
 
+    @PostMapping("/download")
+    @ApiOperation(value = "文件导出")
+    public void download(HttpServletResponse response, @RequestBody String version){
+        policyTotalService.download(response, version);
+    }
+
 }

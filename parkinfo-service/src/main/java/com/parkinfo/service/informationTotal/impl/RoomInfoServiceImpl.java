@@ -2,6 +2,7 @@ package com.parkinfo.service.informationTotal.impl;
 
 import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
+import com.parkinfo.entity.informationTotal.CheckRecord;
 import com.parkinfo.entity.informationTotal.PolicyTotal;
 import com.parkinfo.entity.informationTotal.RoomInfo;
 import com.parkinfo.entity.userConfig.ParkInfo;
@@ -12,6 +13,7 @@ import com.parkinfo.request.infoTotalRequest.RoomInfoRequest;
 import com.parkinfo.service.informationTotal.IRoomInfoService;
 import com.parkinfo.token.TokenUtils;
 import com.parkinfo.util.ExcelUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -89,7 +91,7 @@ public class RoomInfoServiceImpl implements IRoomInfoService {
         }
         try {
             List<RoomInfo> roomInfos = ExcelUtils.importExcel(file, RoomInfo.class);
-            if(parkInfo != null){
+            if(roomInfos != null){
                 roomInfos.forEach(roomInfo -> {
                     roomInfo.setParkInfo(parkInfo);
                     roomInfo.setDelete(false);
@@ -143,5 +145,21 @@ public class RoomInfoServiceImpl implements IRoomInfoService {
         roomInfo.setDelete(true);
         roomInfoRepository.save(roomInfo);
         return Result.<String>builder().success().data("删除成功").build();
+    }
+
+    @Override
+    public void download(HttpServletResponse response, String version) {
+        List<RoomInfo> list = Lists.newArrayList();
+        if(StringUtils.isBlank(version) || version.equals("''") || version.equals("null")){
+            list.addAll(roomInfoRepository.findByVersionAndDeleteIsFalse(version));
+        }
+        else{
+            list.addAll(roomInfoRepository.findAllByDeleteIsFalse());
+        }
+        try {
+            ExcelUtils.exportExcel(list, "本园区房间统计", "本园区房间统计", RoomInfo.class, "fangjian", response);
+        } catch (Exception e) {
+            throw new NormalException("下载失败");
+        }
     }
 }

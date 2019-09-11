@@ -1,11 +1,10 @@
 package com.parkinfo.service.archiveInfo;
 
 import com.parkinfo.common.Result;
-import com.parkinfo.entity.archiveInfo.ArchiveInfo;
 import com.parkinfo.entity.archiveInfo.ArchiveReadRecord;
 import com.parkinfo.request.archiveInfo.AddArchiveInfoRequest;
 import com.parkinfo.request.archiveInfo.ArchiveReadRecordRequest;
-import com.parkinfo.request.archiveInfo.ReadRecordRequest;
+import com.parkinfo.request.archiveInfo.ArchiveCommentRequest;
 import com.parkinfo.request.archiveInfo.QueryArchiveInfoRequest;
 import com.parkinfo.response.archiveInfo.ArchiveInfoCommentResponse;
 import com.parkinfo.response.archiveInfo.ArchiveInfoResponse;
@@ -29,7 +28,7 @@ public interface IArchiveInfoService {
 
     Result<String> addReadRecord(String id);
 
-    Result<String> addComment(ReadRecordRequest request);
+    Result<String> addComment(ArchiveCommentRequest request);
 
     Result<Page<ArchiveReadRecord>> findReadRecord(ArchiveReadRecordRequest request);
 
