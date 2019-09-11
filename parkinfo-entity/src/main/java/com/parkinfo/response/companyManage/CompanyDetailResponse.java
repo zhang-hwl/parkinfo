@@ -31,8 +31,8 @@ public class CompanyDetailResponse {
     @ApiModelProperty(value = "需求类型")
     private String requireType;
 
-    @ApiModelProperty(value = "需求数量")
-    private String requireNumber;
+    @ApiModelProperty(value = "需求面积")
+    private String requireArea;
 
     @ApiModelProperty(value = "需求时间")
     private String requireTime;
