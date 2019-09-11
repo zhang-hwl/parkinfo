@@ -2,12 +2,15 @@ package com.parkinfo.entity.informationTotal;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.parkinfo.entity.base.BaseEntity;
+import com.parkinfo.entity.userConfig.ParkInfo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 //竞争园区信息
@@ -15,7 +18,7 @@ import javax.persistence.Table;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "c_comptete_graden_info")
-@ApiModel(value = "CompeteGradenInfo", description = "信息统计-园区关键信息")
+@ApiModel(value = "CompeteGradenInfo", description = "信息统计-竞争园区统计信息")
 public class CompeteGradenInfo extends BaseEntity {
 
     @ApiModelProperty(value = "版本标签")
@@ -61,6 +64,9 @@ public class CompeteGradenInfo extends BaseEntity {
     @ApiModelProperty(value = "说明")
     private String remark;
 
-    //关联园区， todo
+    @ManyToOne
+    @JoinColumn(name = "parkInfo_id")
+    //关联园区信息
+    private ParkInfo parkInfo;
 
 }

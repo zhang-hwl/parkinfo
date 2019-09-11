@@ -3,12 +3,15 @@ package com.parkinfo.entity.informationTotal;
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.parkinfo.entity.base.BaseEntity;
+import com.parkinfo.entity.userConfig.ParkInfo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 //点检记录
@@ -16,7 +19,7 @@ import javax.persistence.Table;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "c_check_record")
-@ApiModel(value = "CheckRecord", description = "信息统计-点检记录表")
+@ApiModel(value = "CheckRecordRequest", description = "信息统计-点检记录表")
 public class CheckRecord extends BaseEntity {
 
     @ApiModelProperty(value = "版本标签")
@@ -50,6 +53,9 @@ public class CheckRecord extends BaseEntity {
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private String checkDate;
 
-    //关联园区 todo
+    @ManyToOne
+    @JoinColumn(name = "parkInfo_id")
+    //关联园区信息
+    private ParkInfo parkInfo;
 
 }

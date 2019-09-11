@@ -12,5 +12,9 @@ public interface CompanyDetailRepository extends JpaRepository<CompanyDetail,Str
 
     Page<CompanyDetail> findAll(Specification<CompanyDetail> specification, Pageable pageable);
 
+    Optional<CompanyDetail> findByIdAndDeleteIsFalse(String id);
+
     Optional<CompanyDetail> findByIdAndDeleteIsFalseAndAvailableIsTrue(String id);
+
+    Optional<CompanyDetail> findByIdAndDeleteEnterIsFalse(String id);
 }
