@@ -2,6 +2,7 @@ package com.parkinfo.service.informationTotal.impl;
 
 import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
+import com.parkinfo.entity.informationTotal.CheckRecord;
 import com.parkinfo.entity.informationTotal.PolicyTotal;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.exception.NormalException;
@@ -12,6 +13,7 @@ import com.parkinfo.request.infoTotalRequest.PolicyTotalRequest;
 import com.parkinfo.service.informationTotal.IPolicyTotalService;
 import com.parkinfo.token.TokenUtils;
 import com.parkinfo.util.ExcelUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -146,6 +148,22 @@ public class PolicyTotalServiceImpl implements IPolicyTotalService {
         policyTotal.setDelete(true);
         policyTotalRepository.save(policyTotal);
         return Result.<String>builder().success().data("删除成功").build();
+    }
+
+    @Override
+    public void download(HttpServletResponse response, String version) {
+        List<PolicyTotal> list = Lists.newArrayList();
+        if(StringUtils.isBlank(version) || version.equals("''") || version.equals("null")){
+            list.addAll(policyTotalRepository.findByVersionAndDeleteIsFalse(version));
+        }
+        else{
+            list.addAll(policyTotalRepository.findAllByDeleteIsFalse());
+        }
+        try {
+            ExcelUtils.exportExcel(list, "政策统计", "政策统计", PolicyTotal.class, "zhence", response);
+        } catch (Exception e) {
+            throw new NormalException("下载失败");
+        }
     }
 
     //判断是否有权限

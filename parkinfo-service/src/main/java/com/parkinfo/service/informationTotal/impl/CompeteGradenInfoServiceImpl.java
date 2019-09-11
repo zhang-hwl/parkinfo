@@ -3,6 +3,7 @@ package com.parkinfo.service.informationTotal.impl;
 import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.informationTotal.BigEvent;
+import com.parkinfo.entity.informationTotal.CheckRecord;
 import com.parkinfo.entity.informationTotal.CompeteGradenInfo;
 import com.parkinfo.entity.informationTotal.PolicyTotal;
 import com.parkinfo.entity.userConfig.ParkInfo;
@@ -14,6 +15,7 @@ import com.parkinfo.request.infoTotalRequest.CompeteGradenInfoRequest;
 import com.parkinfo.service.informationTotal.ICompeteGradenInfoService;
 import com.parkinfo.token.TokenUtils;
 import com.parkinfo.util.ExcelUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -145,5 +147,21 @@ public class CompeteGradenInfoServiceImpl implements ICompeteGradenInfoService {
         competeGradenInfo.setDelete(true);
         competeGradenInfoRepository.save(competeGradenInfo);
         return Result.<String>builder().success().data("删除成功").build();
+    }
+
+    @Override
+    public void download(HttpServletResponse response, String version) {
+        List<CompeteGradenInfo> list = Lists.newArrayList();
+        if(StringUtils.isBlank(version) || version.equals("''") || version.equals("null")){
+            list.addAll(competeGradenInfoRepository.findByVersionAndDeleteIsFalse(version));
+        }
+        else{
+            list.addAll(competeGradenInfoRepository.findAllByDeleteIsFalse());
+        }
+        try {
+            ExcelUtils.exportExcel(list, "园区竞争信息", "园区竞争信息", CompeteGradenInfo.class, "jingzheng", response);
+        } catch (Exception e) {
+            throw new NormalException("下载失败");
+        }
     }
 }

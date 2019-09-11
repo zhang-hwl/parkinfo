@@ -4,7 +4,7 @@ import com.parkinfo.common.Result;
 import com.parkinfo.entity.archiveInfo.ArchiveReadRecord;
 import com.parkinfo.request.archiveInfo.AddArchiveInfoRequest;
 import com.parkinfo.request.archiveInfo.ArchiveReadRecordRequest;
-import com.parkinfo.request.archiveInfo.ReadRecordRequest;
+import com.parkinfo.request.archiveInfo.ArchiveCommentRequest;
 import com.parkinfo.request.archiveInfo.QueryArchiveInfoRequest;
 import com.parkinfo.response.archiveInfo.ArchiveInfoCommentResponse;
 import com.parkinfo.response.archiveInfo.ArchiveInfoResponse;
@@ -39,7 +39,6 @@ public class ArchiveInfoController {
     }
 
     @GetMapping("/detail/{id}")
-//    @RequiresPermissions(value = "archiveInfo:info_detail")
     @ApiOperation(value = "根据id查询文件(带评论)")
     public Result<ArchiveInfoCommentResponse> findById(@PathVariable("id") String id){
         return archiveInfoService.findById(id);
@@ -68,8 +67,8 @@ public class ArchiveInfoController {
 
     @PostMapping("/add/comment")
     @ApiOperation(value = "新增评论")
-    public Result<String> addComment(@RequestBody ReadRecordRequest readRecordRequest){
-        return archiveInfoService.addComment(readRecordRequest);
+    public Result<String> addComment(@RequestBody ArchiveCommentRequest archiveCommentRequest){
+        return archiveInfoService.addComment(archiveCommentRequest);
     }
 
     @GetMapping("/add/record/{id}")
@@ -82,6 +81,14 @@ public class ArchiveInfoController {
     @ApiOperation(value = "查询阅读记录")
     public Result<Page<ArchiveReadRecord>> findReadRecord(@RequestBody ArchiveReadRecordRequest request){
         return archiveInfoService.findReadRecord(request);
+    }
+
+    @PostMapping("/download/{id}")
+    @RequiresPermissions(value = "archiveInfo:download")
+    @ApiOperation(value = "下载文件")
+    public Result<String> download(@PathVariable("id") String id){
+        Result<ArchiveInfoCommentResponse> byId = archiveInfoService.findById(id);
+        return Result.<String>builder().success().data(byId.getData().getFileAddress()).build();
     }
 
 }

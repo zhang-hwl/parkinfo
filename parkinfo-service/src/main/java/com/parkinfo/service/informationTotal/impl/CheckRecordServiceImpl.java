@@ -3,12 +3,16 @@ package com.parkinfo.service.informationTotal.impl;
 import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.informationTotal.BigEvent;
+import com.parkinfo.entity.informationTotal.CheckRecord;
+import com.parkinfo.entity.informationTotal.PolicyTotal;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.exception.NormalException;
-import com.parkinfo.repository.informationTotal.BigEventRepository;
+import com.parkinfo.repository.informationTotal.CheckRecordRepository;
 import com.parkinfo.repository.userConfig.ParkInfoRepository;
 import com.parkinfo.request.infoTotalRequest.BigEventRequest;
-import com.parkinfo.service.informationTotal.IBigEventService;
+import com.parkinfo.request.infoTotalRequest.CheckRecordRequest;
+import com.parkinfo.request.infoTotalRequest.PolicyTotalRequest;
+import com.parkinfo.service.informationTotal.ICheckRecordService;
 import com.parkinfo.token.TokenUtils;
 import com.parkinfo.util.ExcelUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -24,59 +28,59 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
-public class BigEventServiceImpl implements IBigEventService {
+public class CheckRecordServiceImpl implements ICheckRecordService {
 
     @Autowired
     private TokenUtils tokenUtils;
     @Autowired
     private ParkInfoRepository parkInfoRepository;
     @Autowired
-    private BigEventRepository bigEventRepository;
+    private CheckRecordRepository checkRecordRepository;
 
     @Override
-    public Result<String> add(BigEventRequest request) {
-        BigEvent bigEvent = new BigEvent();
-        BeanUtils.copyProperties(request, bigEvent);
+    public Result<String> addCheckRecord(CheckRecordRequest request) {
+        CheckRecord checkRecord = new CheckRecord();
+        BeanUtils.copyProperties(request, checkRecord);
         String parkId = tokenUtils.getLoginUserDTO().getCurrentParkId();
         Optional<ParkInfo> byIdAndDeleteIsFalse = parkInfoRepository.findByIdAndDeleteIsFalse(parkId);
         if(!byIdAndDeleteIsFalse.isPresent()){
             throw new NormalException("该园区不存在");
         }
         ParkInfo parkInfo = byIdAndDeleteIsFalse.get();
-        bigEvent.setParkInfo(parkInfo);
-        bigEvent.setDelete(false);
-        bigEvent.setAvailable(true);
-        bigEventRepository.save(bigEvent);
+        checkRecord.setParkInfo(parkInfo);
+        checkRecord.setDelete(false);
+        checkRecord.setAvailable(true);
+        checkRecordRepository.save(checkRecord);
         return Result.<String>builder().success().data("新增成功").build();
     }
 
     @Override
-    public Result<String> edit(BigEventRequest request) {
-        BigEvent bigEvent = new BigEvent();
-        BeanUtils.copyProperties(request, bigEvent);
-        Optional<BigEvent> byIdAndDeleteIsFalse = bigEventRepository.findByIdAndDeleteIsFalse(bigEvent.getId());
+    public Result<String> editCheckRecord(CheckRecordRequest request) {
+        CheckRecord checkRecord = new CheckRecord();
+        BeanUtils.copyProperties(request, checkRecord);
+        Optional<CheckRecord> byIdAndDeleteIsFalse = checkRecordRepository.findByIdAndDeleteIsFalse(checkRecord.getId());
         if(!byIdAndDeleteIsFalse.isPresent()){
             throw new NormalException("文件不存在");
         }
-        bigEvent.setParkInfo(byIdAndDeleteIsFalse.get().getParkInfo());
-        bigEventRepository.save(byIdAndDeleteIsFalse.get());
+        checkRecord.setParkInfo(byIdAndDeleteIsFalse.get().getParkInfo());
+        checkRecordRepository.save(byIdAndDeleteIsFalse.get());
         return Result.<String>builder().success().data("编辑成功").build();
     }
 
     @Override
-    public Result<List<BigEventRequest>> findByVersion(String version) {
-        List<BigEvent> byVersionAndDeleteIsFalse = bigEventRepository.findByVersionAndDeleteIsFalse(version);
-        List<BigEventRequest> list = Lists.newArrayList();
+    public Result<List<CheckRecordRequest>> findByVersion(String version) {
+        List<CheckRecord> byVersionAndDeleteIsFalse = checkRecordRepository.findByVersionAndDeleteIsFalse(version);
+        List<CheckRecordRequest> list = Lists.newArrayList();
         byVersionAndDeleteIsFalse.forEach(temp -> {
-            BigEventRequest request = new BigEventRequest();
+            CheckRecordRequest request = new CheckRecordRequest();
             BeanUtils.copyProperties(temp, request);
             list.add(request);
         });
-        return Result.<List<BigEventRequest>>builder().success().data(list).build();
+        return Result.<List<CheckRecordRequest>>builder().success().data(list).build();
     }
 
     @Override
-    public Result<String> myImport(MultipartFile file) {
+    public Result<String> checkRecordImport(MultipartFile file) {
         String parkId = tokenUtils.getLoginUserDTO().getCurrentParkId();
         Optional<ParkInfo> byIdAndDeleteIsFalse = parkInfoRepository.findByIdAndDeleteIsFalse(parkId);
         if(!byIdAndDeleteIsFalse.isPresent()){
@@ -88,13 +92,13 @@ public class BigEventServiceImpl implements IBigEventService {
             throw new NormalException("上传文件格式不正确");
         }
         try {
-            List<BigEvent> bigEvents = ExcelUtils.importExcel(file, BigEvent.class);
+            List<CheckRecord> bigEvents = ExcelUtils.importExcel(file, CheckRecord.class);
             if(bigEvents != null){
-                bigEvents.forEach(bigEvent -> {
-                    bigEvent.setParkInfo(parkInfo);
-                    bigEvent.setDelete(false);
-                    bigEvent.setAvailable(true);
-                    bigEventRepository.save(bigEvent);
+                bigEvents.forEach(checkRecord -> {
+                    checkRecord.setParkInfo(parkInfo);
+                    checkRecord.setDelete(false);
+                    checkRecord.setAvailable(true);
+                    checkRecordRepository.save(checkRecord);
                 });
             }
         } catch (Exception e) {
@@ -104,12 +108,12 @@ public class BigEventServiceImpl implements IBigEventService {
     }
 
     @Override
-    public Result<String> export(HttpServletResponse response) {
-        BigEvent bigEvent = new BigEvent();
-        List<BigEvent> list = new ArrayList<>();
-        list.add(bigEvent);
+    public Result<String> checkRecordExport(HttpServletResponse response) {
+        CheckRecord checkRecord = new CheckRecord();
+        List<CheckRecord> list = new ArrayList<>();
+        list.add(checkRecord);
         try {
-            ExcelUtils.exportExcel(list, "园区大事记", "园区大事记统计模板", BigEvent.class, "shiji", response);
+            ExcelUtils.exportExcel(list, "点检记录表", "点检记录表", CheckRecord.class, "dianjian", response);
         } catch (Exception e) {
             throw new NormalException("模板下载失败");
         }
@@ -117,45 +121,45 @@ public class BigEventServiceImpl implements IBigEventService {
     }
 
     @Override
-    public Result<List<BigEventRequest>> findAll() {
+    public Result<List<CheckRecordRequest>> findAll() {
         String parkId = tokenUtils.getLoginUserDTO().getCurrentParkId();
         Optional<ParkInfo> byIdAndDeleteIsFalse = parkInfoRepository.findByIdAndDeleteIsFalse(parkId);
         if(!byIdAndDeleteIsFalse.isPresent()){
             throw new NormalException("该园区不存在");
         }
-        List<BigEvent> allByDeleteIsFalse = bigEventRepository.findAllByDeleteIsFalse();
-        List<BigEventRequest> list = Lists.newArrayList();
+        List<CheckRecord> allByDeleteIsFalse = checkRecordRepository.findAllByDeleteIsFalse();
+        List<CheckRecordRequest> list = Lists.newArrayList();
         allByDeleteIsFalse.forEach(temp -> {
-            BigEventRequest request = new BigEventRequest();
+            CheckRecordRequest request = new CheckRecordRequest();
             BeanUtils.copyProperties(temp, request);
             list.add(request);
         });
-        return Result.<List<BigEventRequest>>builder().success().data(list).build();
+        return Result.<List<CheckRecordRequest>>builder().success().data(list).build();
     }
 
     @Override
-    public Result<String> delete(String id) {
-        Optional<BigEvent> byId = bigEventRepository.findById(id);
+    public Result<String> deleteCheckRecord(String id) {
+        Optional<CheckRecord> byId = checkRecordRepository.findById(id);
         if(!byId.isPresent()){
             throw new NormalException("文件不存在");
         }
-        BigEvent bigEvent = byId.get();
-        bigEvent.setDelete(true);
-        bigEventRepository.save(bigEvent);
+        CheckRecord checkRecord = byId.get();
+        checkRecord.setDelete(true);
+        checkRecordRepository.save(checkRecord);
         return Result.<String>builder().success().data("删除成功").build();
     }
 
     @Override
     public void download(HttpServletResponse response, String version) {
-        List<BigEvent> list = Lists.newArrayList();
+        List<CheckRecord> list = Lists.newArrayList();
         if(StringUtils.isBlank(version) || version.equals("''") || version.equals("null")){
-            list.addAll(bigEventRepository.findByVersionAndDeleteIsFalse(version));
+            list.addAll(checkRecordRepository.findByVersionAndDeleteIsFalse(version));
         }
         else{
-            list.addAll(bigEventRepository.findAllByDeleteIsFalse());
+            list.addAll(checkRecordRepository.findAllByDeleteIsFalse());
         }
         try {
-            ExcelUtils.exportExcel(list, "园区大事记", "园区大事记", BigEvent.class, "shiji", response);
+            ExcelUtils.exportExcel(list, "点检记录表", "点检记录表", CheckRecord.class, "dianjian", response);
         } catch (Exception e) {
             throw new NormalException("下载失败");
         }

@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class ReadRecordRequest{
+public class ArchiveCommentRequest {
 
     @ApiModelProperty(value = "文件ID")
     private String archiveId;

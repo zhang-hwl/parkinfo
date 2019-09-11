@@ -4,18 +4,21 @@ import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.archiveInfo.ArchiveComment;
 import com.parkinfo.entity.archiveInfo.ArchiveInfo;
+import com.parkinfo.entity.archiveInfo.ArchiveInfoType;
 import com.parkinfo.entity.archiveInfo.ArchiveReadRecord;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.entity.userConfig.ParkRole;
 import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.exception.NormalException;
+import com.parkinfo.repository.archiveInfo.ArchiveCommentRepository;
 import com.parkinfo.repository.archiveInfo.ArchiveInfoRepository;
+import com.parkinfo.repository.archiveInfo.ArchiveInfoTypeRepository;
 import com.parkinfo.repository.archiveInfo.ArchiveReadRecordRepository;
 import com.parkinfo.repository.userConfig.ParkInfoRepository;
 import com.parkinfo.repository.userConfig.ParkUserRepository;
 import com.parkinfo.request.archiveInfo.AddArchiveInfoRequest;
 import com.parkinfo.request.archiveInfo.ArchiveReadRecordRequest;
-import com.parkinfo.request.archiveInfo.ReadRecordRequest;
+import com.parkinfo.request.archiveInfo.ArchiveCommentRequest;
 import com.parkinfo.request.archiveInfo.QueryArchiveInfoRequest;
 import com.parkinfo.response.archiveInfo.ArchiveInfoCommentResponse;
 import com.parkinfo.response.archiveInfo.ArchiveInfoResponse;
@@ -47,10 +50,13 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
     private ParkUserRepository parkUserRepository;
     @Autowired
     private ArchiveReadRecordRepository archiveReadRecordRepository;
+    @Autowired
+    private ArchiveCommentRepository archiveCommentRepository;
+    @Autowired
+    private ArchiveInfoTypeRepository archiveInfoTypeRepository;
 
     @Override
     public Result<Page<ArchiveInfoResponse>> search(QueryArchiveInfoRequest request) {
-        //todo 权限判断
         Set<ParkRole> roles = tokenUtils.getLoginUser().getRoles();
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.DEFAULT_DIRECTION.DESC, "uploadTime");
         Specification<ArchiveInfo> specification = new Specification<ArchiveInfo>() {
@@ -58,16 +64,16 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
             public Predicate toPredicate(Root<ArchiveInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder cb) {
                 List<Predicate> predicates = new ArrayList<>();
                 if(request.getGeneral() != null){
-                    predicates.add(cb.like(root.get("general").as(String.class), "%"+request.getGeneral()+"%")); //文件大类
+                    predicates.add(cb.equal(root.get("general").get("id").as(String.class), request.getGeneral())); //文件大类
                 }
                 if(request.getKind() != null){
-                    predicates.add(cb.like(root.get("kind").as(String.class), "%"+request.getKind()+"%")); //文件种类
+                    predicates.add(cb.equal(root.get("kind").get("id").as(String.class), request.getKind())); //文件种类
+                }
+                if(StringUtils.isNotBlank(request.getParkId())){
+                    predicates.add(cb.equal(root.get("parkInfo").get("id").as(String.class), request.getParkId())); //园区ID
                 }
                 if(StringUtils.isNotBlank(request.getFileName())){
                     predicates.add(cb.like(root.get("fileName").as(String.class), "%"+request.getFileName()+"%"));  //根据文件名模糊查询
-                }
-                if(StringUtils.isNotBlank(request.getParkId())){
-                    predicates.add(cb.equal(root.get("parkInfo.id").as(String.class), request.getParkId())); //园区ID
                 }
                 if(request.getStartTime() != null){
                     predicates.add(cb.greaterThanOrEqualTo(root.get("uploadTime").as(Date.class), request.getStartTime()));  //大于等于开始时间
@@ -136,6 +142,11 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
 
     @Override
     public Result<String> addArchiveInfo(AddArchiveInfoRequest request) {
+        ParkUser loginUser = tokenUtils.getLoginUser(); //上传人
+        Optional<ParkUser> byIdAndDeleteIsFalse1 = parkUserRepository.findByIdAndDeleteIsFalse(loginUser.getId());
+        if(!byIdAndDeleteIsFalse1.isPresent()){
+            throw new NormalException("token过期或不存在");
+        }
         ArchiveInfo archiveInfo = new ArchiveInfo();
         BeanUtils.copyProperties(request, archiveInfo);
         String parkId = tokenUtils.getLoginUserDTO().getCurrentParkId();
@@ -145,11 +156,20 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
         }
         ParkInfo parkInfo = byIdAndDeleteIsFalse.get();
         archiveInfo.setParkInfo(parkInfo);
+        Optional<ArchiveInfoType> byBigType = archiveInfoTypeRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(request.getGeneral());
+        Optional<ArchiveInfoType> bySmallType = archiveInfoTypeRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(request.getKind());
+        if(!byBigType.isPresent() || !bySmallType.isPresent()){
+            throw new NormalException("类型不存在");
+        }
+        archiveInfo.setGeneral(byBigType.get());
+        archiveInfo.setKind(bySmallType.get());
+        archiveInfo.setHeir(byIdAndDeleteIsFalse1.get().getNickname());
+        archiveInfo.setUploadTime(new Date());
+        archiveInfo.setDelete(false);
+        archiveInfo.setAvailable(true);
         if(archiveInfo.getExternal() == true){
             //todo 对外，存入学习资料
         }
-        archiveInfo.setDelete(false);
-        archiveInfo.setAvailable(true);
         archiveInfoRepository.save(archiveInfo);
         return Result.<String>builder().success().data("新增成功").build();
     }
@@ -188,6 +208,7 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
         archiveReadRecord.setBookName(archiveInfo.getFileName());
         archiveReadRecord.setReadDate(new Date());
         archiveReadRecord.setFileId(id);
+        archiveReadRecordRepository.save(archiveReadRecord);
         archiveReadRecords.add(archiveReadRecord);
         archiveInfo.setArchiveReadRecords(archiveReadRecords);
         archiveInfoRepository.save(archiveInfo);
@@ -195,7 +216,7 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
     }
 
     @Override
-    public Result<String> addComment(ReadRecordRequest request) {
+    public Result<String> addComment(ArchiveCommentRequest request) {
         String userId = tokenUtils.getLoginUser().getId();
         Optional<ArchiveInfo> byIdAndDeleteIsFalse = archiveInfoRepository.findByIdAndDeleteIsFalse(request.getArchiveId());
         if(!byIdAndDeleteIsFalse.isPresent()){
@@ -215,6 +236,7 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
         archiveComment.setNickname(user.getNickname());
         archiveComment.setAvatar(user.getAvatar());
         archiveComments.add(archiveComment);
+        archiveCommentRepository.save(archiveComment);
         archiveInfo.setArchiveComments(archiveComments);
         archiveInfoRepository.save(archiveInfo);
         return Result.<String>builder().success().data("评论成功").build();

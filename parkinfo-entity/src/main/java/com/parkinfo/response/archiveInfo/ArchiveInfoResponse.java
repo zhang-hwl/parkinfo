@@ -35,10 +35,5 @@ public class ArchiveInfoResponse {
     @ApiModelProperty(value = "文档说明")
     private String remark;
 
-    @ApiModelProperty(value = "大类")
-    private String general;
-
-    @ApiModelProperty(value = "种类")
-    private String kind;
 
 }
