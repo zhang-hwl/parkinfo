@@ -3,9 +3,11 @@ package com.parkinfo.entity.companyManage;
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.parkinfo.entity.base.BaseEntity;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.enums.CheckStatus;
+import com.parkinfo.enums.DiscussStatus;
 import com.parkinfo.enums.EnterStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -14,7 +16,7 @@ import lombok.EqualsAndHashCode;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.util.*;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -93,7 +95,7 @@ public class CompanyDetail extends BaseEntity{
     private CheckStatus checkStatus;
 
     @ApiModelProperty(value = "入驻状态")
-    @Enumerated(EnumType.ORDINAL)//WAITING,ENTERED,LEAVE  未入住,已入住,已离园
+    @Enumerated(EnumType.ORDINAL)//WAITING,ENTERED,LEAVE 未入驻,已入住,已离园
     private EnterStatus enterStatus;
 
     @Excel(name = "百强企业", width = 15)
@@ -104,12 +106,66 @@ public class CompanyDetail extends BaseEntity{
     @ApiModelProperty(value = "是否为本地企业")
     private String localCompany;
 
+    @Excel(name = "对接时间", width = 15)
+    @ApiModelProperty(value = "对接时间")
+    private Date connectTime;
+
+    @Excel(name = "意向", width = 15)
+    @ApiModelProperty(value = "是否有意向")
+    private String purpose;
+
+    @ApiModelProperty(value = "对接备注")
+    @Column(columnDefinition = "text")
+    private String remark;
+
+    @Excel(name = "对接方式", width = 15)
+    @ApiModelProperty(value = "对接方式")
+    private String connectWay;
+
+    @Excel(name = "洽谈状态", width = 15)
+    @ApiModelProperty(value = "洽谈状态")//WAIT_LOOK,LOOKED,FOLLOWING,FIRST_PASS 未参园,已参观,跟进中,第一次通过
+    private DiscussStatus discussStatus;
+
+    @ApiModelProperty(value = "洽谈内容")
+    @Column(columnDefinition = "text")
+    private String content;
+
+    @ApiModelProperty(value = "洽谈内容备注")
+    @Column(columnDefinition = "text")
+    private String remarkTalk;
+
+    @Column(name = "`deleteEnter`", columnDefinition = "tinyint(1)")
+    @ApiModelProperty(value = "是否删除入驻企业")
+    private Boolean deleteEnter;
+
+    @Column(name = "`entered`", columnDefinition = "tinyint(1)")
+    @ApiModelProperty(value = "是否入驻")
+    private Boolean entered;
+
     @ManyToOne()
     @JoinColumn(name = "park_id")
     @JsonIgnore
     private ParkInfo parkInfo;
 
-    @OneToOne(mappedBy = "companyDetail",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany
+    @JoinColumn(name = "company_detail_id")
+    @JsonIgnore
+    @ApiModelProperty(value = "入驻信息")
+    private Set<EnteredInfo> enteredInfos = new HashSet<>();
+
+    @OneToMany
+    @JoinColumn(name = "company_detail_id")
+    @JsonIgnore
+    @ApiModelProperty(value = "企业附件")
+    private Set<EnclosureTotal> enclosureTotals = new HashSet<>();
+
+   /* @OneToOne(mappedBy = "companyDetail",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_detail_id")
+    @JsonIgnore
+    @ApiModelProperty(value = "入驻企业")
+    private CompanyEnter companyEnter;*/
+
+    /*@OneToOne(mappedBy = "companyDetail",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JoinColumn(name = "company_detail_id")
     @JsonIgnore
     @ApiModelProperty(value = "对接详情")
@@ -119,5 +175,5 @@ public class CompanyDetail extends BaseEntity{
     @JoinColumn(name = "company_detail_id")
     @JsonIgnore
     @ApiModelProperty(value = "洽谈详情")
-    private DiscussDetail discussDetail;
+    private DiscussDetail discussDetail;*/
 }

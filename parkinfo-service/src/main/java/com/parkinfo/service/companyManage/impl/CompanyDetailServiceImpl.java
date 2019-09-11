@@ -3,6 +3,7 @@ package com.parkinfo.service.companyManage.impl;
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.companyManage.CompanyDetail;
 import com.parkinfo.entity.userConfig.ParkInfo;
+import com.parkinfo.enums.EnterStatus;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.companyManage.CompanyDetailRepository;
 import com.parkinfo.request.compayManage.QueryCompanyRequest;
@@ -54,6 +55,9 @@ public class CompanyDetailServiceImpl implements ICompanyDetailService {
                     companyDetail.setParkInfo(parkInfo);
                     companyDetail.setAvailable(true);
                     companyDetail.setDelete(false);
+                    companyDetail.setDeleteEnter(false);
+                    companyDetail.setEnterStatus(EnterStatus.WAITING);
+                    companyDetail.setEntered(false);
                     companyDetailRepository.save(companyDetail);
                 });
             }
@@ -69,7 +73,7 @@ public class CompanyDetailServiceImpl implements ICompanyDetailService {
         List<CompanyDetail> companyDetailList = new ArrayList<>();
         companyDetailList.add(companyDetail);
         try {
-            ExcelUtils.exportExcel(companyDetailList, "入驻企业信息模板", "入驻企业信息模板", CompanyDetail.class, "company", response);
+            ExcelUtils.exportExcel(companyDetailList, "企业信息模板", "企业信息模板", CompanyDetail.class, "company", response);
         } catch (Exception e) {
             throw new NormalException("模板下载失败");
         }
@@ -94,6 +98,8 @@ public class CompanyDetailServiceImpl implements ICompanyDetailService {
             Join<CompanyDetail, ParkInfo> join = root.join(root.getModel().getSingularAttribute("parkInfo", ParkInfo.class), JoinType.LEFT);
             predicates.add(criteriaBuilder.equal(join.get("id").as(String.class), parkInfo.getId()));
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
+            predicates.add(criteriaBuilder.equal(root.get("entered").as(Boolean.class), Boolean.FALSE));
+            predicates.add(criteriaBuilder.equal(root.get("enterStatus").as(Integer.class), EnterStatus.WAITING.ordinal()));
             //predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };

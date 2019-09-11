@@ -1,15 +1,14 @@
 package com.parkinfo.response.companyManage;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.parkinfo.enums.DiscussStatus;
+import com.parkinfo.enums.EnterStatus;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
-public class ManagementResponse {
+public class EnterDetailResponse {
     @ApiModelProperty(value = "id")
     private String id;
 
@@ -41,12 +40,6 @@ public class ManagementResponse {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date foundTime;
 
-    @ApiModelProperty(value = "对接时间")
-    private Date connectTime;
-
-    @ApiModelProperty(value = "对接方式")
-    private String connectWay;
-
-    @ApiModelProperty(value = "洽谈状态")//WAIT_LOOK,LOOKED,FOLLOWING,FIRST_PASS 未参园,已参观,跟进中,第一次通过
-    private DiscussStatus discussStatus;
+    @ApiModelProperty(value = "入驻状态")
+    private EnterStatus enterStatus;
 }
