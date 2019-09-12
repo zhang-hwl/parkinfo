@@ -40,4 +40,11 @@ public interface IParkWorkPlanService {
      * @return
      */
     Result setTask(SetParkWorkPlanRequest request);
+
+    /**
+     * 删除任务
+     * @param id
+     * @return
+     */
+    Result deleteTask(String id);
 }

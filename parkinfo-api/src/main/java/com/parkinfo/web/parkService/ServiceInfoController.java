@@ -4,6 +4,7 @@ import com.parkinfo.common.Result;
 import com.parkinfo.entity.parkService.serviceFlow.ServiceFlowImg;
 import com.parkinfo.request.parkService.serviceFlow.SearchServiceFlowImgRequest;
 import com.parkinfo.response.companyManage.CompanyDetailResponse;
+import com.parkinfo.response.parkService.CompanyDataResponse;
 import com.parkinfo.service.parkService.IServiceInfoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -25,11 +26,10 @@ public class ServiceInfoController {
     @Autowired
     private IServiceInfoService serviceInfoService;
 
-    //todo
-//    @PostMapping("/detail")
-//    @ApiOperation(value = "获取服务需求信息详情")
-//    @RequiresPermissions("parkService:serviceDemandInfo:serviceInfo:detail")
-//    public Result<CompanyDetailResponse> getServiceInfoDetail(){
-//        return serviceInfoService.getServiceInfoDetail();
-//    }
+    @PostMapping("/detail")
+    @ApiOperation(value = "获取服务需求信息详情")
+    @RequiresPermissions("parkService:serviceDemandInfo:serviceInfo:detail")
+    public Result<CompanyDataResponse> getCompanyDataResponse(){
+        return serviceInfoService.getCompanyDataResponse();
+    }
 }
