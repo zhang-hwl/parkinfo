@@ -9,6 +9,7 @@ import com.parkinfo.response.companyManage.CompanyResponse;
 import com.parkinfo.service.companyManage.ICompanyDetailService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.BindingResult;
@@ -29,30 +30,35 @@ public class CompanyDetailController {
 
     @PostMapping("/companyImport")
     @ApiOperation("导入企业信息")
+    @RequiresPermissions("companyManage:companyInfo:info_import")
     public Result companyImport(@RequestBody MultipartFile file) {
         return companyDetailService.companyImport(file);
     }
 
     @PostMapping("/companyExport")
     @ApiOperation("下载企业信息模板")
+    @RequiresPermissions("companyManage:companyInfo:info_export")
     public Result companyExport(HttpServletResponse response) {
         return companyDetailService.companyExport(response);
     }
 
     @PostMapping("/findAll")
     @ApiOperation("分页查询所有企业信息")
+    @RequiresPermissions("companyManage:companyInfo:info_find")
     public Result<Page<CompanyResponse>> findAll(@RequestBody QueryCompanyRequest request) {
         return companyDetailService.findAll(request);
     }
 
     @PostMapping("/query/{id}")
     @ApiOperation("查询企业详细信息")
+    @RequiresPermissions("companyManage:companyInfo:info_query")
     public Result<CompanyDetailResponse> query(@PathVariable("id") String id) {
         return companyDetailService.query(id);
     }
 
     @PostMapping("/set")
     @ApiOperation("修改企业基本信息")
+    @RequiresPermissions("companyManage:companyInfo:info_set")
     public Result set(@Valid @RequestBody SetCompanyInfoRequest request, BindingResult result) {
         if (result.hasErrors()) {
             for (ObjectError error : result.getAllErrors()) {
@@ -64,12 +70,14 @@ public class CompanyDetailController {
 
     @PostMapping("/setRequire")
     @ApiOperation("修改企业需求信息")
+    @RequiresPermissions("companyManage:companyInfo:info_setRequire")
     public Result setRequire(@RequestBody SetCompanyRequireRequest request) {
         return companyDetailService.setRequire(request);
     }
 
     @PostMapping("/delete/{id}")
     @ApiOperation("删除企业信息")
+    @RequiresPermissions("companyManage:companyInfo:info_delete")
     public Result delete(@PathVariable("id") String id) {
         return companyDetailService.delete(id);
     }

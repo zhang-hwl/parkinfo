@@ -14,6 +14,8 @@ public interface CompanyDetailRepository extends JpaRepository<CompanyDetail,Str
 
     Optional<CompanyDetail> findByIdAndDeleteIsFalse(String id);
 
+    Optional<CompanyDetail> findByParkUser_IdAndDeleteIsFalse(String userId);
+
     Optional<CompanyDetail> findByIdAndDeleteIsFalseAndAvailableIsTrue(String id);
 
     Optional<CompanyDetail> findByIdAndDeleteEnterIsFalse(String id);
