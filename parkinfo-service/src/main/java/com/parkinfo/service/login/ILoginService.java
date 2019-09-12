@@ -2,6 +2,7 @@ package com.parkinfo.service.login;
 
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.userConfig.ParkInfo;
+import com.parkinfo.entity.userConfig.ParkPermission;
 import com.parkinfo.request.login.LoginRequest;
 import com.parkinfo.request.login.QueryUserByParkRequest;
 import com.parkinfo.request.login.QueryUserCurrentRequest;
@@ -19,4 +20,6 @@ public interface ILoginService {
     Result<Page<ParkUserResponse>> findByCurrent(QueryUserCurrentRequest request);
 
     Result<Page<ParkUserResponse>> query(QueryUserByParkRequest request);
+
+    Result<List<ParkPermission>> findPermission();
 }

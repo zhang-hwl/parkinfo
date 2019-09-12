@@ -2,9 +2,11 @@ package com.parkinfo.service.login.impl;
 
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.userConfig.ParkInfo;
+import com.parkinfo.entity.userConfig.ParkPermission;
 import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.userConfig.ParkInfoRepository;
+import com.parkinfo.repository.userConfig.ParkPermissionRepository;
 import com.parkinfo.repository.userConfig.ParkUserRepository;
 import com.parkinfo.request.login.LoginRequest;
 import com.parkinfo.request.login.QueryUserByParkRequest;
@@ -36,6 +38,9 @@ public class LoginServiceImpl implements ILoginService {
     private ParkUserRepository parkUserRepository;
 
     @Autowired
+    private ParkPermissionRepository parkPermissionRepository;
+
+    @Autowired
     private TokenUtils tokenUtils;
 
     @Override
@@ -52,6 +57,17 @@ public class LoginServiceImpl implements ILoginService {
             throw new NormalException("密码错误");
         }
         //TODO
+        Optional<ParkInfo> optionalParkInfo = parkInfoRepository.findByIdAndDeleteIsFalse(request.getId());
+        if (!optionalParkInfo.isPresent()) {
+            throw new NormalException("园区不存在");
+        }
+        ParkInfo park = optionalParkInfo.get();
+        if (null == parkUser.getParks()) {
+            throw new NormalException("请绑定园区");
+        }
+        if (!parkUser.getParks().contains(park)){
+            throw new NormalException("请选择所在园区");
+        }
         token = tokenUtils.generateTokeCode(parkUser, request.getId());
         return Result.<String>builder().success().data(token).build();
     }
@@ -98,6 +114,12 @@ public class LoginServiceImpl implements ILoginService {
         Page<ParkUser> parkUsers = parkUserRepository.findAll(specification, pageable);
         Page<ParkUserResponse> userResponses = this.convertUserPage(parkUsers);
         return Result.<Page<ParkUserResponse>>builder().success().data(userResponses).build();
+    }
+
+    @Override
+    public Result<List<ParkPermission>> findPermission() {
+        List<ParkPermission> permissionList = parkPermissionRepository.findAllByParentIsNullAndAvailableIsTrueAndDeleteIsFalse();
+        return Result.<List<ParkPermission>>builder().success().data(permissionList).build();
     }
 
     private Page<ParkUserResponse> convertUserPage(Page<ParkUser> parkUserPage) {
