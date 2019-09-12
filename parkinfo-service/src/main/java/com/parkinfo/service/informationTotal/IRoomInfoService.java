@@ -27,4 +27,6 @@ public interface IRoomInfoService {
 
     Result<String> delete(String id);
 
+    void download(HttpServletResponse response, String version);
+
 }

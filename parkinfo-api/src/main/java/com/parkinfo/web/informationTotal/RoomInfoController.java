@@ -70,4 +70,10 @@ public class RoomInfoController {
         return roomInfoService.export(response);
     }
 
+    @PostMapping("/download")
+    @ApiOperation(value = "文件导出")
+    public void download(HttpServletResponse response, @RequestBody String version){
+        roomInfoService.download(response, version);
+    }
+
 }

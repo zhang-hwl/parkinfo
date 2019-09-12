@@ -16,7 +16,7 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "c_archive_info", indexes = {@Index(name = "index_general", columnList = "general"), @Index(name = "index_kind", columnList = "kind")})
+@Table(name = "c_archive_info")
 @EntityListeners(AuditingEntityListener.class)
 @ApiModel(value = "ArchiveInfo", description = "存档资料")
 public class ArchiveInfo extends BaseEntity {
@@ -48,10 +48,14 @@ public class ArchiveInfo extends BaseEntity {
     private String remark;
 
     @ApiModelProperty(value = "大类")
-    private String general;
+    @ManyToOne
+    @JoinColumn(name = "general_id")
+    private ArchiveInfoType general;
 
     @ApiModelProperty(value = "种类")
-    private String kind;
+    @ManyToOne
+    @JoinColumn(name = "kind_id")
+    private ArchiveInfoType kind;
 
     @Column(name = "`parkManager`", columnDefinition = "tinyint(1)")
     @ApiModelProperty(value = "本园区员工是否有查看权限")

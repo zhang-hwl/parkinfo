@@ -8,6 +8,9 @@ import javax.persistence.Column;
 @Data
 public class AddArchiveInfoRequest {
 
+    @ApiModelProperty(value = "文件类型")
+    private String fileType;
+
     @ApiModelProperty(value = "文件大类")
     private String general;
 
@@ -19,6 +22,9 @@ public class AddArchiveInfoRequest {
 
     @ApiModelProperty(value = "文件地址")
     private String fileAddress;
+
+    @ApiModelProperty(value = "PDF文件地址")
+    private String pdfAddress;
 
     @ApiModelProperty(value = "备注")
     private String remark;

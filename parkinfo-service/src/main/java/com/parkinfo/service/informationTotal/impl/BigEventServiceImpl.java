@@ -11,6 +11,7 @@ import com.parkinfo.request.infoTotalRequest.BigEventRequest;
 import com.parkinfo.service.informationTotal.IBigEventService;
 import com.parkinfo.token.TokenUtils;
 import com.parkinfo.util.ExcelUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -88,7 +89,7 @@ public class BigEventServiceImpl implements IBigEventService {
         }
         try {
             List<BigEvent> bigEvents = ExcelUtils.importExcel(file, BigEvent.class);
-            if(parkInfo != null){
+            if(bigEvents != null){
                 bigEvents.forEach(bigEvent -> {
                     bigEvent.setParkInfo(parkInfo);
                     bigEvent.setDelete(false);
@@ -142,5 +143,21 @@ public class BigEventServiceImpl implements IBigEventService {
         bigEvent.setDelete(true);
         bigEventRepository.save(bigEvent);
         return Result.<String>builder().success().data("删除成功").build();
+    }
+
+    @Override
+    public void download(HttpServletResponse response, String version) {
+        List<BigEvent> list = Lists.newArrayList();
+        if(StringUtils.isBlank(version) || version.equals("''") || version.equals("null")){
+            list.addAll(bigEventRepository.findByVersionAndDeleteIsFalse(version));
+        }
+        else{
+            list.addAll(bigEventRepository.findAllByDeleteIsFalse());
+        }
+        try {
+            ExcelUtils.exportExcel(list, "园区大事记", "园区大事记", BigEvent.class, "shiji", response);
+        } catch (Exception e) {
+            throw new NormalException("下载失败");
+        }
     }
 }

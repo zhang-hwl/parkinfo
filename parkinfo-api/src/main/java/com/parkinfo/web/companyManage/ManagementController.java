@@ -7,6 +7,7 @@ import com.parkinfo.response.companyManage.ManagementResponse;
 import com.parkinfo.service.companyManage.IManagementService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.BindingResult;
@@ -27,18 +28,21 @@ public class ManagementController {
 
     @PostMapping("/investImport")
     @ApiOperation("导入招商信息")
+    @RequiresPermissions("companyManage:investment:invest_import")
     public Result investImport(@RequestBody MultipartFile file) {
         return managementService.investImport(file);
     }
 
     @PostMapping("/investExport")
     @ApiOperation("下载招商信息模板")
+    @RequiresPermissions("companyManage:investment:invest_export")
     public Result investExport(HttpServletResponse response) {
         return managementService.investExport(response);
     }
 
     @PostMapping("/add")
     @ApiOperation("添加招商信息")
+    @RequiresPermissions("companyManage:investment:invest_add")
     public Result add(@Valid @RequestBody AddInvestmentRequest request, BindingResult result) {
         if (result.hasErrors()) {
             for (ObjectError error : result.getAllErrors()) {
@@ -50,30 +54,35 @@ public class ManagementController {
 
     @PostMapping("/findAll")
     @ApiOperation("分页查询所有招商信息")
+    @RequiresPermissions("companyManage:investment:invest_find")
     public Result<Page<ManagementResponse>> findAll(@RequestBody QueryManagementRequest request) {
         return managementService.findAll(request);
     }
 
     @PostMapping("/enter/{id}")
     @ApiOperation("设置企业入驻")
+    @RequiresPermissions("companyManage:investment:invest_enter")
     public Result enter(@PathVariable("id") String id) {
         return managementService.enter(id);
     }
 
     @PostMapping("/delete/{id}")
     @ApiOperation("删除招商信息")
+    @RequiresPermissions("companyManage:investment:invest_delete")
     public Result delete(@PathVariable("id") String id) {
         return managementService.delete(id);
     }
 
     @PostMapping("/query/{id}")
     @ApiOperation("查询招商详细信息")
+    @RequiresPermissions("companyManage:investment:invest_query")
     public Result<ManageDetailResponse> query(@PathVariable("id") String id) {
         return managementService.query(id);
     }
 
     @PostMapping("/set")
     @ApiOperation("修改招商基本信息")
+    @RequiresPermissions("companyManage:investment:invest_set")
     public Result set(@Valid @RequestBody SetInvestmentRequest request, BindingResult result) {
         if (result.hasErrors()) {
             for (ObjectError error : result.getAllErrors()) {
@@ -85,12 +94,14 @@ public class ManagementController {
 
     @PostMapping("/setConnect")
     @ApiOperation("修改对接信息")
+    @RequiresPermissions("companyManage:investment:invest_setConnect")
     public Result setConnect(@RequestBody SetConnectRequest request) {
         return managementService.setConnect(request);
     }
 
     @PostMapping("/setDiscuss")
     @ApiOperation("修改洽谈信息")
+    @RequiresPermissions("companyManage:investment:invest_setDiscuss")
     public Result setDiscuss(@RequestBody SetDiscussRequest request) {
         return managementService.setDiscuss(request);
     }
