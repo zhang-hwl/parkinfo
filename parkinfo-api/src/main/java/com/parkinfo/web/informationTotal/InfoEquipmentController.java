@@ -37,20 +37,20 @@ public class InfoEquipmentController {
         return infoEquipmentService.edit(request);
     }
 
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     @ApiOperation(value = "删除信息化设备")
     @RequiresPermissions(value = "infoTotal:delete")
     public Result<String> deletePolicyTotal(@PathVariable("id") String id){
         return infoEquipmentService.delete(id);
     }
 
-    @GetMapping("/all")
+    @PostMapping("/all")
     @ApiOperation(value = "查询所有信息化设备")
     public Result<List<InfoEquipmentRequest>> findAll(){
         return infoEquipmentService.findAll();
     }
 
-    @GetMapping("/search/{version}")
+    @PostMapping("/search/{version}")
     @ApiOperation(value = "根据版本查询信息化设备")
     public Result<List<InfoEquipmentRequest>> findByVersion(@PathVariable("version") String version){
         return infoEquipmentService.findByVersion(version);
@@ -62,7 +62,7 @@ public class InfoEquipmentController {
         return infoEquipmentService.myImport(multipartFile);
     }
 
-    @GetMapping("/export")
+    @PostMapping("/export")
     @ApiOperation(value = "下载信息化设备模板")
     public Result<String> policyTotalExport(HttpServletResponse response){
         return infoEquipmentService.export(response);
