@@ -64,14 +64,14 @@ public interface ILiveService {
     Result deleteLiveBroadcast(String id);
 
     /**
-     * 分页查看视频的评论
+     * 分页查看直播的评论
      * @param request
      * @return
      */
     Result<Page<LiveCommentListResponse>> getCommentPage(QueryLiveCommentListRequest request);
 
     /**
-     * 添加视频评论
+     * 添加直播评论
      * @param request
      * @return
      */

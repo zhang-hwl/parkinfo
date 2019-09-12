@@ -97,7 +97,7 @@ public class LiveController {
     }
 
     @PostMapping("/comment/search")
-    @ApiOperation(value = "分页查看视频的评论")
+    @ApiOperation(value = "分页查看直播的评论")
     @RequiresPermissions("parkCulture:live:comment_search")
     public Result<Page<LiveCommentListResponse>> getCommentPage(@Valid @RequestBody QueryLiveCommentListRequest request, BindingResult result){
         if (result.hasErrors()){
@@ -109,7 +109,7 @@ public class LiveController {
     }
 
     @PostMapping("/comment/add")
-    @ApiOperation(value = "添加视频评论")
+    @ApiOperation(value = "添加直播评论")
     @RequiresPermissions("parkCulture:live:comment_add")
     public  Result addComment(@Valid @RequestBody AddLiveCommentRequest request, BindingResult result){
         if (result.hasErrors()){
