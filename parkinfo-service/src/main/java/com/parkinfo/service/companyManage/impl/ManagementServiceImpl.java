@@ -3,6 +3,7 @@ package com.parkinfo.service.companyManage.impl;
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.companyManage.CompanyDetail;
 import com.parkinfo.entity.userConfig.ParkInfo;
+import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.enums.DiscussStatus;
 import com.parkinfo.enums.EnterStatus;
 import com.parkinfo.exception.NormalException;
@@ -172,6 +173,10 @@ public class ManagementServiceImpl implements IManagementService {
     @Override
     public Result enter(String id) {
         CompanyDetail companyDetail = this.checkInvestment(id);
+        ParkUser parkUser = companyDetail.getParkUser();
+        if (parkUser == null) {
+            throw new NormalException("请先绑定负责人");
+        }
         companyDetail.setEntered(true);
         companyDetail.setEnterStatus(EnterStatus.ENTERED);
         companyDetailRepository.save(companyDetail);

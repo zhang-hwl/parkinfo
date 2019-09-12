@@ -38,6 +38,7 @@ public class ParkInfo extends BaseEntity {
      * 园区负责人
      */
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinColumn(name = "manager_id")
     private ParkUser manager;
 
@@ -46,7 +47,7 @@ public class ParkInfo extends BaseEntity {
     private Set<ParkUser> users = new HashSet<>();
 
     @OneToMany(mappedBy = "parkInfo")
-    @JsonIgnoreProperties("parkInfo")
+    @JsonIgnore
     private List<MeetingRoom> meetingRooms = new ArrayList<>();
 
     @OneToMany(mappedBy = "parkInfo")

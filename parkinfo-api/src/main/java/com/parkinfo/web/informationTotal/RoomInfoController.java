@@ -38,20 +38,20 @@ public class RoomInfoController {
         return roomInfoService.edit(request);
     }
 
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     @ApiOperation(value = "删除该房间统计")
     @RequiresPermissions(value = "infoTotal:delete")
     public Result<String> delete(@PathVariable("id") String id){
         return roomInfoService.delete(id);
     }
 
-    @GetMapping("/all")
+    @PostMapping("/all")
     @ApiOperation(value = "查询本园区所有房间")
     public Result<List<RoomInfoRequest>> findAll(){
         return roomInfoService.findAll();
     }
 
-    @GetMapping("/search/{version}")
+    @PostMapping("/search/{version}")
     @ApiOperation(value = "根据版本查询本园区房间统计")
     public Result<List<RoomInfoRequest>> findByVersion(@PathVariable("version") String version){
         return roomInfoService.findByVersion(version);
@@ -64,7 +64,7 @@ public class RoomInfoController {
         return roomInfoService.myImport(multipartFile);
     }
 
-    @GetMapping("/export")
+    @PostMapping("/export")
     @ApiOperation(value = "下载本园区房间统计模板")
     public Result<String> export(HttpServletResponse response){
         return roomInfoService.export(response);
