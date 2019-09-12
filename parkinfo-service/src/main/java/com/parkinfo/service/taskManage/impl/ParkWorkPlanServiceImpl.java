@@ -72,6 +72,10 @@ public class ParkWorkPlanServiceImpl implements IParkWorkPlanService {
             }
             if (currentUser.getRole().contains(ParkRoleEnum.PARK_MANAGER.toString())) { //园区管理员
                 predicates.add(criteriaBuilder.equal(root.get("park").get("id").as(String.class), currentUser.getCurrentParkId()));
+            }else {  //总裁
+                if (StringUtils.isNotBlank(request.getParkId())){
+                    predicates.add(criteriaBuilder.equal(root.get("park").get("id").as(String.class), request.getParkId()));
+                }
             }
             predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
@@ -137,6 +141,23 @@ public class ParkWorkPlanServiceImpl implements IParkWorkPlanService {
         return Result.builder().success().message("任务修改成功").build();
     }
 
+    @Override
+    public Result deleteTask(String id) {
+        ParkWorkPlan parkWorkPlan = this.checkParkWorkPlan(id);
+        ParkUserDTO currentUser = tokenUtils.getLoginUserDTO();
+        if (currentUser.getRole().contains(ParkRoleEnum.GENERAL_MANAGER.toString())
+                || currentUser.getRole().contains(ParkRoleEnum.PRESIDENT.toString())
+                || currentUser.getRole().contains(ParkRoleEnum.PARK_MANAGER.toString())) {
+            parkWorkPlan.setDelete(true);
+            parkWorkPlanRepository.save(parkWorkPlan);
+        } else if (currentUser.getId().equals(parkWorkPlan.getAuthor().getId())) {
+            parkWorkPlan.setDelete(true);
+            parkWorkPlanRepository.save(parkWorkPlan);
+        } else {
+            throw new NormalException("您无法进行此操作");
+        }
+        return Result.builder().success().message("删除成功").build();
+    }
 
     private Page<ParkWorkPlanListResponse> convertParkWorkPlanList(Page<ParkWorkPlan> parkWorkPlanPage) {
         List<ParkWorkPlanListResponse> content = Lists.newArrayList();
