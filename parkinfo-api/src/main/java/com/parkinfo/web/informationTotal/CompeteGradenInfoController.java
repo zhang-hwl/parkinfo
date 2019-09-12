@@ -34,19 +34,19 @@ public class CompeteGradenInfoController {
         return competeGradenInfoService.editCompeteGradenInfo(request);
     }
 
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     @ApiOperation(value = "删除竞争园区信息")
     public Result<String> deleteCompeteGradenInfo(@PathVariable("id") String id){
         return competeGradenInfoService.deleteCompeteGradenInfo(id);
     }
 
-    @GetMapping("/all")
+    @PostMapping("/all")
     @ApiOperation(value = "查询所有竞争园区信息")
     public Result<List<CompeteGradenInfoRequest>> findAll(){
         return competeGradenInfoService.findAll();
     }
 
-    @GetMapping("/search/{version}")
+    @PostMapping("/search/{version}")
     @ApiOperation(value = "根据版本查询竞争园区信息")
     public Result<List<CompeteGradenInfoRequest>> findByVersion(@PathVariable("version") String version){
         return competeGradenInfoService.findByVersion(version);
@@ -58,7 +58,7 @@ public class CompeteGradenInfoController {
         return competeGradenInfoService.competeGradenInfoImport(multipartFile);
     }
 
-    @GetMapping("/export")
+    @PostMapping("/export")
     @ApiOperation(value = "下载政策统计模板")
     public Result<String> policyTotalExport(HttpServletResponse response){
         return competeGradenInfoService.competeGradenInfoExport(response);

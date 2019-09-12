@@ -36,20 +36,20 @@ public class CheckRecordController {
         return checkRecordService.editCheckRecord(request);
     }
 
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     @ApiOperation(value = "删除点检记录表")
     @RequiresPermissions(value = "infoTotal:delete")
     public Result<String> delete(@PathVariable("id") String id){
         return checkRecordService.deleteCheckRecord(id);
     }
 
-    @GetMapping("/all")
+    @PostMapping("/all")
     @ApiOperation(value = "查询所有点检记录表")
     public Result<List<CheckRecordRequest>> findAll(){
         return checkRecordService.findAll();
     }
 
-    @GetMapping("/search/{version}")
+    @PostMapping("/search/{version}")
     @ApiOperation(value = "根据版本查询点检记录表")
     public Result<List<CheckRecordRequest>> findByVersion(@PathVariable("version") String version){
         return checkRecordService.findByVersion(version);
@@ -62,7 +62,7 @@ public class CheckRecordController {
         return checkRecordService.checkRecordImport(multipartFile);
     }
 
-    @GetMapping("/export")
+    @PostMapping("/export")
     @ApiOperation(value = "下载点检记录表模板")
     public Result<String> export(HttpServletResponse response){
         return checkRecordService.checkRecordExport(response);
