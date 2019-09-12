@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.parkinfo.entity.base.BaseEntity;
 import com.parkinfo.entity.userConfig.ParkInfo;
+import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.enums.CheckStatus;
 import com.parkinfo.enums.DiscussStatus;
 import com.parkinfo.enums.EnterStatus;
@@ -145,6 +146,11 @@ public class CompanyDetail extends BaseEntity{
     @JoinColumn(name = "park_id")
     @JsonIgnore
     private ParkInfo parkInfo;
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private ParkUser parkUser;
 
     @OneToMany(mappedBy = "companyDetail",fetch = FetchType.LAZY)
     @JsonIgnore

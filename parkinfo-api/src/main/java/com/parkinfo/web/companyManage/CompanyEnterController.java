@@ -111,7 +111,7 @@ public class CompanyEnterController {
     }
 
     @PostMapping("/uploadFile")
-    @ApiOperation("上传文件")
+    @ApiOperation("上传文件返回文件url")
     @RequiresPermissions("companyManage:companyEnter:enter_ upload")
     public Result<String> uploadFile(HttpServletRequest request) {
         return companyEnterService.uploadFile(request);
