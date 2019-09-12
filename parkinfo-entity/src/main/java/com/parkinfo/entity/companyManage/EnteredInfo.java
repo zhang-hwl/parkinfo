@@ -80,6 +80,7 @@ public class EnteredInfo extends BaseEntity {
     private BigDecimal decTax;
 
     @ManyToOne
+    @JoinColumn(name = "company_detail_id")
     @ApiModelProperty(value = "企业申请入驻详情")
     @JsonIgnore
     private CompanyDetail companyDetail;

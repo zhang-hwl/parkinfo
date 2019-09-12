@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.parkinfo.entity.base.BaseEntity;
 import com.parkinfo.entity.parkService.meetingRoom.MeetingRoom;
 import com.parkinfo.entity.parkService.meetingRoom.MeetingRoomReserve;
+import com.parkinfo.entity.personalCloud.CloudDisk;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -68,5 +69,10 @@ public class ParkUser extends BaseEntity {
     @JsonIgnoreProperties("reserveUser")
     @ApiModelProperty("预约的会议室")
     private List<MeetingRoomReserve> meetingRoomReserves = new ArrayList<>();
+
+    @OneToMany(mappedBy = "parkUser")
+    @JsonIgnoreProperties("parkUser")
+    @ApiModelProperty("个人云盘")
+    private List<CloudDisk> cloudDisks = new ArrayList<>();
 
 }
