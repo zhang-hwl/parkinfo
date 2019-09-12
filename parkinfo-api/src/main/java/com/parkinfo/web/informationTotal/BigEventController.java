@@ -37,20 +37,20 @@ public class BigEventController {
         return bigEventService.edit(request);
     }
 
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     @ApiOperation(value = "删除园区大事件")
     @RequiresPermissions(value = "infoTotal:delete")
     public Result<String> delete(@PathVariable("id") String id){
         return bigEventService.delete(id);
     }
 
-    @GetMapping("/all")
+    @PostMapping("/all")
     @ApiOperation(value = "查询园区大事件")
     public Result<List<BigEventRequest>> findAll(){
         return bigEventService.findAll();
     }
 
-    @GetMapping("/search/{version}")
+    @PostMapping("/search/{version}")
     @ApiOperation(value = "根据版本查询园区大事件")
     public Result<List<BigEventRequest>> findByVersion(@PathVariable("version") String version){
         return bigEventService.findByVersion(version);
@@ -63,7 +63,7 @@ public class BigEventController {
         return bigEventService.myImport(multipartFile);
     }
 
-    @GetMapping("/export")
+    @PostMapping("/export")
     @ApiOperation(value = "下载园区大事件模板")
     public Result<String> export(HttpServletResponse response){
         return bigEventService.export(response);

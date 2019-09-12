@@ -36,20 +36,20 @@ public class PolicyTotalController {
         return policyTotalService.editPolicyTotal(request);
     }
 
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     @ApiOperation(value = "删除政策统计")
     @RequiresPermissions(value = "infoTotal:delete")
     public Result<String> deletePolicyTotal(@PathVariable("id") String id){
         return policyTotalService.deletePolicyTotal(id);
     }
 
-    @GetMapping("/all")
+    @PostMapping("/all")
     @ApiOperation(value = "查询所有政策统计")
     public Result<List<PolicyTotalRequest>> findAll(){
         return policyTotalService.findAll();
     }
 
-    @GetMapping("/search/{version}")
+    @PostMapping("/search/{version}")
     @ApiOperation(value = "根据版本查询政策统计")
     public Result<List<PolicyTotalRequest>> findByVersion(@PathVariable("version") String version){
         return policyTotalService.findByVersion(version);
@@ -61,7 +61,7 @@ public class PolicyTotalController {
         return policyTotalService.policyTotalImport(multipartFile);
     }
 
-    @GetMapping("/export")
+    @PostMapping("/export")
     @ApiOperation(value = "下载政策统计模板")
     public Result<String> policyTotalExport(HttpServletResponse response){
         return policyTotalService.policyTotalExport(response);

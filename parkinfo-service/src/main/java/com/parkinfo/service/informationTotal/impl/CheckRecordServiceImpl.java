@@ -6,6 +6,8 @@ import com.parkinfo.entity.informationTotal.BigEvent;
 import com.parkinfo.entity.informationTotal.CheckRecord;
 import com.parkinfo.entity.informationTotal.PolicyTotal;
 import com.parkinfo.entity.userConfig.ParkInfo;
+import com.parkinfo.entity.userConfig.ParkRole;
+import com.parkinfo.enums.ParkRoleEnum;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.informationTotal.CheckRecordRepository;
 import com.parkinfo.repository.userConfig.ParkInfoRepository;
@@ -16,16 +18,14 @@ import com.parkinfo.service.informationTotal.ICheckRecordService;
 import com.parkinfo.token.TokenUtils;
 import com.parkinfo.util.ExcelUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.ShiroException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class CheckRecordServiceImpl implements ICheckRecordService {
@@ -69,6 +69,7 @@ public class CheckRecordServiceImpl implements ICheckRecordService {
 
     @Override
     public Result<List<CheckRecordRequest>> findByVersion(String version) {
+        judgePremission();
         List<CheckRecord> byVersionAndDeleteIsFalse = checkRecordRepository.findByVersionAndDeleteIsFalse(version);
         List<CheckRecordRequest> list = Lists.newArrayList();
         byVersionAndDeleteIsFalse.forEach(temp -> {
@@ -122,6 +123,7 @@ public class CheckRecordServiceImpl implements ICheckRecordService {
 
     @Override
     public Result<List<CheckRecordRequest>> findAll() {
+        judgePremission();
         String parkId = tokenUtils.getLoginUserDTO().getCurrentParkId();
         Optional<ParkInfo> byIdAndDeleteIsFalse = parkInfoRepository.findByIdAndDeleteIsFalse(parkId);
         if(!byIdAndDeleteIsFalse.isPresent()){
@@ -151,8 +153,9 @@ public class CheckRecordServiceImpl implements ICheckRecordService {
 
     @Override
     public void download(HttpServletResponse response, String version) {
+        judgePremission();
         List<CheckRecord> list = Lists.newArrayList();
-        if(StringUtils.isBlank(version) || version.equals("''") || version.equals("null")){
+        if(StringUtils.isBlank(version)){
             list.addAll(checkRecordRepository.findByVersionAndDeleteIsFalse(version));
         }
         else{
@@ -163,5 +166,23 @@ public class CheckRecordServiceImpl implements ICheckRecordService {
         } catch (Exception e) {
             throw new NormalException("下载失败");
         }
+    }
+
+    //判断权限，1为有权限，0为仅本园区
+    private int judgePremission(){
+        int flag = -1;
+        List<String> roles = tokenUtils.getLoginUserDTO().getRole();
+        for(String role : roles){
+            if(role.equals(ParkRoleEnum.HR_USER.name())){
+                flag = -1;
+            }
+            else{
+                return 1;
+            }
+        }
+        if(flag == -1){
+            throw new ShiroException();
+        }
+        return flag;
     }
 }
