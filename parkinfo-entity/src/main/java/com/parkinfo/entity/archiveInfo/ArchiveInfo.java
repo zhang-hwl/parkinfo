@@ -53,7 +53,7 @@ public class ArchiveInfo extends BaseEntity {
     private ArchiveInfoType general;
 
     @ApiModelProperty(value = "种类")
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.REMOVE})
     @JoinColumn(name = "kind_id")
     private ArchiveInfoType kind;
 
