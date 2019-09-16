@@ -29,9 +29,8 @@ import java.util.Set;
 @Entity(name = "c_park_user")
 @org.hibernate.annotations.Table(appliesTo = "c_park_user",comment = "园区用户表")
 @JsonIgnoreProperties(value={"hibernateLazyInitializer","handler","fieldHandler"})
-public class ParkUser extends BaseEntity implements Serializable {
+public class ParkUser extends BaseEntity {
 
-    private static final long serialVersionUID = -7758514661539579492L;
     /**
      * 账户
      */
@@ -50,11 +49,13 @@ public class ParkUser extends BaseEntity implements Serializable {
     /**
      * 盐值
      */
+    @JsonIgnore
     private String salt;
 
     /**
      * 密码
      */
+    @JsonIgnore
     private String password;
 
     @ManyToMany(targetEntity = ParkRole.class, fetch = FetchType.LAZY)
@@ -64,6 +65,7 @@ public class ParkUser extends BaseEntity implements Serializable {
 
     @ManyToMany(targetEntity = ParkInfo.class, fetch = FetchType.LAZY)
     @JoinTable(name = "c_user_park", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "park_id")})
+    @JsonIgnore
     private Set<ParkInfo> parks = new HashSet<>();
 
     @OneToMany(mappedBy = "parkUser")
@@ -72,12 +74,12 @@ public class ParkUser extends BaseEntity implements Serializable {
     private List<MeetingRoom> meetingRooms = new ArrayList<>();
 
     @OneToMany(mappedBy = "reserveUser")
-    @JsonIgnoreProperties("reserveUser")
+    @JsonIgnore
     @ApiModelProperty("预约的会议室")
     private List<MeetingRoomReserve> meetingRoomReserves = new ArrayList<>();
 
     @OneToMany(mappedBy = "parkUser")
-    @JsonIgnoreProperties("parkUser")
+    @JsonIgnore
     @ApiModelProperty("个人云盘")
     private List<CloudDisk> cloudDisks = new ArrayList<>();
 

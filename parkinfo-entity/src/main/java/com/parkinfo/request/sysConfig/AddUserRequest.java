@@ -19,6 +19,9 @@ public class AddUserRequest {
     @ApiModelProperty(value = "头像url")
     private String avatar;
 
+    @ApiModelProperty(value = "绑定园区id")
+    private List<String> parkId;
+
     @ApiModelProperty(value = "绑定角色id")
     private List<String> roleId;
 }

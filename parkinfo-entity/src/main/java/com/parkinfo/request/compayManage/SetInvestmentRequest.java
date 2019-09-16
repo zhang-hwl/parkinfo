@@ -43,6 +43,9 @@ public class SetInvestmentRequest {
     @ApiModelProperty(value = "是否为百强企业")
     private String hundredCompany;
 
+    @ApiModelProperty(value = "是否为本地企业")
+    private String localCompany;
+
     @ApiModelProperty(value = "公司注册资金")
     private String registerMoney;
 

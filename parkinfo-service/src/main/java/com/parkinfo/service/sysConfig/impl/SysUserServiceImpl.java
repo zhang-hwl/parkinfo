@@ -2,11 +2,13 @@ package com.parkinfo.service.sysConfig.impl;
 
 import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
+import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.entity.userConfig.ParkRole;
 import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.enums.FileUploadType;
 import com.parkinfo.enums.SettingType;
 import com.parkinfo.exception.NormalException;
+import com.parkinfo.repository.userConfig.ParkInfoRepository;
 import com.parkinfo.repository.userConfig.ParkRoleRepository;
 import com.parkinfo.repository.userConfig.ParkUserRepository;
 import com.parkinfo.request.sysConfig.AddUserRequest;
@@ -41,6 +43,9 @@ public class SysUserServiceImpl implements ISysUserService {
 
     @Autowired
     private ParkRoleRepository parkRoleRepository;
+
+    @Autowired
+    private ParkInfoRepository parkInfoRepository;
 
     @Autowired
     private IOssService ossService;
@@ -92,6 +97,10 @@ public class SysUserServiceImpl implements ISysUserService {
             List<ParkRole> sysRoleList = parkRoleRepository.findAllById(request.getRoleId());
             newData.setRoles(new HashSet<>(sysRoleList));
         }
+        if (request.getParkId()!=null&&!request.getParkId().isEmpty()) {
+            List<ParkInfo> parkInfoList = parkInfoRepository.findAllById(request.getParkId());
+            newData.setParks(new HashSet<>(parkInfoList));
+        }
         parkUserRepository.save(newData);
         return Result.builder().success().message("添加用户成功").build();
     }
@@ -105,6 +114,10 @@ public class SysUserServiceImpl implements ISysUserService {
         if (request.getRoleId()!=null&&!request.getRoleId().isEmpty()) {
             List<ParkRole> sysRoleList = parkRoleRepository.findAllById(request.getRoleId());
             parkUser.setRoles(new HashSet<>(sysRoleList));
+        }
+        if (request.getParkId()!=null&&!request.getParkId().isEmpty()) {
+            List<ParkInfo> parkInfoList = parkInfoRepository.findAllById(request.getParkId());
+            parkUser.setParks(new HashSet<>(parkInfoList));
         }
         parkUserRepository.save(parkUser);
         return Result.builder().success().message("修改用户成功").build();
