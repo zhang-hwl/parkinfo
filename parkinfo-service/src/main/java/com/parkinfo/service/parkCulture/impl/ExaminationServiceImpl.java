@@ -19,6 +19,7 @@ import com.parkinfo.response.parkCulture.QuestionDetailResponse;
 import com.parkinfo.response.parkCulture.QuestionListResponse;
 import com.parkinfo.service.parkCulture.IExaminationService;
 import com.parkinfo.token.TokenUtils;
+import com.parkinfo.util.ExcelUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -27,8 +28,10 @@ import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.criteria.Predicate;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -82,19 +85,18 @@ public class ExaminationServiceImpl implements IExaminationService {
         Question question = this.checkQuestion(id);
         QuestionDetailResponse response = new QuestionDetailResponse();
         BeanUtils.copyProperties(question, response);
-        if (question.getCategory()!=null){
+        if (question.getCategory() != null) {
             response.setCategoryId(question.getCategory().getId());
         }
         return Result.<QuestionDetailResponse>builder().success().data(response).build();
     }
 
 
-
     @Override
     public Result addQuestion(AddQuestionRequest request) {
         QuestionCategory questionCategory = this.checkQuestionCategory(request.getCategoryId());
         Question question = new Question();
-        BeanUtils.copyProperties(request,question);
+        BeanUtils.copyProperties(request, question);
         question.setUploader(tokenUtils.getLoginUser());
         question.setCategory(questionCategory);
         question.setDelete(false);
@@ -104,9 +106,33 @@ public class ExaminationServiceImpl implements IExaminationService {
     }
 
     @Override
+    public Result importQuestion(MultipartFile file) {
+        //获取上传文件的名称
+        String fileName = file.getOriginalFilename();
+        if (!Objects.requireNonNull(fileName).matches("^.+\\.(?i)(xls)$") && !fileName.matches("^.+\\.(?i)(xlsx)$")) {
+            throw new NormalException("上传文件格式不正确");
+        }
+        try {
+            List<AddQuestionRequest> requestList = ExcelUtils.importExcel(file, AddQuestionRequest.class);
+            requestList.forEach(request -> {
+                        Question question = new Question();
+                        BeanUtils.copyProperties(request, question);
+                        question.setUploader(tokenUtils.getLoginUser());
+                        question.setDelete(false);
+                        question.setAvailable(true);
+                        questionRepository.save(question);
+                    }
+            );
+        } catch (IOException e) {
+            throw new NormalException("上传文件内容不符合要求");
+        }
+        return Result.builder().success().message("导入成功").build();
+    }
+
+    @Override
     public Result setQuestion(SetQuestionRequest request) {
         Question question = this.checkQuestion(request.getId());
-        BeanUtils.copyProperties(request,question);
+        BeanUtils.copyProperties(request, question);
         QuestionCategory questionCategory = this.checkQuestionCategory(request.getCategoryId());
         question.setCategory(questionCategory);
         questionRepository.save(question);
@@ -118,20 +144,20 @@ public class ExaminationServiceImpl implements IExaminationService {
     public Result generateExamination(GenerateExaminationRequest request) {
         Examination examination = new Examination();
         examination.setQuestionList(new HashSet<>());
-        BeanUtils.copyProperties(request,examination);
+        BeanUtils.copyProperties(request, examination);
         request.getQuestions().forEach(generateQuestionRequest -> {
-            Long total= questionRepository.countByCategory_IdAndQuestionTypeAndAvailableIsTrueAndDeleteIsFalse(generateQuestionRequest.getCategoryId(),generateQuestionRequest.getQuestionType());
-            if (generateQuestionRequest.getCount()<total){
+            Long total = questionRepository.countByCategory_IdAndQuestionTypeAndAvailableIsTrueAndDeleteIsFalse(generateQuestionRequest.getCategoryId(), generateQuestionRequest.getQuestionType());
+            if (generateQuestionRequest.getCount() < total) {
                 throw new NormalException("设置题目数量超出题库总数");
             }
-            List<Question> questionList = questionRepository.queryIdsByCategory(generateQuestionRequest.getCategoryId(),generateQuestionRequest.getQuestionType().getIndex(),generateQuestionRequest.getCount());
+            List<Question> questionList = questionRepository.queryIdsByCategory(generateQuestionRequest.getCategoryId(), generateQuestionRequest.getQuestionType().getIndex(), generateQuestionRequest.getCount());
             examination.getQuestionList().addAll(questionList);
         });
         examinationRepository.save(examination);
         //创建答卷
-        request.getUserIds().forEach(id->{
+        request.getUserIds().forEach(id -> {
             Optional<ParkUser> parkUserOptional = parkUserRepository.findByIdAndDeleteIsFalse(id);
-            if (parkUserOptional.isPresent()){
+            if (parkUserOptional.isPresent()) {
                 AnswerSheet answerSheet = new AnswerSheet();
                 answerSheet.setStart(false);
                 answerSheet.setAnswers(null);
@@ -151,7 +177,7 @@ public class ExaminationServiceImpl implements IExaminationService {
     @Override
     public Result<Page<AnswerSheetListResponse>> search(QueryAnswerSheetListRequest request) {
         ParkUser parkUser = tokenUtils.getLoginUser();
-        Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "start","createTime");
+        Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "start", "createTime");
         Specification<AnswerSheet> answerSheetSpecification = (Specification<AnswerSheet>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             predicates.add(criteriaBuilder.equal(root.get("parkUser").get("id").as(String.class), parkUser.getId()));
@@ -159,7 +185,7 @@ public class ExaminationServiceImpl implements IExaminationService {
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
-        Page<AnswerSheet> answerSheetPage = answerSheetRepository.findAll(answerSheetSpecification,pageable);
+        Page<AnswerSheet> answerSheetPage = answerSheetRepository.findAll(answerSheetSpecification, pageable);
         Page<AnswerSheetListResponse> responsePage = this.convertAnswerSheetPage(answerSheetPage);
         return Result.<Page<AnswerSheetListResponse>>builder().success().data(responsePage).build();
     }
@@ -169,19 +195,19 @@ public class ExaminationServiceImpl implements IExaminationService {
     public Result startExamination(String answerSheetId) {
         AnswerSheet answerSheet = this.checkAnswerSheet(answerSheetId);
         Date current = new Date();
-        if (answerSheet.getEndTime()!=null&&current.compareTo(answerSheet.getEndTime())>0){
+        if (answerSheet.getEndTime() != null && current.compareTo(answerSheet.getEndTime()) > 0) {
             throw new NormalException("本场考试已经结束");
         }
-        if (answerSheet.getStart()){
+        if (answerSheet.getStart()) {
             throw new NormalException("本场考试已经开始");
         }
         answerSheet.setStart(true);
         answerSheet.setStartTime(current);
         Date endTime;
-        if (answerSheet.getExamination()!=null){
-            endTime = new Date(current.getTime()+1000*60*answerSheet.getExamination().getTime());
-        }else {
-            endTime = new Date(current.getTime()+1000*60*60);  //默认考试60分钟
+        if (answerSheet.getExamination() != null) {
+            endTime = new Date(current.getTime() + 1000 * 60 * answerSheet.getExamination().getTime());
+        } else {
+            endTime = new Date(current.getTime() + 1000 * 60 * 60);  //默认考试60分钟
         }
         answerSheet.setEndTime(endTime);
         answerSheetRepository.save(answerSheet);
@@ -193,21 +219,21 @@ public class ExaminationServiceImpl implements IExaminationService {
     public Result commitExamination(CommitAnswerRequest request) {
         AnswerSheet answerSheet = this.checkAnswerSheet(request.getAnswerSheetId());
         Date current = new Date();
-        if (answerSheet.getEndTime()!=null&&current.compareTo(answerSheet.getEndTime())>0){
+        if (answerSheet.getEndTime() != null && current.compareTo(answerSheet.getEndTime()) > 0) {
             throw new NormalException("本场考试已经结束");
         }
-        if (!answerSheet.getStart()){
+        if (!answerSheet.getStart()) {
             throw new NormalException("请先开始考试");
         }
         answerSheet.setCorrectNum(0);
         answerSheet.setWrongNum(0);
-        Map<String,String> answers = request.getAnswers();
-        answers.forEach((questionId,answer)->{
+        Map<String, String> answers = request.getAnswers();
+        answers.forEach((questionId, answer) -> {
             Question question = this.checkQuestion(questionId);
-            if (answer.equals(question.getAnswer().toString())){
-                answerSheet.setCorrectNum(answerSheet.getCorrectNum()+1);
-            }else {
-                answerSheet.setWrongNum(answerSheet.getWrongNum()+1);
+            if (answer.equals(question.getAnswer().toString())) {
+                answerSheet.setCorrectNum(answerSheet.getCorrectNum() + 1);
+            } else {
+                answerSheet.setWrongNum(answerSheet.getWrongNum() + 1);
             }
         });
         answerSheet.setAnswers(request.getAnswersJsonString());
@@ -219,30 +245,30 @@ public class ExaminationServiceImpl implements IExaminationService {
         List<QuestionListResponse> content = Lists.newArrayList();
         questionPage.forEach(question -> {
             QuestionListResponse response = new QuestionListResponse();
-            BeanUtils.copyProperties(question,response);
-            if (question.getUploader()!=null){
+            BeanUtils.copyProperties(question, response);
+            if (question.getUploader() != null) {
                 response.setUploader(question.getUploader().getNickname());
             }
             content.add(response);
         });
-        return new PageImpl<>(content,questionPage.getPageable(),questionPage.getTotalElements());
+        return new PageImpl<>(content, questionPage.getPageable(), questionPage.getTotalElements());
     }
 
     private Page<AnswerSheetListResponse> convertAnswerSheetPage(Page<AnswerSheet> answerSheetPage) {
         List<AnswerSheetListResponse> content = Lists.newArrayList();
         answerSheetPage.forEach(answerSheet -> {
             AnswerSheetListResponse response = new AnswerSheetListResponse();
-            BeanUtils.copyProperties(answerSheet,response);
-            if (answerSheet.getExamination()!=null){
+            BeanUtils.copyProperties(answerSheet, response);
+            if (answerSheet.getExamination() != null) {
                 response.setName(answerSheet.getExamination().getName());
             }
-            if (answerSheet.getEndTime()==null||new Date().compareTo(answerSheet.getEndTime())<0){
+            if (answerSheet.getEndTime() == null || new Date().compareTo(answerSheet.getEndTime()) < 0) {
                 response.setWrongNum(null);
                 response.setCorrectNum(null);
             }
             content.add(response);
         });
-        return new PageImpl<>(content,answerSheetPage.getPageable(),answerSheetPage.getTotalElements());
+        return new PageImpl<>(content, answerSheetPage.getPageable(), answerSheetPage.getTotalElements());
     }
 
 

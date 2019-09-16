@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
@@ -62,6 +63,13 @@ public class ExaminationController {
             }
         }
         return examinationService.addQuestion(request);
+    }
+
+    @PostMapping("/question/import")
+    @ApiOperation(value = "一键导入试题库")
+    @RequiresPermissions("parkCulture:examination:question_add")
+    public Result importQuestion( MultipartFile file) {
+        return examinationService.importQuestion(file);
     }
 
     @PostMapping("/question/set")
