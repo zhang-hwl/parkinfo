@@ -49,6 +49,13 @@ public class LibraryController{
         return libraryService.detail(bookId);
     }
 
+    @PostMapping("/disable/{bookId}")
+    @ApiOperation(value = "禁用或启用图书")
+    @RequiresPermissions("parkCulture:library:book_disable")
+    public Result disableBook(@PathVariable("bookId") String bookId){
+        return libraryService.disableBook(bookId);
+    }
+
     @PostMapping("/comment/search")
     @ApiOperation(value = "分页查看图书的评论")
     @RequiresPermissions("parkCulture:library:comment_search")

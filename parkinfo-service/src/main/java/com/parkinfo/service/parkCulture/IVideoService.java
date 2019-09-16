@@ -96,5 +96,29 @@ public interface IVideoService {
      */
     Result<RefreshUploadVideoResponse> refreshUploadVideo(String videoId) throws Exception;
 
+    /**
+     * 分页查询图书分类
+     */
+    Result<Page<VideoCategoryListResponse>> search(QueryVideoCategoryListRequest request);
 
+    /**
+     * 添加图书分类
+     * @param request
+     * @return
+     */
+    Result addVideoCategory(AddVideoCategoryRequest request);
+
+    /**
+     * 修改图书分类
+     * @param request
+     * @return
+     */
+    Result setVideoCategory(SetVideoCategoryRequest request);
+
+    /**
+     * 删除图书分类
+     * @param id
+     * @return
+     */
+    Result deleteVideoCategory(String id);
 }

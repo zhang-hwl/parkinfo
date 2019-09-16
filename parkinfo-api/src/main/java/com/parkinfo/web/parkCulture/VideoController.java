@@ -157,4 +157,47 @@ public class VideoController {
     public Result<RefreshUploadVideoResponse> refreshUploadVideo(@PathVariable("videoId") String videoId) throws Exception {
       return videoService.refreshUploadVideo(videoId);
     }
+
+    @PostMapping("/category/search")
+    @ApiOperation(value = "分页查看图书的分类")
+    @RequiresPermissions("parkCulture:video:category_search")
+    public Result<Page<VideoCategoryListResponse>> search(@Valid @RequestBody QueryVideoCategoryListRequest request, BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError error:result.getAllErrors()) {
+                return Result.<Page<VideoCategoryListResponse>>builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
+        return videoService.search(request);
+    }
+
+    @PostMapping("/category/add")
+    @ApiOperation(value = "添加图书分类")
+    @RequiresPermissions("parkCulture:video:category_add")
+    public Result addVideoCategory(@Valid @RequestBody AddVideoCategoryRequest request,BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError error:result.getAllErrors()) {
+                return Result.builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
+        return videoService.addVideoCategory(request);
+    }
+
+    @PostMapping("/category/set")
+    @ApiOperation(value = "修改图书分类")
+    @RequiresPermissions("parkCulture:video:category_set")
+    public Result setVideoCategory(@Valid @RequestBody SetVideoCategoryRequest request,BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError error:result.getAllErrors()) {
+                return Result.builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
+        return videoService.setVideoCategory(request);
+    }
+
+    @PostMapping("/category/delete/{id}")
+    @ApiOperation(value = "删除图书分类")
+    @RequiresPermissions("parkCulture:video:category_delete")
+    public Result deleteVideoCategory(@PathVariable("id")String id){
+        return videoService.deleteVideoCategory(id);
+    }
 }
