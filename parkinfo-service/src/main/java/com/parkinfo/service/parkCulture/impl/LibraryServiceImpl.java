@@ -90,6 +90,14 @@ public class LibraryServiceImpl implements ILibraryService {
     }
 
     @Override
+    public Result disableBook(String bookId) {
+        Book book = this.checkBook(bookId);
+        book.setAvailable(book.getAvailable() != null && !book.getAvailable());
+        bookRepository.save(book);
+        return Result.builder().success().message("成功").build();
+    }
+
+    @Override
     public Result<Page<BookCommentListResponse>> getCommentPage(QueryBookCommentListRequest request) {
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
         Specification<BookComment> bookCommentSpecification = (Specification<BookComment>) (root, criteriaQuery, criteriaBuilder) -> {

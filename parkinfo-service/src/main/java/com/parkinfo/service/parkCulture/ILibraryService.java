@@ -4,6 +4,7 @@ import com.parkinfo.common.Result;
 import com.parkinfo.request.parkCulture.*;
 import com.parkinfo.response.parkCulture.*;
 import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  * When I wrote this, only God and I understood what I was doing
@@ -28,6 +29,12 @@ public interface ILibraryService {
      */
     Result<BookDetailResponse> detail(String bookId);
 
+    /**
+     * 图书上架、下架
+     * @param bookId
+     * @return
+     */
+    Result disableBook(String bookId);
     /**
      * 分页查看图书的评论
      * @param request
