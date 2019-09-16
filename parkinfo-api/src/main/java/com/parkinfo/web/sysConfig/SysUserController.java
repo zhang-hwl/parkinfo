@@ -10,9 +10,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/sysConfig/sysUser")
@@ -35,13 +38,23 @@ public class SysUserController {
 
     @PostMapping("/add")
     @ApiOperation(value = "添加用户")
-    public Result addUser(@RequestBody AddUserRequest request) {
+    public Result addUser(@Valid @RequestBody AddUserRequest request, BindingResult result) {
+        if (result.hasErrors()) {
+            for (ObjectError error : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
         return sysUserService.addUser(request);
     }
 
     @PostMapping("/set")
     @ApiOperation(value = "编辑用户")
-    public Result setUser(@RequestBody SetUserRequest request) {
+    public Result setUser(@Valid @RequestBody SetUserRequest request,BindingResult result) {
+        if (result.hasErrors()) {
+            for (ObjectError error : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
         return sysUserService.setUser(request);
     }
 

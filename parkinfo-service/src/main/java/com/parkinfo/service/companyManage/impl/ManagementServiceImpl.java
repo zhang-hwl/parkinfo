@@ -3,11 +3,16 @@ package com.parkinfo.service.companyManage.impl;
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.companyManage.CompanyDetail;
 import com.parkinfo.entity.userConfig.ParkInfo;
+import com.parkinfo.entity.userConfig.ParkRole;
 import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.enums.DiscussStatus;
 import com.parkinfo.enums.EnterStatus;
+import com.parkinfo.enums.SettingType;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.companyManage.CompanyDetailRepository;
+import com.parkinfo.repository.userConfig.ParkInfoRepository;
+import com.parkinfo.repository.userConfig.ParkRoleRepository;
+import com.parkinfo.repository.userConfig.ParkUserRepository;
 import com.parkinfo.request.compayManage.*;
 import com.parkinfo.response.companyManage.ManageDetailResponse;
 import com.parkinfo.response.companyManage.ManagementResponse;
@@ -15,6 +20,7 @@ import com.parkinfo.service.companyManage.IManagementService;
 import com.parkinfo.token.TokenUtils;
 import com.parkinfo.util.ExcelUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.crypto.hash.SimpleHash;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -26,15 +32,18 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ManagementServiceImpl implements IManagementService {
     @Autowired
     private CompanyDetailRepository companyDetailRepository;
+
+    @Autowired
+    private ParkRoleRepository parkRoleRepository;
+
+    @Autowired
+    private ParkUserRepository parkUserRepository;
 
     @Autowired
     private TokenUtils tokenUtils;
@@ -162,24 +171,38 @@ public class ManagementServiceImpl implements IManagementService {
         return Result.builder().success().message("入驻成功").build();
     }
 
+    @Override
+    public Result bind(BindCompanyRequest request) {
+        ParkUser newData = new ParkUser();
+        newData.setDelete(false);
+        newData.setAvailable(true);
+        newData.setAvatar(request.getAvatar());
+        newData.setAccount(request.getAccount());
+        newData.setNickname(request.getNickname());
+        newData.setSalt(SettingType.INIT_SALT.getDefaultValue());
+        String initPassword = (SettingType.INIT_PASSWORD.getDefaultValue());
+        String password = new SimpleHash("MD5", initPassword, newData.getSalt(), 1024).toHex();
+        newData.setPassword(password);
+        if (request.getRoleId()!=null&&!request.getRoleId().isEmpty()) {
+            List<ParkRole> sysRoleList = parkRoleRepository.findAllById(request.getRoleId());
+            newData.setRoles(new HashSet<>(sysRoleList));
+        }
+        ParkInfo currentParkInfo = tokenUtils.getCurrentParkInfo();
+        Set<ParkInfo> parkInfoSet = new HashSet<>();
+        parkInfoSet.add(currentParkInfo);
+        newData.setParks(parkInfoSet);
+        parkUserRepository.save(newData);
+        CompanyDetail investment = this.checkInvestment(request.getCompanyId());
+        investment.setParkUser(newData);
+        companyDetailRepository.save(investment);
+        return Result.builder().success().message("绑定成功").build();
+    }
+
     private Page<ManagementResponse> convertDetailPage(Page<CompanyDetail> companyDetailPage) {
         List<ManagementResponse> content = new ArrayList<>();
         companyDetailPage.getContent().forEach(companyDetail -> {
             ManagementResponse response = new ManagementResponse();
             BeanUtils.copyProperties(companyDetail, response);
-            /*Optional<DiscussDetail> discussDetailOptional = discussDetailRepository.findByCompanyDetail_IdAndDeleteIsFalseAndAvailableIsTrue(companyDetail.getId());
-            if (!discussDetailOptional.isPresent()) {
-                throw new NormalException("洽淡详情不存在");
-            }
-            DiscussDetail discussDetail = discussDetailOptional.get();
-            response.setConnectWay(discussDetail.getConnectWay());
-            response.setDiscussStatus(discussDetail.getDiscussStatus());
-            Optional<ConnectDetail> connectDetailOptional = connectDetailRepository.findByCompanyDetail_IdAndDeleteIsFalseAndAvailableIsTrue(companyDetail.getId());
-            if (!connectDetailOptional.isPresent()) {
-                throw new NormalException("对接详情不存在");
-            }
-            ConnectDetail connectDetail = connectDetailOptional.get();
-            response.setConnectTime(connectDetail.getConnectTime());*/
             content.add(response);
         });
         return new PageImpl<>(content, companyDetailPage.getPageable(), companyDetailPage.getTotalElements());

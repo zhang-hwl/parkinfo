@@ -91,4 +91,16 @@ public class ManagementController {
         }
         return managementService.set(request);
     }
+
+    @PostMapping("/bind")
+    @ApiOperation("绑定人员")
+    @RequiresPermissions("companyManage:investment:invest_bind")
+    public Result bind(@Valid @RequestBody BindCompanyRequest request, BindingResult result) {
+        if (result.hasErrors()) {
+            for (ObjectError error : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
+        return managementService.bind(request);
+    }
 }

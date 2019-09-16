@@ -74,4 +74,11 @@ public interface IManagementService {
      * @return
      */
     Result enter(String id);
+
+    /**
+     * 绑定人员
+     * @param request
+     * @return
+     */
+    Result bind(BindCompanyRequest request);
 }
