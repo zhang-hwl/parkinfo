@@ -33,9 +33,9 @@ public class VideoCategory extends BaseEntity {
     @ManyToOne(fetch= FetchType.LAZY)
     @JoinColumn(name="parent_id")
     @JsonIgnoreProperties("children")
-    private BookCategory parent;
+    private VideoCategory parent;
 
     @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="parent")
     @JsonIgnoreProperties("parent")
-    private Set<BookCategory> children = new HashSet<>(0);
+    private Set<VideoCategory> children = new HashSet<>(0);
 }
