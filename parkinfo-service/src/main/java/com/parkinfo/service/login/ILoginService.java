@@ -21,5 +21,4 @@ public interface ILoginService {
 
     Result<Page<ParkUserResponse>> query(QueryUserByParkRequest request);
 
-    Result<List<ParkPermission>> findPermission();
 }

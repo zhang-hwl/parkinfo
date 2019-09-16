@@ -116,12 +116,6 @@ public class LoginServiceImpl implements ILoginService {
         return Result.<Page<ParkUserResponse>>builder().success().data(userResponses).build();
     }
 
-    @Override
-    public Result<List<ParkPermission>> findPermission() {
-        List<ParkPermission> permissionList = parkPermissionRepository.findAllByParentIsNullAndAvailableIsTrueAndDeleteIsFalse();
-        return Result.<List<ParkPermission>>builder().success().data(permissionList).build();
-    }
-
     private Page<ParkUserResponse> convertUserPage(Page<ParkUser> parkUserPage) {
         List<ParkUserResponse> content = new ArrayList<>();
         parkUserPage.getContent().forEach(parkUser -> {

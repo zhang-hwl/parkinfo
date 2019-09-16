@@ -68,22 +68,6 @@ public interface IManagementService {
     Result set(SetInvestmentRequest request);
 
     /**
-     * 修改对接信息
-     *
-     * @param request
-     * @return
-     */
-    Result setConnect(SetConnectRequest request);
-
-    /**
-     * 修改洽谈内容
-     *
-     * @param request
-     * @return
-     */
-    Result setDiscuss(SetDiscussRequest request);
-
-    /**
      * 设置企业入驻
      *
      * @param id

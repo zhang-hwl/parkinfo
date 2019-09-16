@@ -58,10 +58,4 @@ public class LoginController {
     public Result<Page<ParkUserResponse>> query(@RequestBody QueryUserByParkRequest request) {
         return loginService.query(request);
     }
-
-    @PostMapping("/findPermission")
-    @ApiOperation(value = "获取所有权限")
-    public Result<List<ParkPermission>> findPermission() {
-        return loginService.findPermission();
-    }
 }
