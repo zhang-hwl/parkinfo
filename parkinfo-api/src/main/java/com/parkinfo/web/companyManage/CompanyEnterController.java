@@ -26,13 +26,6 @@ public class CompanyEnterController {
     @Autowired
     private ICompanyEnterService companyEnterService;
 
-    @PostMapping("/enterImport")
-    @ApiOperation("导入入驻企业信息")
-    @RequiresPermissions("companyManage:companyEnter:enter_import")
-    public Result enterImport(@RequestBody MultipartFile file) {
-        return companyEnterService.enterImport(file);
-    }
-
     @PostMapping("/enterExport")
     @ApiOperation("导出入驻企业信息")
     @RequiresPermissions("companyManage:companyEnter:enter_export")

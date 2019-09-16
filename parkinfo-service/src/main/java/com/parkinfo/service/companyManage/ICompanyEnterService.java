@@ -7,21 +7,12 @@ import com.parkinfo.request.compayManage.*;
 import com.parkinfo.response.companyManage.EnterDetailResponse;
 import com.parkinfo.response.companyManage.EnterResponse;
 import org.springframework.data.domain.Page;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 public interface ICompanyEnterService {
-
-    /**
-     * 导入入驻企业信息
-     *
-     * @param file
-     * @return
-     */
-    Result enterImport(MultipartFile file);
 
     /**
      * 导出入驻企业信息

@@ -5,7 +5,6 @@ import com.parkinfo.entity.companyManage.CompanyDetail;
 import com.parkinfo.entity.companyManage.EnclosureTotal;
 import com.parkinfo.entity.companyManage.EnteredInfo;
 import com.parkinfo.entity.userConfig.ParkInfo;
-import com.parkinfo.enums.EnterStatus;
 import com.parkinfo.enums.FileUploadType;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.companyManage.CompanyDetailRepository;
@@ -24,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
@@ -33,7 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -53,28 +50,6 @@ public class CompanyEnterServiceImpl implements ICompanyEnterService {
 
     @Autowired
     private IOssService ossService;
-
-    @Override
-    public Result enterImport(MultipartFile file) {
-        String fileName = file.getOriginalFilename();
-        if (!Objects.requireNonNull(fileName).matches("^.+\\.(?i)(xls)$") && !fileName.matches("^.+\\.(?i)(xlsx)$")) {
-            throw new NormalException("上传文件格式不正确");
-        }
-        try {
-            List<CompanyDetail> companyDetails = ExcelUtils.importExcel(file, CompanyDetail.class);
-            if(companyDetails != null){
-                companyDetails.forEach(companyDetail -> {
-                    ParkInfo parkInfo = tokenUtils.getCurrentParkInfo();
-                    companyDetail.setParkInfo(parkInfo);
-                    companyDetail.setDeleteEnter(false);
-                    companyDetailRepository.save(companyDetail);
-                });
-            }
-        } catch (Exception e) {
-            throw new NormalException("上传失败");
-        }
-        return Result.builder().message("上传成功").build();
-    }
 
     @Override
     public Result enterExport(HttpServletResponse response) {

@@ -53,6 +53,7 @@ public class SetInvestmentRequest {
     private String requireArea;
 
     @ApiModelProperty(value = "对接时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date connectTime;
 
     @ApiModelProperty(value = "对接方式")

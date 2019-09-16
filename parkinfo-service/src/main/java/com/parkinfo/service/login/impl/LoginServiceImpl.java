@@ -2,11 +2,9 @@ package com.parkinfo.service.login.impl;
 
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.userConfig.ParkInfo;
-import com.parkinfo.entity.userConfig.ParkPermission;
 import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.userConfig.ParkInfoRepository;
-import com.parkinfo.repository.userConfig.ParkPermissionRepository;
 import com.parkinfo.repository.userConfig.ParkUserRepository;
 import com.parkinfo.request.login.LoginRequest;
 import com.parkinfo.request.login.QueryUserByParkRequest;
@@ -36,9 +34,6 @@ public class LoginServiceImpl implements ILoginService {
 
     @Autowired
     private ParkUserRepository parkUserRepository;
-
-    @Autowired
-    private ParkPermissionRepository parkPermissionRepository;
 
     @Autowired
     private TokenUtils tokenUtils;

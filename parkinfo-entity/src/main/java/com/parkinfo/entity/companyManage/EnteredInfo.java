@@ -21,6 +21,10 @@ import java.util.Date;
 @EntityListeners(AuditingEntityListener.class)
 @ApiModel(value = "EnteredInfo", description = "企业入驻信息")
 public class EnteredInfo extends BaseEntity {
+
+    @ApiModelProperty(value = "入驻房间号")
+    private String roomNum;
+
     @ApiModelProperty(value = "入驻面积")
     private String enterArea;
 
@@ -43,41 +47,17 @@ public class EnteredInfo extends BaseEntity {
     @ApiModelProperty(value = "本年预计税收")
     private BigDecimal predictTax;
 
-    @ApiModelProperty(value = "一月税收")
-    private BigDecimal januaryTax;
+    @ApiModelProperty(value = "本年第一季度税收")
+    private BigDecimal firstQuarter;
 
-    @ApiModelProperty(value = "二月月税收")
-    private BigDecimal februaryTax;
+    @ApiModelProperty(value = "本年第二季度税收")
+    private BigDecimal secondQuarter;
 
-    @ApiModelProperty(value = "三月税收")
-    private BigDecimal marchTax;
+    @ApiModelProperty(value = "本年第三季度税收")
+    private BigDecimal thirdQuarter;
 
-    @ApiModelProperty(value = "四月税收")
-    private BigDecimal aprilTax;
-
-    @ApiModelProperty(value = "五月税收")
-    private BigDecimal mayTax;
-
-    @ApiModelProperty(value = "六月税收")
-    private BigDecimal juneTax;
-
-    @ApiModelProperty(value = "七月税收")
-    private BigDecimal julyTax;
-
-    @ApiModelProperty(value = "八月税收")
-    private BigDecimal augustTax;
-
-    @ApiModelProperty(value = "九月税收")
-    private BigDecimal septTax;
-
-    @ApiModelProperty(value = "十月税收")
-    private BigDecimal octTax;
-
-    @ApiModelProperty(value = "十一月税收")
-    private BigDecimal novTax;
-
-    @ApiModelProperty(value = "十二月税收")
-    private BigDecimal decTax;
+    @ApiModelProperty(value = "本年第四季度税收")
+    private BigDecimal fourthQuarter;
 
     @ManyToOne
     @JoinColumn(name = "company_detail_id")
