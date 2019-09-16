@@ -9,6 +9,7 @@ import javax.validation.constraints.NotBlank;
 public class LoginRequest {
 
     @ApiModelProperty("园区id")
+    @NotBlank(message = "园区id不能为空")
     private String id;
 
     @ApiModelProperty("账户")
