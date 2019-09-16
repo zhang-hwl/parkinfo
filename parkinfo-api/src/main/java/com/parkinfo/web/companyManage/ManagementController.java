@@ -91,18 +91,4 @@ public class ManagementController {
         }
         return managementService.set(request);
     }
-
-    @PostMapping("/setConnect")
-    @ApiOperation("修改对接信息")
-    @RequiresPermissions("companyManage:investment:invest_setConnect")
-    public Result setConnect(@RequestBody SetConnectRequest request) {
-        return managementService.setConnect(request);
-    }
-
-    @PostMapping("/setDiscuss")
-    @ApiOperation("修改洽谈信息")
-    @RequiresPermissions("companyManage:investment:invest_setDiscuss")
-    public Result setDiscuss(@RequestBody SetDiscussRequest request) {
-        return managementService.setDiscuss(request);
-    }
 }

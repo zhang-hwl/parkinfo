@@ -150,27 +150,6 @@ public class ManagementServiceImpl implements IManagementService {
     }
 
     @Override
-    public Result setConnect(SetConnectRequest request) {
-        CompanyDetail companyDetail = this.checkInvestment(request.getId());
-        companyDetail.setConnectTime(request.getConnectTime());
-        companyDetail.setPurpose(request.getPurpose());
-        companyDetail.setRemark(request.getRemark());
-        companyDetailRepository.save(companyDetail);
-        return Result.builder().success().message("修改成功").build();
-    }
-
-    @Override
-    public Result setDiscuss(SetDiscussRequest request) {
-        CompanyDetail companyDetail = this.checkInvestment(request.getId());
-        companyDetail.setConnectWay(request.getConnectWay());
-        companyDetail.setDiscussStatus(request.getDiscussStatus());
-        companyDetail.setContent(request.getContent());
-        companyDetail.setRemarkTalk(request.getRemarkTalk());
-        companyDetailRepository.save(companyDetail);
-        return Result.builder().success().message("修改成功").build();
-    }
-
-    @Override
     public Result enter(String id) {
         CompanyDetail companyDetail = this.checkInvestment(id);
         ParkUser parkUser = companyDetail.getParkUser();

@@ -1,5 +1,6 @@
 package com.parkinfo.entity.userConfig;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.parkinfo.entity.base.BaseEntity;
 import com.parkinfo.entity.parkService.meetingRoom.MeetingRoom;
@@ -10,6 +11,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -22,12 +24,14 @@ import java.util.Set;
  * @author cnyuchu@gmail.com
  * @create 2019-09-05 09:30
  **/
-@EqualsAndHashCode(callSuper = true,exclude = {"roles","parks","meetingRooms","meetingRoomReserves"})
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Entity(name = "c_park_user")
 @org.hibernate.annotations.Table(appliesTo = "c_park_user",comment = "园区用户表")
-public class ParkUser extends BaseEntity {
+@JsonIgnoreProperties(value={"hibernateLazyInitializer","handler","fieldHandler"})
+public class ParkUser extends BaseEntity implements Serializable {
 
+    private static final long serialVersionUID = -7758514661539579492L;
     /**
      * 账户
      */
@@ -55,6 +59,7 @@ public class ParkUser extends BaseEntity {
 
     @ManyToMany(targetEntity = ParkRole.class, fetch = FetchType.LAZY)
     @JoinTable(name = "c_user_role", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "role_id")})
+    @JsonIgnoreProperties(value = "permissions")
     private Set<ParkRole> roles = new HashSet<>();
 
     @ManyToMany(targetEntity = ParkInfo.class, fetch = FetchType.LAZY)
@@ -63,6 +68,7 @@ public class ParkUser extends BaseEntity {
 
     @OneToMany(mappedBy = "parkUser")
     @JsonIgnoreProperties("parkUser")
+    @JsonIgnore
     private List<MeetingRoom> meetingRooms = new ArrayList<>();
 
     @OneToMany(mappedBy = "reserveUser")

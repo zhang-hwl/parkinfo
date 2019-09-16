@@ -28,6 +28,9 @@ public class ManagementResponse {
     @ApiModelProperty(value = "联系人")
     private String linkMan;
 
+    @ApiModelProperty(value = "职位")
+    private String position;
+
     @ApiModelProperty(value = "联系电话")
     private String phone;
 
