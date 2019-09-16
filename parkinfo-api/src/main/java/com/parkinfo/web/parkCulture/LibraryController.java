@@ -1,14 +1,8 @@
 package com.parkinfo.web.parkCulture;
 
 import com.parkinfo.common.Result;
-import com.parkinfo.request.parkCulture.AddBookCommentRequest;
-import com.parkinfo.request.parkCulture.QueryBookCommentListRequest;
-import com.parkinfo.request.parkCulture.QueryBookListRequest;
-import com.parkinfo.request.parkCulture.SetReadProcessRequest;
-import com.parkinfo.response.parkCulture.BookCommentListResponse;
-import com.parkinfo.response.parkCulture.BookDetailResponse;
-import com.parkinfo.response.parkCulture.BookListResponse;
-import com.parkinfo.response.parkCulture.ReadProcessResponse;
+import com.parkinfo.request.parkCulture.*;
+import com.parkinfo.response.parkCulture.*;
 import com.parkinfo.service.parkCulture.ILibraryService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -91,5 +85,48 @@ public class LibraryController{
     @RequiresPermissions("parkCulture:library:progress_set")
     public Result setReadProcess(@Valid @RequestBody SetReadProcessRequest request,BindingResult result){
         return libraryService.setReadProcess(request);
+    }
+
+    @PostMapping("/category/search")
+    @ApiOperation(value = "分页查看图书的分类")
+    @RequiresPermissions("parkCulture:library:category_search")
+    public Result<Page<BookCategoryListResponse>> search(@Valid @RequestBody QueryCategoryListRequest request, BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError error:result.getAllErrors()) {
+                return Result.<Page<BookCategoryListResponse>>builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
+        return libraryService.search(request);
+    }
+
+    @PostMapping("/category/add")
+    @ApiOperation(value = "添加图书分类")
+    @RequiresPermissions("parkCulture:library:category_add")
+    public Result addBookCategory(@Valid @RequestBody AddBookCategoryRequest request,BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError error:result.getAllErrors()) {
+                return Result.builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
+        return libraryService.addBookCategory(request);
+    }
+
+    @PostMapping("/category/set")
+    @ApiOperation(value = "修改图书分类")
+    @RequiresPermissions("parkCulture:library:category_set")
+    public Result setBookCategory(@Valid @RequestBody SetBookCategoryRequest request,BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError error:result.getAllErrors()) {
+                return Result.builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
+        return libraryService.setBookCategory(request);
+    }
+
+    @PostMapping("/category/delete/{id}")
+    @ApiOperation(value = "删除图书分类")
+    @RequiresPermissions("parkCulture:library:category_delete")
+    public Result deleteBookCategory(@PathVariable("id")String id){
+        return libraryService.deleteBookCategory(id);
     }
 }
