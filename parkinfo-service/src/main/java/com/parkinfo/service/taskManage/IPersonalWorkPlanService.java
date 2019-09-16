@@ -43,4 +43,11 @@ public interface IPersonalWorkPlanService {
      * @return
      */
     Result setTask(SetPersonalWorkPlanRequest request);
+
+    /**
+     * 删除任务
+     * @param id
+     * @return
+     */
+    Result deleteTask(String id);
 }

@@ -66,9 +66,13 @@ public class PersonalWorkPlanServiceImpl implements IPersonalWorkPlanService {
             if (request.getCreateTimeFrom() != null && request.getCreateTimeTo() != null) {
                 predicates.add(criteriaBuilder.between(root.get("createTime"), request.getCreateTimeFrom(), request.getCreateTimeTo()));
             }
-            predicates.add(criteriaBuilder.equal(root.get("park").get("id").as(String.class), currentUser.getCurrentParkId()));
             if (currentUser.getRole().contains(ParkRoleEnum.PARK_USER.toString())) {  //普通员工
                 predicates.add(criteriaBuilder.equal(root.get("author").get("id").as(String.class), currentUser.getId()));
+                predicates.add(criteriaBuilder.equal(root.get("park").get("id").as(String.class), currentUser.getCurrentParkId()));
+            }else {
+                if (StringUtils.isNotBlank(request.getParkId())){
+                    predicates.add(criteriaBuilder.equal(root.get("park").get("id").as(String.class), request.getParkId()));
+                }
             }
             predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
@@ -132,6 +136,24 @@ public class PersonalWorkPlanServiceImpl implements IPersonalWorkPlanService {
             workPlanDetailRepository.save(workPlanDetail);
         });
         return Result.builder().success().message("任务修改成功").build();
+    }
+
+    @Override
+    public Result deleteTask(String id) {
+        PersonalWorkPlan personalWorkPlan = this.checkPersonalWorkPlan(id);
+        ParkUserDTO currentUser = tokenUtils.getLoginUserDTO();
+        if (currentUser.getRole().contains(ParkRoleEnum.GENERAL_MANAGER.toString())
+                || currentUser.getRole().contains(ParkRoleEnum.PRESIDENT.toString())
+                || currentUser.getRole().contains(ParkRoleEnum.PARK_MANAGER.toString())) {
+            personalWorkPlan.setDelete(true);
+            personalWorkPlanRepository.save(personalWorkPlan);
+        } else if (currentUser.getId().equals(personalWorkPlan.getAuthor().getId())) {
+            personalWorkPlan.setDelete(true);
+            personalWorkPlanRepository.save(personalWorkPlan);
+        } else {
+            throw new NormalException("您无法进行此操作");
+        }
+        return Result.builder().success().message("删除成功").build();
     }
 
     private Page<PersonalWorkPlanListResponse> convertPersonalWorkPlanList(Page<PersonalWorkPlan> personalWorkPlanPage) {
