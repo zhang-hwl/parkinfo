@@ -108,6 +108,7 @@ public class CompanyDetail extends BaseEntity{
 
     @Excel(name = "对接时间", width = 15)
     @ApiModelProperty(value = "对接时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date connectTime;
 
     @Excel(name = "意向", width = 15)

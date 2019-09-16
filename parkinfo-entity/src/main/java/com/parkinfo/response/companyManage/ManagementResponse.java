@@ -45,10 +45,14 @@ public class ManagementResponse {
     private Date foundTime;
 
     @ApiModelProperty(value = "对接时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date connectTime;
 
     @ApiModelProperty(value = "对接方式")
     private String connectWay;
+
+    @ApiModelProperty(value = "是否有意向")
+    private String purpose;
 
     @ApiModelProperty(value = "洽谈状态")//WAIT_LOOK,LOOKED,FOLLOWING,FIRST_PASS 未参园,已参观,跟进中,第一次通过
     private DiscussStatus discussStatus;
