@@ -16,6 +16,8 @@ public interface ArchiveInfoRepository extends JpaRepository<ArchiveInfo, String
 
     Page<ArchiveInfo> findAll(Specification<ArchiveInfo> specification, Pageable pageable);
 
+    List<ArchiveInfo> findAll(Specification<ArchiveInfo> specification);
+
     List<ArchiveInfo> findAllByDeleteIsFalse();
 
 

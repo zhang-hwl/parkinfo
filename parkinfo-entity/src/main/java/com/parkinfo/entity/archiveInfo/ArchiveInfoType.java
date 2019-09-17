@@ -2,6 +2,7 @@ package com.parkinfo.entity.archiveInfo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.parkinfo.entity.base.BaseEntity;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Table;
@@ -18,8 +19,6 @@ public class ArchiveInfoType extends BaseEntity {
 
     //类型
     private String type;
-
-    private String remark;
 
     //上一级分类类型
     @ManyToOne(fetch= FetchType.LAZY)

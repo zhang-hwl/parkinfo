@@ -25,40 +25,42 @@ public class BigEventController {
 
     @PostMapping("/add")
     @ApiOperation(value = "新增园区大事件")
-    @RequiresPermissions(value = "infoTotal:add")
+    @RequiresPermissions(value = "infoTotal:bigEvent:add")
     public Result<String> add(@RequestBody BigEventRequest request){
         return bigEventService.add(request);
     }
 
     @PostMapping("/edit")
     @ApiOperation(value = "编辑园区大事件")
-    @RequiresPermissions(value = "infoTotal:edit")
+    @RequiresPermissions(value = "infoTotal:bigEvent:edit")
     public Result<String> edit(@RequestBody BigEventRequest request){
         return bigEventService.edit(request);
     }
 
     @PostMapping("/delete/{id}")
     @ApiOperation(value = "删除园区大事件")
-    @RequiresPermissions(value = "infoTotal:delete")
+    @RequiresPermissions(value = "infoTotal:bigEvent:delete")
     public Result<String> delete(@PathVariable("id") String id){
         return bigEventService.delete(id);
     }
 
     @PostMapping("/all")
     @ApiOperation(value = "查询园区大事件")
+    @RequiresPermissions(value = "infoTotal:bigEvent:search")
     public Result<List<BigEventRequest>> findAll(){
         return bigEventService.findAll();
     }
 
     @PostMapping("/search/{version}")
     @ApiOperation(value = "根据版本查询园区大事件")
+    @RequiresPermissions(value = "infoTotal:bigEvent:search")
     public Result<List<BigEventRequest>> findByVersion(@PathVariable("version") String version){
         return bigEventService.findByVersion(version);
     }
 
     @PostMapping("/import")
     @ApiOperation(value = "导入园区大事件")
-    @RequiresPermissions(value = "infoTotal:add")
+    @RequiresPermissions(value = "infoTotal:bigEvent:add")
     public Result<String> myImport(@RequestBody MultipartFile multipartFile){
         return bigEventService.myImport(multipartFile);
     }
@@ -71,6 +73,7 @@ public class BigEventController {
 
     @PostMapping("/download")
     @ApiOperation(value = "文件导出")
+    @RequiresPermissions(value = "infoTotal:bigEvent:export")
     public void download(HttpServletResponse response, @RequestBody String version){
         bigEventService.download(response, version);
     }

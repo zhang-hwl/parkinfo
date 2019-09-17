@@ -11,4 +11,6 @@ public interface ArchiveInfoTypeRepository extends JpaRepository<ArchiveInfoType
 
     Optional<ArchiveInfoType> findByIdAndDeleteIsFalseAndAvailableIsTrue(String id);
 
+    Optional<ArchiveInfoType> findByTypeAndDeleteIsFalseAndAvailableIsTrue(String type);
+
 }

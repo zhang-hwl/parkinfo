@@ -14,8 +14,6 @@ public interface IArchiveInfoService {
 
     Result<Page<ArchiveInfoResponse>> search(QueryArchiveInfoRequest request);
 
-    Result<List<ArchiveInfoResponse>> findAll();
-
     Result<ArchiveInfoCommentResponse> findById(String id);
 
     Result<String> addArchiveInfo(AddArchiveInfoRequest request);
@@ -29,12 +27,6 @@ public interface IArchiveInfoService {
     Result<String> addComment(ArchiveCommentRequest request);
 
     Result<Page<ArchiveReadRecord>> findReadRecord(ArchiveReadRecordRequest request);
-
-    Result<String> addType(ArchiveInfoTypeRequest request);
-
-    Result<String> editType(ArchiveInfoTypeRequest request);
-
-    Result<String> deleteType(String id);
 
     Result<ArchiveInfoType> findType(String id);
 

@@ -9,4 +9,6 @@ public interface IServiceInfoService {
      * @return
      */
     Result<CompanyDataResponse> getCompanyDataResponse();
+
+    Result<String> addCompanyDataResponse(CompanyDataResponse companyDataResponse);
 }
