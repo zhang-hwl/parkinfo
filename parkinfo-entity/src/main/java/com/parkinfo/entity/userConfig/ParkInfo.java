@@ -27,6 +27,7 @@ import java.util.Set;
 @Data
 @Entity(name = "c_park_info")
 @Table(appliesTo = "c_park_info",comment = "园区信息表")
+@JsonIgnoreProperties(value={"hibernateLazyInitializer","handler","fieldHandler"})
 public class ParkInfo extends BaseEntity {
 
     /**

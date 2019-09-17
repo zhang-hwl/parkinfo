@@ -3,12 +3,13 @@ package com.parkinfo.service.companyManage.impl;
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.companyManage.CompanyDetail;
 import com.parkinfo.entity.userConfig.ParkInfo;
+import com.parkinfo.enums.CheckStatus;
 import com.parkinfo.enums.EnterStatus;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.companyManage.CompanyDetailRepository;
+import com.parkinfo.request.compayManage.AddCompanyInfoRequest;
 import com.parkinfo.request.compayManage.QueryCompanyRequest;
 import com.parkinfo.request.compayManage.SetCompanyInfoRequest;
-import com.parkinfo.request.compayManage.SetCompanyRequireRequest;
 import com.parkinfo.response.companyManage.CompanyDetailResponse;
 import com.parkinfo.response.companyManage.CompanyResponse;
 import com.parkinfo.service.companyManage.ICompanyDetailService;
@@ -58,6 +59,7 @@ public class CompanyDetailServiceImpl implements ICompanyDetailService {
                     companyDetail.setDeleteEnter(false);
                     companyDetail.setEnterStatus(EnterStatus.WAITING);
                     companyDetail.setEntered(false);
+                    companyDetail.setCheckStatus(CheckStatus.APPLYING);
                     companyDetailRepository.save(companyDetail);
                 });
             }
@@ -95,6 +97,9 @@ public class CompanyDetailServiceImpl implements ICompanyDetailService {
             if (null != request.getCheckStatus()) {
                 predicates.add(criteriaBuilder.equal(root.get("checkStatus").as(Integer.class), request.getCheckStatus().ordinal()));
             }
+            if (parkInfo == null) {
+                throw new NormalException("请先登录");
+            }
             Join<CompanyDetail, ParkInfo> join = root.join(root.getModel().getSingularAttribute("parkInfo", ParkInfo.class), JoinType.LEFT);
             predicates.add(criteriaBuilder.equal(join.get("id").as(String.class), parkInfo.getId()));
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
@@ -114,6 +119,22 @@ public class CompanyDetailServiceImpl implements ICompanyDetailService {
         CompanyDetailResponse response = new CompanyDetailResponse();
         BeanUtils.copyProperties(companyDetail,response);
         return Result.<CompanyDetailResponse>builder().success().data(response).build();
+    }
+
+    @Override
+    public Result add(AddCompanyInfoRequest request) {
+        CompanyDetail companyDetail = new CompanyDetail();
+        ParkInfo parkInfo = tokenUtils.getCurrentParkInfo();
+        BeanUtils.copyProperties(request,companyDetail);
+        companyDetail.setParkInfo(parkInfo);
+        companyDetail.setAvailable(true);
+        companyDetail.setDelete(false);
+        companyDetail.setDeleteEnter(false);
+        companyDetail.setEnterStatus(EnterStatus.WAITING);
+        companyDetail.setEntered(false);
+        companyDetail.setCheckStatus(CheckStatus.APPLYING);
+        companyDetailRepository.save(companyDetail);
+        return Result.builder().success().message("添加成功").build();
     }
 
     @Override

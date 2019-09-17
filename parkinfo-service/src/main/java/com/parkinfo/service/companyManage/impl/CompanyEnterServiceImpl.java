@@ -78,6 +78,9 @@ public class CompanyEnterServiceImpl implements ICompanyEnterService {
             if (null != request.getEnterStatus()) {
                 predicates.add(criteriaBuilder.equal(root.get("enterStatus").as(Integer.class), request.getEnterStatus().ordinal()));
             }
+            if (parkInfo == null) {
+                throw new NormalException("请先登录");
+            }
             Join<CompanyDetail, ParkInfo> join = root.join(root.getModel().getSingularAttribute("parkInfo", ParkInfo.class), JoinType.LEFT);
             predicates.add(criteriaBuilder.equal(join.get("id").as(String.class), parkInfo.getId()));
             predicates.add(criteriaBuilder.equal(root.get("deleteEnter").as(Boolean.class), Boolean.FALSE));
@@ -209,7 +212,7 @@ public class CompanyEnterServiceImpl implements ICompanyEnterService {
     private EnteredInfo checkEnterInfo(String id) {
         Optional<EnteredInfo> enteredInfoOptional = enteredInfoRepository.findByIdAndDeleteIsFalse(id);
         if (!enteredInfoOptional.isPresent()) {
-            throw new NormalException("入驻企业不存在");
+            throw new NormalException("入驻信息不存在");
         }
         return enteredInfoOptional.get();
     }

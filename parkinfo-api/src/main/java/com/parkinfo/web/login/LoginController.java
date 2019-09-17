@@ -2,11 +2,9 @@ package com.parkinfo.web.login;
 
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.userConfig.ParkInfo;
-import com.parkinfo.entity.userConfig.ParkPermission;
 import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.request.login.LoginRequest;
 import com.parkinfo.request.login.QueryUserByParkRequest;
-import com.parkinfo.request.login.QueryUserCurrentRequest;
 import com.parkinfo.response.login.ParkUserResponse;
 import com.parkinfo.service.login.ILoginService;
 import io.swagger.annotations.Api;
@@ -55,5 +53,11 @@ public class LoginController {
     @ApiOperation(value = "根据园区获取用户")
     public Result<List<ParkUser>> query(@PathVariable String parkId) {
         return loginService.query(parkId);
+    }
+
+    @PostMapping("/search")
+    @ApiOperation(value = "根据园区分页获取用户")
+    public Result<Page<ParkUserResponse>> search(@RequestBody QueryUserByParkRequest request) {
+        return loginService.search(request);
     }
 }

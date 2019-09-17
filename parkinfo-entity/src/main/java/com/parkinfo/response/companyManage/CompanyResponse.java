@@ -33,7 +33,7 @@ public class CompanyResponse {
     private String requireArea;
 
     @ApiModelProperty(value = "需求时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     private Date requireTime;
 
     @ApiModelProperty(value = "需求地点")
@@ -43,7 +43,7 @@ public class CompanyResponse {
     private String connectMan;
 
     @ApiModelProperty(value = "申请日期")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     private Date applyTime;
 
     @ApiModelProperty(value = "审核状态")

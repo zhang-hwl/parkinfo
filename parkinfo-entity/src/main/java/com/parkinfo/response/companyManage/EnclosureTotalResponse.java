@@ -10,6 +10,9 @@ public class EnclosureTotalResponse {
     @ApiModelProperty(value = "附件id")
     private String enclosureId;
 
+    @ApiModelProperty(value = "附件名称")
+    private String fileName;
+
     @ApiModelProperty(value = "附件类型")
     private EnclosureType enclosureType;
 

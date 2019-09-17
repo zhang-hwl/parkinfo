@@ -28,7 +28,7 @@ public class CompanyEnterController {
 
     @PostMapping("/enterExport")
     @ApiOperation("导出入驻企业信息")
-    @RequiresPermissions("companyManage:companyEnter:enter_export")
+    //@RequiresPermissions("companyManage:companyEnter:enter_export")
     public Result enterExport(HttpServletResponse response) {
         return companyEnterService.enterExport(response);
     }

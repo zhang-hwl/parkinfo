@@ -21,4 +21,6 @@ public interface ParkUserRepository extends JpaRepository<ParkUser,String> {
     Optional<ParkUser> findByIdAndDeleteIsFalseAndAvailableIsTrue(String id);
 
     List<ParkUser> findAllByParksEqualsAndDeleteIsFalseAndAvailableIsTrue(ParkInfo parkInfo);
+
+    Optional<ParkUser> findByCompanyDetail_IdAndDeleteIsFalseAndAvailableIsTrue(String id);
 }
