@@ -4,20 +4,18 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class EnterDetailResponse {
-    @ApiModelProperty(value = "id")
+    @ApiModelProperty(value = "公司id")
     private String id;
 
     @ApiModelProperty(value = "公司名称")
-    @NotBlank(message = "公司名称不能为空")
     private String companyName;
 
     @ApiModelProperty(value = "联系人")
-    @NotBlank(message = "联系人不能为空")
     private String linkMan;
 
     @ApiModelProperty(value = "联系电话")
@@ -44,4 +42,10 @@ public class EnterDetailResponse {
 
     @ApiModelProperty(value = "需求面积")
     private String requireArea;
+
+    @ApiModelProperty(value = "入驻信息")
+    private List<EnteredInfoResponse> infoResponseList;
+
+    @ApiModelProperty(value = "附件信息")
+    private List<EnclosureTotalResponse> enclosureTotalResponseList;
 }

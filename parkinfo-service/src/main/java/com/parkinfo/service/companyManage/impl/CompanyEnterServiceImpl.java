@@ -11,8 +11,10 @@ import com.parkinfo.repository.companyManage.CompanyDetailRepository;
 import com.parkinfo.repository.companyManage.EnclosureTotalRepository;
 import com.parkinfo.repository.companyManage.EnteredInfoRepository;
 import com.parkinfo.request.compayManage.*;
+import com.parkinfo.response.companyManage.EnclosureTotalResponse;
 import com.parkinfo.response.companyManage.EnterDetailResponse;
 import com.parkinfo.response.companyManage.EnterResponse;
+import com.parkinfo.response.companyManage.EnteredInfoResponse;
 import com.parkinfo.service.companyManage.ICompanyEnterService;
 import com.parkinfo.token.TokenUtils;
 import com.parkinfo.tools.oss.IOssService;
@@ -100,7 +102,7 @@ public class CompanyEnterServiceImpl implements ICompanyEnterService {
     @Override
     public Result setCompany(ModifyCompanyRequest request) {
         CompanyDetail companyDetail = this.checkEnter(request.getId());
-        BeanUtils.copyProperties(request,companyDetail);
+        BeanUtils.copyProperties(request, companyDetail);
         companyDetailRepository.save(companyDetail);
         return Result.builder().success().message("修改成功").build();
     }
@@ -109,7 +111,7 @@ public class CompanyEnterServiceImpl implements ICompanyEnterService {
     public Result addEnter(AddEnterDetailRequest request) {
         CompanyDetail companyDetail = this.checkEnter(request.getCompanyId());
         EnteredInfo enteredInfo = new EnteredInfo();
-        BeanUtils.copyProperties(request,enteredInfo);
+        BeanUtils.copyProperties(request, enteredInfo);
         enteredInfo.setCompanyDetail(companyDetail);
         enteredInfo.setDelete(false);
         enteredInfo.setAvailable(true);
@@ -120,7 +122,7 @@ public class CompanyEnterServiceImpl implements ICompanyEnterService {
     @Override
     public Result set(SetEnterDetailRequest request) {
         EnteredInfo enteredInfo = this.checkEnterInfo(request.getEnterId());
-        BeanUtils.copyProperties(request,enteredInfo);
+        BeanUtils.copyProperties(request, enteredInfo);
         enteredInfoRepository.save(enteredInfo);
         return Result.builder().success().message("修改成功").build();
     }
@@ -137,20 +139,26 @@ public class CompanyEnterServiceImpl implements ICompanyEnterService {
     public Result<EnterDetailResponse> query(String id) {
         CompanyDetail companyDetail = this.checkEnter(id);
         EnterDetailResponse response = new EnterDetailResponse();
-        BeanUtils.copyProperties(companyDetail,response);
-        return Result.<EnterDetailResponse>builder().success().data(response).build();
-    }
-
-    @Override
-    public Result<List<EnteredInfo>> queryEnter(String id) {
+        BeanUtils.copyProperties(companyDetail, response);
+        //添加返回入驻信息
         List<EnteredInfo> totals = enteredInfoRepository.findAllByCompanyDetail_IdAndDeleteIsFalse(id);
-        return Result.<List<EnteredInfo>>builder().success().data(totals).build();
-    }
-
-    @Override
-    public Result<List<EnclosureTotal>> find(String id) {
+        List<EnteredInfoResponse> enteredInfoResponseList = new ArrayList<>();
+        EnteredInfoResponse enteredInfoResponse = new EnteredInfoResponse();
+        totals.forEach(enteredInfo -> {
+            BeanUtils.copyProperties(enteredInfo, enteredInfoResponse);
+            enteredInfoResponseList.add(enteredInfoResponse);
+        });
+        response.setInfoResponseList(enteredInfoResponseList);
+        //添加返回附件
         List<EnclosureTotal> all = enclosureTotalRepository.findAllByCompanyDetail_IdAndDeleteIsFalse(id);
-        return Result.<List<EnclosureTotal>>builder().success().data(all).build();
+        List<EnclosureTotalResponse> enclosureTotalResponseList = new ArrayList<>();
+        EnclosureTotalResponse enclosureTotalResponse = new EnclosureTotalResponse();
+        all.forEach(enclosureTotal -> {
+            BeanUtils.copyProperties(enclosureTotal, enclosureTotalResponse);
+            enclosureTotalResponseList.add(enclosureTotalResponse);
+        });
+        response.setEnclosureTotalResponseList(enclosureTotalResponseList);
+        return Result.<EnterDetailResponse>builder().success().data(response).build();
     }
 
     @Override
@@ -172,7 +180,7 @@ public class CompanyEnterServiceImpl implements ICompanyEnterService {
         CompanyDetail companyDetail = this.checkEnter(request.getCompanyId());
         EnclosureTotal enclosureTotal = new EnclosureTotal();
         enclosureTotal.setCompanyDetail(companyDetail);
-        BeanUtils.copyProperties(request,enclosureTotal);
+        BeanUtils.copyProperties(request, enclosureTotal);
         enclosureTotal.setDelete(false);
         enclosureTotal.setAvailable(true);
         enclosureTotalRepository.save(enclosureTotal);

@@ -1,8 +1,6 @@
 package com.parkinfo.service.companyManage;
 
 import com.parkinfo.common.Result;
-import com.parkinfo.entity.companyManage.EnclosureTotal;
-import com.parkinfo.entity.companyManage.EnteredInfo;
 import com.parkinfo.request.compayManage.*;
 import com.parkinfo.response.companyManage.EnterDetailResponse;
 import com.parkinfo.response.companyManage.EnterResponse;
@@ -10,7 +8,6 @@ import org.springframework.data.domain.Page;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 public interface ICompanyEnterService {
 
@@ -70,20 +67,6 @@ public interface ICompanyEnterService {
      * @return
      */
     Result<EnterDetailResponse> query(String id);
-
-    /**
-     *查询入驻信息
-     * @param id
-     * @return
-     */
-    Result<List<EnteredInfo>> queryEnter(String id);
-
-    /**
-     * 查询所有附件
-     * @param id
-     * @return
-     */
-    Result<List<EnclosureTotal>> find(String id);
 
     /**
      * 删除入驻企业信息

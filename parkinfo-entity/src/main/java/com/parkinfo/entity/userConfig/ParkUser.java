@@ -3,6 +3,7 @@ package com.parkinfo.entity.userConfig;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.parkinfo.entity.base.BaseEntity;
+import com.parkinfo.entity.companyManage.CompanyDetail;
 import com.parkinfo.entity.parkService.meetingRoom.MeetingRoom;
 import com.parkinfo.entity.parkService.meetingRoom.MeetingRoomReserve;
 import com.parkinfo.entity.personalCloud.CloudDisk;
@@ -69,7 +70,7 @@ public class ParkUser extends BaseEntity {
     private Set<ParkInfo> parks = new HashSet<>();
 
     @OneToMany(mappedBy = "parkUser")
-    @JsonIgnoreProperties("parkUser")
+    //@JsonIgnoreProperties("parkUser")
     @JsonIgnore
     private List<MeetingRoom> meetingRooms = new ArrayList<>();
 
@@ -83,4 +84,7 @@ public class ParkUser extends BaseEntity {
     @ApiModelProperty("个人云盘")
     private List<CloudDisk> cloudDisks = new ArrayList<>();
 
+    @OneToOne
+    @JsonIgnore
+    private CompanyDetail companyDetail;
 }

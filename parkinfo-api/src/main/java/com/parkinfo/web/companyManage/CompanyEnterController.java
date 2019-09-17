@@ -82,20 +82,6 @@ public class CompanyEnterController {
         return companyEnterService.query(id);
     }
 
-    @PostMapping("/queryEnter/{id}")
-    @ApiOperation("查询该企业所有入驻信息")
-    @RequiresPermissions("companyManage:companyEnter:enter_queryEnter")
-    public Result<List<EnteredInfo>> queryEnter(@PathVariable("id") String id) {
-        return companyEnterService.queryEnter(id);
-    }
-
-    @PostMapping("/find/{id}")
-    @ApiOperation("查询所有附件")
-    @RequiresPermissions("companyManage:companyEnter:enter_find")
-    public Result<List<EnclosureTotal>> find(@PathVariable("id") String id) {
-        return companyEnterService.find(id);
-    }
-
     @PostMapping("/delete/{id}")
     @ApiOperation("删除入驻企业")
     @RequiresPermissions("companyManage:companyEnter:enter_delete")

@@ -1,8 +1,8 @@
 package com.parkinfo.response.companyManage;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.parkinfo.enums.DiscussStatus;
+import com.parkinfo.enums.EnterStatus;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Data
 public class ManagementResponse {
-    @ApiModelProperty(value = "id")
+    @ApiModelProperty(value = "公司id")
     private String id;
 
     @ApiModelProperty(value = "公司名称")
@@ -51,9 +51,20 @@ public class ManagementResponse {
     @ApiModelProperty(value = "对接方式")
     private String connectWay;
 
+    @ApiModelProperty(value = "入驻状态")
+    //WAITING,ENTERED,LEAVE 未入驻,已入住,已离园
+    private EnterStatus enterStatus;
+
     @ApiModelProperty(value = "是否有意向")
     private String purpose;
 
     @ApiModelProperty(value = "洽谈状态")//WAIT_LOOK,LOOKED,FOLLOWING,FIRST_PASS 未参园,已参观,跟进中,第一次通过
     private DiscussStatus discussStatus;
+
+    @ApiModelProperty(value = "管理公司信息人")
+    private String nickname;
+
+    @ApiModelProperty(value = "管理公司信息人id")
+    private String manId;
+
 }

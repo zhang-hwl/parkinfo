@@ -40,9 +40,6 @@ public class ManagementServiceImpl implements IManagementService {
     private CompanyDetailRepository companyDetailRepository;
 
     @Autowired
-    private ParkRoleRepository parkRoleRepository;
-
-    @Autowired
     private ParkUserRepository parkUserRepository;
 
     @Autowired
@@ -147,6 +144,9 @@ public class ManagementServiceImpl implements IManagementService {
         CompanyDetail investment = this.checkInvestment(id);
         ManageDetailResponse response = new ManageDetailResponse();
         BeanUtils.copyProperties(investment,response);
+        ParkUser parkUser = investment.getParkUser();
+        response.setManId(parkUser.getId());
+        response.setNickname(parkUser.getNickname());
         return Result.<ManageDetailResponse>builder().success().data(response).build();
     }
 
@@ -173,28 +173,16 @@ public class ManagementServiceImpl implements IManagementService {
 
     @Override
     public Result bind(BindCompanyRequest request) {
-        ParkUser newData = new ParkUser();
-        newData.setDelete(false);
-        newData.setAvailable(true);
-        newData.setAvatar(request.getAvatar());
-        newData.setAccount(request.getAccount());
-        newData.setNickname(request.getNickname());
-        newData.setSalt(SettingType.INIT_SALT.getDefaultValue());
-        String initPassword = (SettingType.INIT_PASSWORD.getDefaultValue());
-        String password = new SimpleHash("MD5", initPassword, newData.getSalt(), 1024).toHex();
-        newData.setPassword(password);
-        if (request.getRoleId()!=null&&!request.getRoleId().isEmpty()) {
-            List<ParkRole> sysRoleList = parkRoleRepository.findAllById(request.getRoleId());
-            newData.setRoles(new HashSet<>(sysRoleList));
+        ParkUser parkUser = this.checkUser(request.getUserId());
+        CompanyDetail companyDetail = parkUser.getCompanyDetail();
+        if (null != companyDetail) {
+            throw new NormalException("该用户已绑定公司，请选择其他用户");
         }
-        ParkInfo currentParkInfo = tokenUtils.getCurrentParkInfo();
-        Set<ParkInfo> parkInfoSet = new HashSet<>();
-        parkInfoSet.add(currentParkInfo);
-        newData.setParks(parkInfoSet);
-        parkUserRepository.save(newData);
         CompanyDetail investment = this.checkInvestment(request.getCompanyId());
-        investment.setParkUser(newData);
+        investment.setParkUser(parkUser);
         companyDetailRepository.save(investment);
+        parkUser.setCompanyDetail(investment);
+        parkUserRepository.save(parkUser);
         return Result.builder().success().message("绑定成功").build();
     }
 
@@ -203,6 +191,9 @@ public class ManagementServiceImpl implements IManagementService {
         companyDetailPage.getContent().forEach(companyDetail -> {
             ManagementResponse response = new ManagementResponse();
             BeanUtils.copyProperties(companyDetail, response);
+            ParkUser parkUser = companyDetail.getParkUser();
+            response.setManId(parkUser.getId());
+            response.setNickname(parkUser.getNickname());
             content.add(response);
         });
         return new PageImpl<>(content, companyDetailPage.getPageable(), companyDetailPage.getTotalElements());
@@ -214,5 +205,13 @@ public class ManagementServiceImpl implements IManagementService {
             throw new NormalException("招商信息不存在");
         }
         return companyDetailOptional.get();
+    }
+
+    private ParkUser checkUser(String id) {
+        Optional<ParkUser> optionalParkUser = parkUserRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(id);
+        if (!optionalParkUser.isPresent()) {
+            throw new NormalException("用户不存在");
+        }
+        return optionalParkUser.get();
     }
 }

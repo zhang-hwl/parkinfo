@@ -25,6 +25,7 @@ import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class LoginServiceImpl implements ILoginService {
@@ -47,8 +48,8 @@ public class LoginServiceImpl implements ILoginService {
         }
         ParkUser parkUser = optionalParkUser.get();
         parkUser.setRoles(null);
-        String password = new SimpleHash("MD5", request.getPassword(), parkUser.getSalt(),1024).toHex();
-        if (!password.equals(parkUser.getPassword())){
+        String password = new SimpleHash("MD5", request.getPassword(), parkUser.getSalt(), 1024).toHex();
+        if (!password.equals(parkUser.getPassword())) {
             throw new NormalException("密码错误");
         }
         //TODO
@@ -60,7 +61,7 @@ public class LoginServiceImpl implements ILoginService {
         if (null == parkUser.getParks()) {
             throw new NormalException("请绑定园区");
         }
-        if (!parkUser.getParks().contains(park)){
+        if (!parkUser.getParks().contains(park)) {
             throw new NormalException("请选择所在园区");
         }
         token = tokenUtils.generateTokeCode(parkUser, request.getId());
@@ -79,45 +80,33 @@ public class LoginServiceImpl implements ILoginService {
     }
 
     @Override
-    public Result<Page<ParkUserResponse>> findByCurrent(QueryUserCurrentRequest request) {
-        Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
-        Specification<ParkUser> specification = (Specification<ParkUser>) (root, criteriaQuery, criteriaBuilder) -> {
-            List<Predicate> predicates = new ArrayList<>();
-            ParkInfo parkInfo = tokenUtils.getCurrentParkInfo();
-            Join<ParkUser, ParkInfo> join = root.join(root.getModel().getSingularAttribute("parkInfo", ParkInfo.class), JoinType.LEFT);
-            predicates.add(criteriaBuilder.equal(join.get("id").as(String.class), parkInfo.getId()));
-            predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
-            predicates.add(criteriaBuilder.equal(root.get("entered").as(Boolean.class), Boolean.FALSE));
-            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-        };
-        Page<ParkUser> parkUserPage = parkUserRepository.findAll(specification, pageable);
-        Page<ParkUserResponse> responses = this.convertUserPage(parkUserPage);
-        return Result.<Page<ParkUserResponse>>builder().success().data(responses).build();
+    public Result<List<ParkUser>> findByCurrent() {
+        ParkInfo parkInfo = tokenUtils.getCurrentParkInfo();
+        List<ParkUser> allByParksEquals = parkUserRepository.findAllByParksEqualsAndDeleteIsFalseAndAvailableIsTrue(parkInfo);
+        return Result.<List<ParkUser>>builder().success().data(allByParksEquals).build();
     }
 
     @Override
-    public Result<Page<ParkUserResponse>> query(QueryUserByParkRequest request) {
-        Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
-        Specification<ParkUser> specification = (Specification<ParkUser>) (root, criteriaQuery, criteriaBuilder) -> {
-            List<Predicate> predicates = new ArrayList<>();
-            Join<ParkUser, ParkInfo> join = root.join(root.getModel().getSingularAttribute("parkInfo", ParkInfo.class), JoinType.LEFT);
-            predicates.add(criteriaBuilder.equal(join.get("id").as(String.class), request.getId()));
-            predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
-            predicates.add(criteriaBuilder.equal(root.get("entered").as(Boolean.class), Boolean.FALSE));
-            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-        };
-        Page<ParkUser> parkUsers = parkUserRepository.findAll(specification, pageable);
-        Page<ParkUserResponse> userResponses = this.convertUserPage(parkUsers);
-        return Result.<Page<ParkUserResponse>>builder().success().data(userResponses).build();
+    public Result<List<ParkUser>> query(String parkId) {
+        ParkInfo parkInfo = this.checkPark(parkId);
+        /*List<ParkUser> response = new ArrayList<>();
+        ParkUser user = new ParkUser();
+        List<ParkUser> collect = parkInfo.getUsers().stream()
+                .filter(parkUser -> parkUser.getDelete().equals(false)&&parkUser.getAvailable().equals(true))
+                .collect(Collectors.toList());
+        collect.forEach(parkUser -> {
+            BeanUtils.copyProperties(parkUser, user);
+            response.add(user);
+        });*/
+        List<ParkUser> allByParksEquals = parkUserRepository.findAllByParksEqualsAndDeleteIsFalseAndAvailableIsTrue(parkInfo);
+        return Result.<List<ParkUser>>builder().success().data(allByParksEquals).build();
     }
 
-    private Page<ParkUserResponse> convertUserPage(Page<ParkUser> parkUserPage) {
-        List<ParkUserResponse> content = new ArrayList<>();
-        parkUserPage.getContent().forEach(parkUser -> {
-            ParkUserResponse response = new ParkUserResponse();
-            BeanUtils.copyProperties(parkUser, response);
-            content.add(response);
-        });
-        return new PageImpl<>(content, parkUserPage.getPageable(), parkUserPage.getTotalElements());
+    private ParkInfo checkPark(String id) {
+        Optional<ParkInfo> parkInfoOptional = parkInfoRepository.findFirstByDeleteIsFalseAndAvailableIsTrueAndId(id);
+        if (!parkInfoOptional.isPresent()) {
+            throw new NormalException("园区不存在");
+        }
+        return parkInfoOptional.get();
     }
 }

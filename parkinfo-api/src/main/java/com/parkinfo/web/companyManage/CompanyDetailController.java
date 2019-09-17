@@ -68,13 +68,6 @@ public class CompanyDetailController {
         return companyDetailService.set(request);
     }
 
-    @PostMapping("/setRequire")
-    @ApiOperation("修改企业需求信息")
-    @RequiresPermissions("companyManage:companyInfo:info_setRequire")
-    public Result setRequire(@RequestBody SetCompanyRequireRequest request) {
-        return companyDetailService.setRequire(request);
-    }
-
     @PostMapping("/delete/{id}")
     @ApiOperation("删除企业信息")
     @RequiresPermissions("companyManage:companyInfo:info_delete")
