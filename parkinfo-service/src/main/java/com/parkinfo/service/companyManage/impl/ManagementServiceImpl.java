@@ -146,10 +146,15 @@ public class ManagementServiceImpl implements IManagementService {
         CompanyDetail investment = this.checkInvestment(id);
         ManageDetailResponse response = new ManageDetailResponse();
         BeanUtils.copyProperties(investment,response);
-        ParkUser parkUser = investment.getParkUser();
-        response.setManId(parkUser.getId());
-        response.setNickname(parkUser.getNickname());
-        return Result.<ManageDetailResponse>builder().success().data(response).build();
+        Optional<ParkUser> optionalParkUser = parkUserRepository.findByCompanyDetail_IdAndDeleteIsFalseAndAvailableIsTrue(investment.getId());
+        if (!optionalParkUser.isPresent()) {
+            return Result.<ManageDetailResponse>builder().success().data(response).build();
+        }else {
+            ParkUser user = optionalParkUser.get();
+            response.setManId(user.getId());
+            response.setNickname(user.getNickname());
+            return Result.<ManageDetailResponse>builder().success().data(response).build();
+        }
     }
 
     @Override
