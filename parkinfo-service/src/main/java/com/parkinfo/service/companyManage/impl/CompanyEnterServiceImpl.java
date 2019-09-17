@@ -5,15 +5,16 @@ import com.parkinfo.entity.companyManage.CompanyDetail;
 import com.parkinfo.entity.companyManage.EnclosureTotal;
 import com.parkinfo.entity.companyManage.EnteredInfo;
 import com.parkinfo.entity.userConfig.ParkInfo;
-import com.parkinfo.enums.EnterStatus;
 import com.parkinfo.enums.FileUploadType;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.companyManage.CompanyDetailRepository;
 import com.parkinfo.repository.companyManage.EnclosureTotalRepository;
 import com.parkinfo.repository.companyManage.EnteredInfoRepository;
 import com.parkinfo.request.compayManage.*;
+import com.parkinfo.response.companyManage.EnclosureTotalResponse;
 import com.parkinfo.response.companyManage.EnterDetailResponse;
 import com.parkinfo.response.companyManage.EnterResponse;
+import com.parkinfo.response.companyManage.EnteredInfoResponse;
 import com.parkinfo.service.companyManage.ICompanyEnterService;
 import com.parkinfo.token.TokenUtils;
 import com.parkinfo.tools.oss.IOssService;
@@ -24,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
@@ -33,7 +33,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -53,28 +52,6 @@ public class CompanyEnterServiceImpl implements ICompanyEnterService {
 
     @Autowired
     private IOssService ossService;
-
-    @Override
-    public Result enterImport(MultipartFile file) {
-        String fileName = file.getOriginalFilename();
-        if (!Objects.requireNonNull(fileName).matches("^.+\\.(?i)(xls)$") && !fileName.matches("^.+\\.(?i)(xlsx)$")) {
-            throw new NormalException("上传文件格式不正确");
-        }
-        try {
-            List<CompanyDetail> companyDetails = ExcelUtils.importExcel(file, CompanyDetail.class);
-            if(companyDetails != null){
-                companyDetails.forEach(companyDetail -> {
-                    ParkInfo parkInfo = tokenUtils.getCurrentParkInfo();
-                    companyDetail.setParkInfo(parkInfo);
-                    companyDetail.setDeleteEnter(false);
-                    companyDetailRepository.save(companyDetail);
-                });
-            }
-        } catch (Exception e) {
-            throw new NormalException("上传失败");
-        }
-        return Result.builder().message("上传成功").build();
-    }
 
     @Override
     public Result enterExport(HttpServletResponse response) {
@@ -125,7 +102,7 @@ public class CompanyEnterServiceImpl implements ICompanyEnterService {
     @Override
     public Result setCompany(ModifyCompanyRequest request) {
         CompanyDetail companyDetail = this.checkEnter(request.getId());
-        BeanUtils.copyProperties(request,companyDetail);
+        BeanUtils.copyProperties(request, companyDetail);
         companyDetailRepository.save(companyDetail);
         return Result.builder().success().message("修改成功").build();
     }
@@ -134,7 +111,7 @@ public class CompanyEnterServiceImpl implements ICompanyEnterService {
     public Result addEnter(AddEnterDetailRequest request) {
         CompanyDetail companyDetail = this.checkEnter(request.getCompanyId());
         EnteredInfo enteredInfo = new EnteredInfo();
-        BeanUtils.copyProperties(request,enteredInfo);
+        BeanUtils.copyProperties(request, enteredInfo);
         enteredInfo.setCompanyDetail(companyDetail);
         enteredInfo.setDelete(false);
         enteredInfo.setAvailable(true);
@@ -145,7 +122,7 @@ public class CompanyEnterServiceImpl implements ICompanyEnterService {
     @Override
     public Result set(SetEnterDetailRequest request) {
         EnteredInfo enteredInfo = this.checkEnterInfo(request.getEnterId());
-        BeanUtils.copyProperties(request,enteredInfo);
+        BeanUtils.copyProperties(request, enteredInfo);
         enteredInfoRepository.save(enteredInfo);
         return Result.builder().success().message("修改成功").build();
     }
@@ -162,20 +139,26 @@ public class CompanyEnterServiceImpl implements ICompanyEnterService {
     public Result<EnterDetailResponse> query(String id) {
         CompanyDetail companyDetail = this.checkEnter(id);
         EnterDetailResponse response = new EnterDetailResponse();
-        BeanUtils.copyProperties(companyDetail,response);
-        return Result.<EnterDetailResponse>builder().success().data(response).build();
-    }
-
-    @Override
-    public Result<List<EnteredInfo>> queryEnter(String id) {
+        BeanUtils.copyProperties(companyDetail, response);
+        //添加返回入驻信息
         List<EnteredInfo> totals = enteredInfoRepository.findAllByCompanyDetail_IdAndDeleteIsFalse(id);
-        return Result.<List<EnteredInfo>>builder().success().data(totals).build();
-    }
-
-    @Override
-    public Result<List<EnclosureTotal>> find(String id) {
+        List<EnteredInfoResponse> enteredInfoResponseList = new ArrayList<>();
+        EnteredInfoResponse enteredInfoResponse = new EnteredInfoResponse();
+        totals.forEach(enteredInfo -> {
+            BeanUtils.copyProperties(enteredInfo, enteredInfoResponse);
+            enteredInfoResponseList.add(enteredInfoResponse);
+        });
+        response.setInfoResponseList(enteredInfoResponseList);
+        //添加返回附件
         List<EnclosureTotal> all = enclosureTotalRepository.findAllByCompanyDetail_IdAndDeleteIsFalse(id);
-        return Result.<List<EnclosureTotal>>builder().success().data(all).build();
+        List<EnclosureTotalResponse> enclosureTotalResponseList = new ArrayList<>();
+        EnclosureTotalResponse enclosureTotalResponse = new EnclosureTotalResponse();
+        all.forEach(enclosureTotal -> {
+            BeanUtils.copyProperties(enclosureTotal, enclosureTotalResponse);
+            enclosureTotalResponseList.add(enclosureTotalResponse);
+        });
+        response.setEnclosureTotalResponseList(enclosureTotalResponseList);
+        return Result.<EnterDetailResponse>builder().success().data(response).build();
     }
 
     @Override
@@ -197,7 +180,7 @@ public class CompanyEnterServiceImpl implements ICompanyEnterService {
         CompanyDetail companyDetail = this.checkEnter(request.getCompanyId());
         EnclosureTotal enclosureTotal = new EnclosureTotal();
         enclosureTotal.setCompanyDetail(companyDetail);
-        BeanUtils.copyProperties(request,enclosureTotal);
+        BeanUtils.copyProperties(request, enclosureTotal);
         enclosureTotal.setDelete(false);
         enclosureTotal.setAvailable(true);
         enclosureTotalRepository.save(enclosureTotal);

@@ -7,14 +7,12 @@ import com.aliyuncs.vod.model.v20170321.RefreshUploadVideoResponse;
 import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
 import com.parkinfo.dto.ParkUserDTO;
-import com.parkinfo.entity.parkCulture.Book;
-import com.parkinfo.entity.parkCulture.Video;
-import com.parkinfo.entity.parkCulture.VideoComment;
-import com.parkinfo.entity.parkCulture.VideoRecord;
+import com.parkinfo.entity.parkCulture.*;
 import com.parkinfo.entity.userConfig.ParkRole;
 import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.enums.ParkRoleEnum;
 import com.parkinfo.exception.NormalException;
+import com.parkinfo.repository.parkCulture.VideoCategoryRepository;
 import com.parkinfo.repository.parkCulture.VideoCommentRepository;
 import com.parkinfo.repository.parkCulture.VideoRecordRepository;
 import com.parkinfo.repository.parkCulture.VideoRepository;
@@ -55,6 +53,9 @@ public class VideoServiceImpl implements IVideoService {
 
     @Autowired
     private VideoRecordRepository videoRecordRepository;
+
+    @Autowired
+    private VideoCategoryRepository videoCategoryRepository;
 
     @Autowired
     private TokenUtils tokenUtils;
@@ -220,6 +221,53 @@ public class VideoServiceImpl implements IVideoService {
         return Result.<RefreshUploadVideoResponse>builder().success().data(response).build();
     }
 
+    @Override
+    public Result<Page<VideoCategoryListResponse>> search(QueryVideoCategoryListRequest request) {
+        Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
+        Specification<VideoCategory> videoCategorySpecification = (Specification<VideoCategory>) (root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(criteriaBuilder.equal(root.get("parent"), null));
+            predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
+            predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+        Page<VideoCategory> videoCategoryPage = videoCategoryRepository.findAll(videoCategorySpecification, pageable);
+        Page<VideoCategoryListResponse> responsePage = this.convertVideoCategoryPage(videoCategoryPage);
+        return Result.<Page<VideoCategoryListResponse>>builder().success().data(responsePage).build();
+    }
+
+    @Override
+    public Result addVideoCategory(AddVideoCategoryRequest request) {
+        VideoCategory videoCategory = new VideoCategory();
+        BeanUtils.copyProperties(request,videoCategory);
+        if (StringUtils.isNotBlank(request.getParentId())){
+            VideoCategory parent = this.checkVideoCategory(request.getParentId());
+            videoCategory.setParent(parent);
+        }
+        videoCategoryRepository.save(videoCategory);
+        return Result.builder().success().message("添加视频分类成功").build();
+    }
+
+    @Override
+    public Result setVideoCategory(SetVideoCategoryRequest request) {
+        VideoCategory videoCategory = this.checkVideoCategory(request.getId());
+        BeanUtils.copyProperties(request,videoCategory);
+        if (StringUtils.isNotBlank(request.getParentId())){
+            VideoCategory parent = this.checkVideoCategory(request.getParentId());
+            videoCategory.setParent(parent);
+        }
+        videoCategoryRepository.save(videoCategory);
+        return Result.builder().success().message("修改视频分类成功").build();
+    }
+
+    @Override
+    public Result deleteVideoCategory(String id) {
+        VideoCategory videoCategory = this.checkVideoCategory(id);
+        videoCategory.setDelete(true);
+        videoCategoryRepository.save(videoCategory);
+        return Result.builder().success().message("删除视频分类成功").build();
+    }
+
     private Page<VideoListResponse> convertVideoPage(Page<Video> videoPage) {
         List<VideoListResponse> content = Lists.newArrayList();
         videoPage.forEach(video -> {
@@ -274,11 +322,38 @@ public class VideoServiceImpl implements IVideoService {
         return new PageImpl<>(content,videoRecordPage.getPageable(),videoRecordPage.getTotalElements());
     }
 
+    private Page<VideoCategoryListResponse> convertVideoCategoryPage(Page<VideoCategory> videoCategoryPage) {
+        List<VideoCategoryListResponse> content = Lists.newArrayList();
+        videoCategoryPage.forEach(videoCategory -> {
+            VideoCategoryListResponse response = new VideoCategoryListResponse();
+            BeanUtils.copyProperties(videoCategory, response);
+            List<VideoCategoryListResponse> children = Lists.newArrayList();
+            videoCategory.getChildren().forEach(childrenCategory->{
+                if (childrenCategory.getAvailable()&&!childrenCategory.getDelete()) {
+                    VideoCategoryListResponse childrenResponse = new VideoCategoryListResponse();
+                    BeanUtils.copyProperties(childrenCategory, childrenResponse);
+                    children.add(childrenResponse);
+                }
+            });
+            response.setChildren(children);
+            content.add(response);
+        });
+        return new PageImpl<>(content, videoCategoryPage.getPageable(), videoCategoryPage.getTotalElements());
+    }
+
     private Video checkVideo(String videoId) {
         Optional<Video> videoOptional = videoRepository.findById(videoId);
         if (!videoOptional.isPresent()) {
             throw new NormalException("该视频不存在");
         }
         return videoOptional.get();
+    }
+
+    private VideoCategory checkVideoCategory(String parentId) {
+        Optional<VideoCategory> videoCategoryOptional = videoCategoryRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(parentId);
+        if (!videoCategoryOptional.isPresent()) {
+            throw new NormalException("该视频分类不存在");
+        }
+        return videoCategoryOptional.get();
     }
 }

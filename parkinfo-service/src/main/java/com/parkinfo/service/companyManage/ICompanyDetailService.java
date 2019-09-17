@@ -49,13 +49,6 @@ public interface ICompanyDetailService {
     Result set(SetCompanyInfoRequest request);
 
     /**
-     * 修改企业需求
-     * @param request
-     * @return
-     */
-    Result setRequire(SetCompanyRequireRequest request);
-
-    /**
      * 删除企业信息
      * @param id
      * @return

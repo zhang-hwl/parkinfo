@@ -1,14 +1,13 @@
 package com.parkinfo.response.companyManage;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
+import java.util.Date;
 
 @Data
 public class CompanyDetailResponse {
-    @ApiModelProperty(value = "id")
-    private String id;
 
     @ApiModelProperty(value = "公司名称")
     private String companyName;
@@ -35,7 +34,8 @@ public class CompanyDetailResponse {
     private String requireArea;
 
     @ApiModelProperty(value = "需求时间")
-    private String requireTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    private Date requireTime;
 
     @ApiModelProperty(value = "需求位置")
     private String requireSite;
@@ -44,6 +44,5 @@ public class CompanyDetailResponse {
     private String connectMan;
 
     @ApiModelProperty(value = "需求详情")
-    @Column(columnDefinition = "text")
     private String requireDetail;
 }

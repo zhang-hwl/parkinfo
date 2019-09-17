@@ -1,5 +1,7 @@
 package com.parkinfo.response.companyManage;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.parkinfo.enums.DiscussStatus;
 import com.parkinfo.enums.EnterStatus;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -17,6 +19,13 @@ public class ManageDetailResponse {
     @ApiModelProperty(value = "公司注册资金")
     private String registerMoney;
 
+    @ApiModelProperty(value = "主要业务")
+    private String mainBusiness;
+
+    @ApiModelProperty(value = "公司成立日期")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    private Date foundTime;
+
     @ApiModelProperty(value = "是否为百强企业")
     private String hundredCompany;
 
@@ -26,11 +35,11 @@ public class ManageDetailResponse {
     @ApiModelProperty(value = "联系人")
     private String linkMan;
 
+    @ApiModelProperty(value = "职位")
+    private String position;
+
     @ApiModelProperty(value = "联系电话")
     private String phone;
-
-    @ApiModelProperty(value = "主要业务")
-    private String mainBusiness;
 
     @ApiModelProperty(value = "需求面积")
     private String requireArea;
@@ -47,6 +56,9 @@ public class ManageDetailResponse {
     @ApiModelProperty(value = "对接方式")
     private String connectWay;
 
+    @ApiModelProperty(value = "洽谈状态")//WAIT_LOOK,LOOKED,FOLLOWING,FIRST_PASS 未参园,已参观,跟进中,第一次通过
+    private DiscussStatus discussStatus;
+
     @ApiModelProperty(value = "洽谈内容")
     private String content;
 
@@ -55,4 +67,10 @@ public class ManageDetailResponse {
 
     @ApiModelProperty(value = "入驻状态")
     private EnterStatus enterStatus;
+
+    @ApiModelProperty(value = "管理公司信息人")
+    private String nickname;
+
+    @ApiModelProperty(value = "管理公司信息人id")
+    private String manId;
 }

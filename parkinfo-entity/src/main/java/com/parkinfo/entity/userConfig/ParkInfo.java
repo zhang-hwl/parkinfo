@@ -38,7 +38,6 @@ public class ParkInfo extends BaseEntity {
      * 园区负责人
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
     @JoinColumn(name = "manager_id")
     private ParkUser manager;
 

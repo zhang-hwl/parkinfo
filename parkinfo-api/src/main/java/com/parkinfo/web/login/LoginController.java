@@ -3,6 +3,7 @@ package com.parkinfo.web.login;
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.entity.userConfig.ParkPermission;
+import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.request.login.LoginRequest;
 import com.parkinfo.request.login.QueryUserByParkRequest;
 import com.parkinfo.request.login.QueryUserCurrentRequest;
@@ -14,10 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -49,19 +47,13 @@ public class LoginController {
 
     @PostMapping("/search")
     @ApiOperation(value = "获取本园区用户")
-    public Result<Page<ParkUserResponse>> findByCurrent(@RequestBody QueryUserCurrentRequest request) {
-        return loginService.findByCurrent(request);
+    public Result<List<ParkUser>> findByCurrent() {
+        return loginService.findByCurrent();
     }
 
-    @PostMapping("/query")
+    @PostMapping("/query/{parkId}")
     @ApiOperation(value = "根据园区获取用户")
-    public Result<Page<ParkUserResponse>> query(@RequestBody QueryUserByParkRequest request) {
-        return loginService.query(request);
-    }
-
-    @PostMapping("/findPermission")
-    @ApiOperation(value = "获取所有权限")
-    public Result<List<ParkPermission>> findPermission() {
-        return loginService.findPermission();
+    public Result<List<ParkUser>> query(@PathVariable String parkId) {
+        return loginService.query(parkId);
     }
 }

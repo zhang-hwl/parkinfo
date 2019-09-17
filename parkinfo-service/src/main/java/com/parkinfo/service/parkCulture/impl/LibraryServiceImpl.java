@@ -3,20 +3,16 @@ package com.parkinfo.service.parkCulture.impl;
 import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.parkCulture.Book;
+import com.parkinfo.entity.parkCulture.BookCategory;
 import com.parkinfo.entity.parkCulture.BookComment;
 import com.parkinfo.entity.parkCulture.ReadProcess;
 import com.parkinfo.exception.NormalException;
+import com.parkinfo.repository.parkCulture.BookCategoryRepository;
 import com.parkinfo.repository.parkCulture.BookCommentRepository;
 import com.parkinfo.repository.parkCulture.BookRepository;
 import com.parkinfo.repository.parkCulture.ReadProcessRepository;
-import com.parkinfo.request.parkCulture.AddBookCommentRequest;
-import com.parkinfo.request.parkCulture.QueryBookCommentListRequest;
-import com.parkinfo.request.parkCulture.QueryBookListRequest;
-import com.parkinfo.request.parkCulture.SetReadProcessRequest;
-import com.parkinfo.response.parkCulture.BookCommentListResponse;
-import com.parkinfo.response.parkCulture.BookDetailResponse;
-import com.parkinfo.response.parkCulture.BookListResponse;
-import com.parkinfo.response.parkCulture.ReadProcessResponse;
+import com.parkinfo.request.parkCulture.*;
+import com.parkinfo.response.parkCulture.*;
 import com.parkinfo.service.parkCulture.ILibraryService;
 import com.parkinfo.token.TokenUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -50,6 +46,9 @@ public class LibraryServiceImpl implements ILibraryService {
 
     @Autowired
     private ReadProcessRepository readProcessRepository;
+
+    @Autowired
+    private BookCategoryRepository bookCategoryRepository;
 
     @Autowired
     private TokenUtils tokenUtils;
@@ -88,6 +87,14 @@ public class LibraryServiceImpl implements ILibraryService {
         Book book = bookOptional.get();
         BookDetailResponse response = this.convertBookDetail(book);
         return Result.<BookDetailResponse>builder().success().data(response).build();
+    }
+
+    @Override
+    public Result disableBook(String bookId) {
+        Book book = this.checkBook(bookId);
+        book.setAvailable(book.getAvailable() != null && !book.getAvailable());
+        bookRepository.save(book);
+        return Result.builder().success().message("成功").build();
     }
 
     @Override
@@ -153,6 +160,54 @@ public class LibraryServiceImpl implements ILibraryService {
         return Result.builder().success().message("更新阅读进度成功").build();
     }
 
+    @Override
+    public Result<Page<BookCategoryListResponse>> search(QueryCategoryListRequest request) {
+        Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
+        Specification<BookCategory> bookCategorySpecification = (Specification<BookCategory>) (root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(criteriaBuilder.equal(root.get("parent"), null));
+            predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
+            predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+        Page<BookCategory> bookCategoryPage = bookCategoryRepository.findAll(bookCategorySpecification, pageable);
+        Page<BookCategoryListResponse> responsePage = this.convertBookCategoryPage(bookCategoryPage);
+        return Result.<Page<BookCategoryListResponse>>builder().success().data(responsePage).build();
+    }
+
+
+    @Override
+    public Result addBookCategory(AddBookCategoryRequest request) {
+        BookCategory bookCategory = new BookCategory();
+        BeanUtils.copyProperties(request,bookCategory);
+        if (StringUtils.isNotBlank(request.getParentId())){
+            BookCategory parent = this.checkBookCategory(request.getParentId());
+            bookCategory.setParent(parent);
+        }
+        bookCategoryRepository.save(bookCategory);
+        return Result.builder().success().message("添加图书分类成功").build();
+    }
+
+    @Override
+    public Result setBookCategory(SetBookCategoryRequest request) {
+        BookCategory bookCategory = this.checkBookCategory(request.getId());
+        BeanUtils.copyProperties(request,bookCategory);
+        if (StringUtils.isNotBlank(request.getParentId())){
+            BookCategory parent = this.checkBookCategory(request.getParentId());
+            bookCategory.setParent(parent);
+        }
+        bookCategoryRepository.save(bookCategory);
+        return Result.builder().success().message("修改图书分类成功").build();
+    }
+
+    @Override
+    public Result deleteBookCategory(String id) {
+        BookCategory bookCategory = this.checkBookCategory(id);
+        bookCategory.setDelete(true);
+        bookCategoryRepository.save(bookCategory);
+        return Result.builder().success().message("删除图书分类成功").build();
+    }
+
     /**
      * convert from Book's Page to BookListResponse's Page
      *
@@ -169,6 +224,24 @@ public class LibraryServiceImpl implements ILibraryService {
         return new PageImpl<>(content, bookPage.getPageable(), bookPage.getTotalElements());
     }
 
+    private Page<BookCategoryListResponse> convertBookCategoryPage(Page<BookCategory> bookCategoryPage) {
+        List<BookCategoryListResponse> content = Lists.newArrayList();
+        bookCategoryPage.forEach(bookCategory -> {
+            BookCategoryListResponse response = new BookCategoryListResponse();
+            BeanUtils.copyProperties(bookCategory, response);
+            List<BookCategoryListResponse> children = Lists.newArrayList();
+            bookCategory.getChildren().forEach(childrenCategory->{
+                if (childrenCategory.getAvailable()&&!childrenCategory.getDelete()) {
+                    BookCategoryListResponse childrenResponse = new BookCategoryListResponse();
+                    BeanUtils.copyProperties(childrenCategory, childrenResponse);
+                    children.add(childrenResponse);
+                }
+            });
+            response.setChildren(children);
+            content.add(response);
+        });
+        return new PageImpl<>(content, bookCategoryPage.getPageable(), bookCategoryPage.getTotalElements());
+    }
     /**
      * convert from Book to BookDetailResponse
      *
@@ -219,4 +292,14 @@ public class LibraryServiceImpl implements ILibraryService {
         }
         return bookOptional.get();
     }
+
+    private BookCategory checkBookCategory(String parentId) {
+        Optional<BookCategory> bookCategoryOptional = bookCategoryRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(parentId);
+        if (!bookCategoryOptional.isPresent()) {
+            throw new NormalException("该图书分类不存在");
+        }
+        return bookCategoryOptional.get();
+
+    }
+
 }

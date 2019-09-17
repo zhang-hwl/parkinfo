@@ -63,7 +63,8 @@ public class CompanyDetail extends BaseEntity{
 
     @Excel(name = "需求时间", width = 15)
     @ApiModelProperty(value = "需求时间")
-    private String requireTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    private Date requireTime;
 
     @Excel(name = "需求位置", width = 15)
     @ApiModelProperty(value = "需求位置")
@@ -108,6 +109,7 @@ public class CompanyDetail extends BaseEntity{
 
     @Excel(name = "对接时间", width = 15)
     @ApiModelProperty(value = "对接时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date connectTime;
 
     @Excel(name = "意向", width = 15)

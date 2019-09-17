@@ -86,8 +86,8 @@ public class CompanyDetailServiceImpl implements ICompanyDetailService {
         Specification<CompanyDetail> specification = (Specification<CompanyDetail>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             ParkInfo parkInfo = tokenUtils.getCurrentParkInfo();
-            if (StringUtils.isNotBlank(request.getLinkMan())) {
-                predicates.add(criteriaBuilder.like(root.get("linkMan").as(String.class), "%" + request.getLinkMan() + "%"));
+            if (StringUtils.isNotBlank(request.getCompanyName())) {
+                predicates.add(criteriaBuilder.like(root.get("companyName").as(String.class), "%" + request.getCompanyName()+ "%"));
             }
             if (StringUtils.isNotBlank(request.getMainBusiness())) {
                 predicates.add(criteriaBuilder.like(root.get("mainBusiness").as(String.class), "%" + request.getMainBusiness() + "%"));
@@ -118,14 +118,6 @@ public class CompanyDetailServiceImpl implements ICompanyDetailService {
 
     @Override
     public Result set(SetCompanyInfoRequest request) {
-        CompanyDetail company = this.checkCompany(request.getId());
-        BeanUtils.copyProperties(request,company);
-        companyDetailRepository.save(company);
-        return Result.builder().success().message("修改成功").build();
-    }
-
-    @Override
-    public Result setRequire(SetCompanyRequireRequest request) {
         CompanyDetail company = this.checkCompany(request.getId());
         BeanUtils.copyProperties(request,company);
         companyDetailRepository.save(company);

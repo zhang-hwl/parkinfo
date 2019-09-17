@@ -92,17 +92,15 @@ public class ManagementController {
         return managementService.set(request);
     }
 
-    @PostMapping("/setConnect")
-    @ApiOperation("修改对接信息")
-    @RequiresPermissions("companyManage:investment:invest_setConnect")
-    public Result setConnect(@RequestBody SetConnectRequest request) {
-        return managementService.setConnect(request);
-    }
-
-    @PostMapping("/setDiscuss")
-    @ApiOperation("修改洽谈信息")
-    @RequiresPermissions("companyManage:investment:invest_setDiscuss")
-    public Result setDiscuss(@RequestBody SetDiscussRequest request) {
-        return managementService.setDiscuss(request);
+    @PostMapping("/bind")
+    @ApiOperation("绑定人员")
+    @RequiresPermissions("companyManage:investment:invest_bind")
+    public Result bind(@Valid @RequestBody BindCompanyRequest request, BindingResult result) {
+        if (result.hasErrors()) {
+            for (ObjectError error : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
+        return managementService.bind(request);
     }
 }
