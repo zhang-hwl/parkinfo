@@ -24,40 +24,42 @@ public class CheckRecordController {
 
     @PostMapping("/add")
     @ApiOperation(value = "新增点检记录表")
-    @RequiresPermissions(value = "infoTotal:add")
+    @RequiresPermissions(value = "infoTotal:checkRecord:add")
     public Result<String> add(@RequestBody CheckRecordRequest request){
         return checkRecordService.addCheckRecord(request);
     }
 
     @PostMapping("/edit")
     @ApiOperation(value = "编辑点检记录表")
-    @RequiresPermissions(value = "infoTotal:edit")
+    @RequiresPermissions(value = "infoTotal:checkRecord:edit")
     public Result<String> edit(@RequestBody CheckRecordRequest request){
         return checkRecordService.editCheckRecord(request);
     }
 
     @PostMapping("/delete/{id}")
     @ApiOperation(value = "删除点检记录表")
-    @RequiresPermissions(value = "infoTotal:delete")
+    @RequiresPermissions(value = "infoTotal:checkRecord:delete")
     public Result<String> delete(@PathVariable("id") String id){
         return checkRecordService.deleteCheckRecord(id);
     }
 
     @PostMapping("/all")
     @ApiOperation(value = "查询所有点检记录表")
+    @RequiresPermissions(value = "infoTotal:checkRecord:search")
     public Result<List<CheckRecordRequest>> findAll(){
         return checkRecordService.findAll();
     }
 
     @PostMapping("/search/{version}")
     @ApiOperation(value = "根据版本查询点检记录表")
+    @RequiresPermissions(value = "infoTotal:checkRecord:search")
     public Result<List<CheckRecordRequest>> findByVersion(@PathVariable("version") String version){
         return checkRecordService.findByVersion(version);
     }
 
     @PostMapping("/import")
     @ApiOperation(value = "导入点检记录表")
-    @RequiresPermissions(value = "infoTotal:add")
+    @RequiresPermissions(value = "infoTotal:checkRecord:add")
     public Result<String> myImport(@RequestBody MultipartFile multipartFile){
         return checkRecordService.checkRecordImport(multipartFile);
     }
@@ -70,6 +72,7 @@ public class CheckRecordController {
 
     @PostMapping("/download")
     @ApiOperation(value = "文件导出")
+    @RequiresPermissions(value = "infoTotal:checkRecord:export")
     public void download(HttpServletResponse response, @RequestBody String version){
         checkRecordService.download(response, version);
     }

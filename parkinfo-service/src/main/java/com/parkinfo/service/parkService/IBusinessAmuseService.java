@@ -35,4 +35,8 @@ public interface IBusinessAmuseService {
      * @return
      */
     Result<String> deleteBusinessAmuse(String id);
+
+    Result<BusinessAmuseResponse> detailBusinessAmuse(String id);
+
+    Result<String> detailBusinessAmuseType();
 }

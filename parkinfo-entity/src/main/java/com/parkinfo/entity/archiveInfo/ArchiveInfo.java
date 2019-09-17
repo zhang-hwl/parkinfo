@@ -16,7 +16,7 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "c_archive_info")
+@Table(name = "c_archive_info", indexes = {@Index(columnList = "general_id")})
 @EntityListeners(AuditingEntityListener.class)
 @ApiModel(value = "ArchiveInfo", description = "存档资料")
 public class ArchiveInfo extends BaseEntity {
@@ -29,9 +29,6 @@ public class ArchiveInfo extends BaseEntity {
 
     @ApiModelProperty(value = "文件地址")
     private String fileAddress;
-
-    @ApiModelProperty(value = "PDF文件地址")
-    private String pdfAddress;
 
     @ApiModelProperty(value = "上传人")
     private String heir;
@@ -47,17 +44,16 @@ public class ArchiveInfo extends BaseEntity {
     @ApiModelProperty(value = "文档说明")
     private String remark;
 
-    @ApiModelProperty(value = "大类")
-    @ManyToOne
-    @JoinColumn(name = "general_id")
-    private ArchiveInfoType general;
+    //冗余字段，查询使用
+    @Column(name = "general_id")
+    private String generalId;
 
     @ApiModelProperty(value = "种类")
     @ManyToOne(cascade = {CascadeType.REMOVE})
     @JoinColumn(name = "kind_id")
     private ArchiveInfoType kind;
 
-    @Column(name = "`parkManager`", columnDefinition = "tinyint(1)")
+    @Column(name = "`parkPerson`", columnDefinition = "tinyint(1)")
     @ApiModelProperty(value = "本园区员工是否有查看权限")
     private Boolean parkPerson;
 

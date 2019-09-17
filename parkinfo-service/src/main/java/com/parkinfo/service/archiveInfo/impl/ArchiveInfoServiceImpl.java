@@ -38,7 +38,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.*;
 
-@Service
 public class ArchiveInfoServiceImpl implements IArchiveInfoService {
 
     @Autowired
@@ -60,87 +59,7 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
 
     @Override
     public Result<Page<ArchiveInfoResponse>> search(QueryArchiveInfoRequest request) {
-        Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.DEFAULT_DIRECTION.DESC, "uploadTime");
-        Specification<ArchiveInfo> specification = new Specification<ArchiveInfo>() {
-            @Override
-            public Predicate toPredicate(Root<ArchiveInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder cb) {
-                List<Predicate> predicates = new ArrayList<>();
-                if(request.getGeneral() != null){
-                    predicates.add(cb.equal(root.get("general").get("id").as(String.class), request.getGeneral())); //文件大类
-                }
-                if(request.getKind() != null){
-                    predicates.add(cb.equal(root.get("kind").get("id").as(String.class), request.getKind())); //文件种类
-                }
-                if(StringUtils.isNotBlank(request.getParkId())){
-                    predicates.add(cb.equal(root.get("parkInfo").get("id").as(String.class), request.getParkId())); //园区ID
-                }
-                if(StringUtils.isNotBlank(request.getFileName())){
-                    predicates.add(cb.like(root.get("fileName").as(String.class), "%"+request.getFileName()+"%"));  //根据文件名模糊查询
-                }
-                if(request.getStartTime() != null){
-                    predicates.add(cb.greaterThanOrEqualTo(root.get("uploadTime").as(Date.class), request.getStartTime()));  //大于等于开始时间
-                }
-                if(request.getEndTime() != null){
-                    predicates.add(cb.lessThanOrEqualTo(root.get("uploadTime").as(Date.class), request.getEndTime())); //小于等于结束时间
-                }
-                if(StringUtils.isNotBlank(request.getRemark())){
-                    predicates.add(cb.like(root.get("remark").as(String.class), "%"+request.getRemark()+"%")); //文档说明
-                }
-                if(request.getExternal() != null){
-                    predicates.add(cb.equal(root.get("remark").as(Boolean.class), request.getExternal())); //是否对外
-                }
-                predicates.add(cb.equal(root.get("delete").as(Boolean.class), false));  //没有被删除
-                return cb.and(predicates.toArray(new Predicate[predicates.size()]));
-            }
-        };
-        Page<ArchiveInfo> all = archiveInfoRepository.findAll(specification, pageable);
-        List<String> roles = tokenUtils.getLoginUserDTO().getRole();
-        int flag = 0;
-        boolean isParkPersion = roles.contains(ParkRoleEnum.PARK_USER.name()),isGovernment = roles.contains(ParkRoleEnum.GENERAL_MANAGER.name()),isHrOrgan = roles.contains(ParkRoleEnum.HR_USER.name());
-        if(roles.contains(ParkRoleEnum.PRESIDENT.name()) || roles.contains(ParkRoleEnum.GENERAL_MANAGER.name()) || roles.contains(ParkRoleEnum.PARK_MANAGER.name())){
-            flag = 1;
-        }
-        List<ArchiveInfoResponse> response = new ArrayList<>();
-        if(flag == 1){
-            all.getContent().forEach(temp->{
-                ArchiveInfoResponse archiveInfoResponse = new ArchiveInfoCommentResponse();
-                BeanUtils.copyProperties(temp, archiveInfoResponse);
-                if(temp.getOtherParkPerson()){
-                    response.add(archiveInfoResponse);
-                }
-            });
-        }
-        else{
-            all.getContent().forEach(temp->{
-                if((temp.getParkPerson() && isParkPersion) || (temp.getGovernment() && isGovernment) || (temp.getHrOrgan() && isHrOrgan)){
-                    ArchiveInfoResponse archiveInfoResponse = new ArchiveInfoCommentResponse();
-                    BeanUtils.copyProperties(temp, archiveInfoResponse);
-                    if(temp.getOtherParkPerson()){
-                        response.add(archiveInfoResponse);
-                    }
-                }
-            });
-        }
-        Page<ArchiveInfoResponse> result = new PageImpl<>(response, all.getPageable(), all.getTotalElements());
-        BeanUtils.copyProperties(all, result);
-        return Result.<Page<ArchiveInfoResponse>>builder().success().data(result).build();
-    }
-
-    @Override
-    public Result<List<ArchiveInfoResponse>> findAll() {
-        ParkUserDTO loginUserDTO = tokenUtils.getLoginUserDTO();
-        if(loginUserDTO == null){
-            throw new NormalException("token不存在或已失效");
-        }
-        String parkId = loginUserDTO.getCurrentParkId();
-        List<ArchiveInfo> all = archiveInfoRepository.findAllByDeleteIsFalse();
-        List<ArchiveInfoResponse> result = new ArrayList<>();
-        all.forEach(archiveInfo -> {
-            ArchiveInfoResponse response = new ArchiveInfoResponse();
-            BeanUtils.copyProperties(archiveInfo, response);
-            result.add(response);
-        });
-        return Result.<List<ArchiveInfoResponse>>builder().success().data(result).build();
+        return Result.<Page<ArchiveInfoResponse>>builder().success().data(null).build();
     }
 
     @Override
@@ -182,12 +101,12 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
         }
         ParkInfo parkInfo = byIdAndDeleteIsFalse.get();
         archiveInfo.setParkInfo(parkInfo);
-        Optional<ArchiveInfoType> byBigType = archiveInfoTypeRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(request.getGeneral());
+        Optional<ArchiveInfoType> byBigType = archiveInfoTypeRepository.findByTypeAndDeleteIsFalseAndAvailableIsTrue(request.getGeneral());
         Optional<ArchiveInfoType> bySmallType = archiveInfoTypeRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(request.getKind());
         if(!byBigType.isPresent() || !bySmallType.isPresent()){
             throw new NormalException("类型不存在");
         }
-        archiveInfo.setGeneral(byBigType.get());
+        archiveInfo.setGeneralId(byBigType.get().getId());
         archiveInfo.setKind(bySmallType.get());
         archiveInfo.setHeir(parkUser.getNickname());
         archiveInfo.setUploadTime(new Date());
@@ -292,46 +211,6 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
         };
         Page<ArchiveReadRecord> all = archiveReadRecordRepository.findAll(specification, pageable);
         return Result.<Page<ArchiveReadRecord>>builder().success().data(all).build();
-    }
-
-    @Override
-    public Result<String> addType(ArchiveInfoTypeRequest request) {
-        Optional<ArchiveInfoType> byIdAndDeleteIsFalseAndAvailableIsTrue = archiveInfoTypeRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(request.getGeneralId());
-        if(!byIdAndDeleteIsFalseAndAvailableIsTrue.isPresent()){
-            throw new NormalException("文件类型不存在");
-        }
-        ArchiveInfoType parent = byIdAndDeleteIsFalseAndAvailableIsTrue.get();
-        ArchiveInfoType archiveInfoType = new ArchiveInfoType();
-        archiveInfoType.setParent(parent);
-        archiveInfoType.setType(request.getKindName());
-        archiveInfoType.setAvailable(true);
-        archiveInfoType.setDelete(false);
-        archiveInfoType.setUpdateTime(new Date());
-        archiveInfoTypeRepository.save(archiveInfoType);
-        return Result.<String>builder().success().data("新增成功").build();
-    }
-
-    @Override
-    public Result<String> editType(ArchiveInfoTypeRequest request) {
-        Optional<ArchiveInfoType> byIdAndDeleteIsFalseAndAvailableIsTrue = archiveInfoTypeRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(request.getKindId());
-        if(!byIdAndDeleteIsFalseAndAvailableIsTrue.isPresent()){
-            throw new NormalException("文件类型不存在");
-        }
-        ArchiveInfoType archiveInfoType = byIdAndDeleteIsFalseAndAvailableIsTrue.get();
-        archiveInfoType.setType(request.getKindName());
-        return Result.<String>builder().success().data("编辑成功").build();
-    }
-
-    @Override
-    public Result<String> deleteType(String id) {
-        Optional<ArchiveInfoType> byIdAndDeleteIsFalseAndAvailableIsTrue = archiveInfoTypeRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(id);
-        if(!byIdAndDeleteIsFalseAndAvailableIsTrue.isPresent()){
-            throw new NormalException("文件类型不存在");
-        }
-        ArchiveInfoType archiveInfoType = byIdAndDeleteIsFalseAndAvailableIsTrue.get();
-        archiveInfoType.setDelete(true);
-        archiveInfoTypeRepository.save(archiveInfoType);
-        return Result.<String>builder().success().data("删除成功").build();
     }
 
     @Override

@@ -37,4 +37,16 @@ public class ServiceInfoServiceImpl implements IServiceInfoService {
         });
         return Result.<CompanyDataResponse>builder().success().data(response).build();
     }
+
+    @Override
+    public Result<String> addCompanyDataResponse(CompanyDataResponse companyDataResponse) {
+        Optional<CompanyDetail> byId = companyDetailRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(companyDataResponse.getId());
+        if(!byId.isPresent()){
+            throw new NormalException("信息不存在");
+        }
+        CompanyDetail companyDetail = byId.get();
+        companyDetail.setEnclosureTotals(companyDataResponse.getEnclosureTotals());
+        companyDetailRepository.save(companyDetail);
+        return Result.<String>builder().success().data("保存成功").build();
+    }
 }

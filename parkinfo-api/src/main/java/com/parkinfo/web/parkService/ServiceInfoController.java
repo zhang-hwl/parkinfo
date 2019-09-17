@@ -1,9 +1,6 @@
 package com.parkinfo.web.parkService;
 
 import com.parkinfo.common.Result;
-import com.parkinfo.entity.parkService.serviceFlow.ServiceFlowImg;
-import com.parkinfo.request.parkService.serviceFlow.SearchServiceFlowImgRequest;
-import com.parkinfo.response.companyManage.CompanyDetailResponse;
 import com.parkinfo.response.parkService.CompanyDataResponse;
 import com.parkinfo.service.parkService.IServiceInfoService;
 import io.swagger.annotations.Api;
@@ -31,5 +28,12 @@ public class ServiceInfoController {
     @RequiresPermissions("parkService:serviceDemandInfo:serviceInfo:detail")
     public Result<CompanyDataResponse> getCompanyDataResponse(){
         return serviceInfoService.getCompanyDataResponse();
+    }
+
+    @PostMapping("/save")
+    @ApiOperation(value = "保存服务需求信息详情")
+    @RequiresPermissions("parkService:serviceDemandInfo:serviceInfo:save")
+    public Result<String> addCompanyDataResponse(@RequestBody CompanyDataResponse companyDataResponse){
+        return serviceInfoService.addCompanyDataResponse(companyDataResponse);
     }
 }

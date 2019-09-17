@@ -26,40 +26,42 @@ public class RoomInfoController {
 
     @PostMapping("/add")
     @ApiOperation(value = "新增本园区房间统计")
-    @RequiresPermissions(value = "infoTotal:add")
+    @RequiresPermissions(value = "infoTotal:room:add")
     public Result<String> add(@RequestBody RoomInfoRequest request){
         return roomInfoService.add(request);
     }
 
     @PostMapping("/edit")
     @ApiOperation(value = "编辑该房间统计")
-    @RequiresPermissions(value = "infoTotal:edit")
+    @RequiresPermissions(value = "infoTotal:room:edit")
     public Result<String> edit(@RequestBody RoomInfoRequest request){
         return roomInfoService.edit(request);
     }
 
     @PostMapping("/delete/{id}")
     @ApiOperation(value = "删除该房间统计")
-    @RequiresPermissions(value = "infoTotal:delete")
+    @RequiresPermissions(value = "infoTotal:room:delete")
     public Result<String> delete(@PathVariable("id") String id){
         return roomInfoService.delete(id);
     }
 
     @PostMapping("/all")
     @ApiOperation(value = "查询本园区所有房间")
+    @RequiresPermissions(value = "infoTotal:room:search")
     public Result<List<RoomInfoRequest>> findAll(){
         return roomInfoService.findAll();
     }
 
     @PostMapping("/search/{version}")
     @ApiOperation(value = "根据版本查询本园区房间统计")
+    @RequiresPermissions(value = "infoTotal:room:search")
     public Result<List<RoomInfoRequest>> findByVersion(@PathVariable("version") String version){
         return roomInfoService.findByVersion(version);
     }
 
     @PostMapping("/import")
     @ApiOperation(value = "导入本园区房间统计")
-    @RequiresPermissions(value = "infoTotal:add")
+    @RequiresPermissions(value = "infoTotal:room:add")
     public Result<String> myImport(@RequestBody MultipartFile multipartFile){
         return roomInfoService.myImport(multipartFile);
     }
@@ -72,6 +74,7 @@ public class RoomInfoController {
 
     @PostMapping("/download")
     @ApiOperation(value = "文件导出")
+    @RequiresPermissions(value = "infoTotal:room:export")
     public void download(HttpServletResponse response, @RequestBody String version){
         roomInfoService.download(response, version);
     }

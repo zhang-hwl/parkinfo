@@ -25,39 +25,42 @@ public class InfoEquipmentController {
 
     @PostMapping("/add")
     @ApiOperation(value = "新增信息化设备")
-    @RequiresPermissions(value = "infoTotal:add")
+    @RequiresPermissions(value = "infoTotal:info:add")
     public Result<String> addPolicyTotal(@RequestBody InfoEquipmentRequest request){
         return infoEquipmentService.add(request);
     }
 
     @PostMapping("/edit")
     @ApiOperation(value = "编辑信息化设备")
-    @RequiresPermissions(value = "infoTotal:edit")
+    @RequiresPermissions(value = "infoTotal:info:edit")
     public Result<String> editPolicyTotal(@RequestBody InfoEquipmentRequest request){
         return infoEquipmentService.edit(request);
     }
 
     @PostMapping("/delete/{id}")
     @ApiOperation(value = "删除信息化设备")
-    @RequiresPermissions(value = "infoTotal:delete")
+    @RequiresPermissions(value = "infoTotal:info:delete")
     public Result<String> deletePolicyTotal(@PathVariable("id") String id){
         return infoEquipmentService.delete(id);
     }
 
     @PostMapping("/all")
     @ApiOperation(value = "查询所有信息化设备")
+    @RequiresPermissions(value = "infoTotal:info:search")
     public Result<List<InfoEquipmentRequest>> findAll(){
         return infoEquipmentService.findAll();
     }
 
     @PostMapping("/search/{version}")
     @ApiOperation(value = "根据版本查询信息化设备")
+    @RequiresPermissions(value = "infoTotal:info:search")
     public Result<List<InfoEquipmentRequest>> findByVersion(@PathVariable("version") String version){
         return infoEquipmentService.findByVersion(version);
     }
 
     @PostMapping("/import")
     @ApiOperation(value = "导入信息化设备")
+    @RequiresPermissions(value = "infoTotal:info:add")
     public Result<String> policyTotalImport(@RequestBody MultipartFile multipartFile){
         return infoEquipmentService.myImport(multipartFile);
     }
@@ -70,6 +73,7 @@ public class InfoEquipmentController {
 
     @PostMapping("/download")
     @ApiOperation(value = "文件导出")
+    @RequiresPermissions(value = "infoTotal:info:export")
     public void download(HttpServletResponse response, @RequestBody String version){
         infoEquipmentService.download(response, version);
     }

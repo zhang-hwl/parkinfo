@@ -73,6 +73,16 @@ public class BusinessAmuseServiceImpl implements IBusinessAmuseService {
     }
 
     @Override
+    public Result<BusinessAmuseResponse> detailBusinessAmuse(String id) {
+        return null;
+    }
+
+    @Override
+    public Result<String> detailBusinessAmuseType() {
+        return null;
+    }
+
+    @Override
     public Result<String> editBusinessAmuse(EditBusinessAmuseRequest request) {
         BusinessAmuse businessAmuse = this.checkBusinessAmuse(request.getId());
         if (StringUtils.isNotBlank(request.getTypeId())){
