@@ -35,7 +35,7 @@ public class CompanyDetailController {
         return companyDetailService.companyImport(file);
     }
 
-    @PostMapping("/companyExport")
+    @GetMapping("/companyExport")
     @ApiOperation("下载企业信息模板")
     //@RequiresPermissions("companyManage:companyInfo:info_export")
     public Result companyExport(HttpServletResponse response) {

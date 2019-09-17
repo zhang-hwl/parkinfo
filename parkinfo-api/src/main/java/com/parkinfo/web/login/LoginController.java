@@ -55,7 +55,7 @@ public class LoginController {
         return loginService.query(parkId);
     }
 
-    @PostMapping("/search")
+    @PostMapping("/searchAll")
     @ApiOperation(value = "根据园区分页获取用户")
     public Result<Page<ParkUserResponse>> search(@RequestBody QueryUserByParkRequest request) {
         return loginService.search(request);

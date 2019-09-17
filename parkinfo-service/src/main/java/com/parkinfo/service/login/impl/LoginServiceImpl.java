@@ -8,7 +8,6 @@ import com.parkinfo.repository.userConfig.ParkInfoRepository;
 import com.parkinfo.repository.userConfig.ParkUserRepository;
 import com.parkinfo.request.login.LoginRequest;
 import com.parkinfo.request.login.QueryUserByParkRequest;
-import com.parkinfo.request.login.QueryUserCurrentRequest;
 import com.parkinfo.response.login.ParkUserResponse;
 import com.parkinfo.service.login.ILoginService;
 import com.parkinfo.token.TokenUtils;
@@ -25,7 +24,6 @@ import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class LoginServiceImpl implements ILoginService {
