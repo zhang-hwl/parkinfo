@@ -72,6 +72,7 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
         }
         ArchiveInfoCommentResponse result = new ArchiveInfoCommentResponse();
         BeanUtils.copyProperties(byId.get(), result);
+        result.setPdfAddress(byId.get().getPdfAddress());
         return Result.<ArchiveInfoCommentResponse>builder().success().data(result).build();
     }
 
@@ -136,6 +137,14 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
         }
         ArchiveInfo archiveInfo = byId.get();
         BeanUtils.copyProperties(request, archiveInfo);
+        if(StringUtils.isNotBlank(request.getKind())){
+            Optional<ArchiveInfoType> byTypeId = archiveInfoTypeRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(request.getKind());
+            if(!byTypeId.isPresent()){
+                throw new NormalException("类型不存在");
+            }
+            ArchiveInfoType archiveInfoType = byTypeId.get();
+            archiveInfo.setKind(archiveInfoType);
+        }
         archiveInfoRepository.save(archiveInfo);
         return Result.<String>builder().success().data("编辑成功").build();
     }
