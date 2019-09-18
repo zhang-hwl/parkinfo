@@ -43,6 +43,10 @@ spring:
     port: 5672
     username: admin
     password: Lynkbey888
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
 logging:
   level:
     jdbc:
