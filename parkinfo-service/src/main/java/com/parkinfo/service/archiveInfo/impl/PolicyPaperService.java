@@ -11,6 +11,7 @@ import com.parkinfo.repository.archiveInfo.ArchiveInfoRepository;
 import com.parkinfo.repository.archiveInfo.ArchiveInfoTypeRepository;
 import com.parkinfo.request.archiveInfo.QueryArchiveInfoRequest;
 import com.parkinfo.response.archiveInfo.ArchiveInfoResponse;
+import com.parkinfo.response.archiveInfo.ArchiveInfoTypeResponse;
 import com.parkinfo.token.TokenUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -110,4 +111,5 @@ public class PolicyPaperService extends ArchiveInfoServiceImpl {
         BeanUtils.copyProperties(all, result);
         return Result.<Page<ArchiveInfoResponse>>builder().success().data(result).build();
     }
+
 }

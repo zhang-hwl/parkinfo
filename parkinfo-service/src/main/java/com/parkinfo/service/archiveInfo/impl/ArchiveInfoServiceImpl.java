@@ -23,6 +23,8 @@ import com.parkinfo.repository.userConfig.ParkUserRepository;
 import com.parkinfo.request.archiveInfo.*;
 import com.parkinfo.response.archiveInfo.ArchiveInfoCommentResponse;
 import com.parkinfo.response.archiveInfo.ArchiveInfoResponse;
+import com.parkinfo.response.archiveInfo.ArchiveInfoTypeResponse;
+import com.parkinfo.response.login.ParkInfoResponse;
 import com.parkinfo.service.archiveInfo.IArchiveInfoService;
 import com.parkinfo.token.TokenUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -221,6 +223,33 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
         }
         ArchiveInfoType archiveInfoType = byIdAndDeleteIsFalseAndAvailableIsTrue.get();
         return Result.<ArchiveInfoType>builder().success().data(archiveInfoType).build();
+    }
+
+    @Override
+    public Result<List<ParkInfoResponse>> findAllPark() {
+        List<ParkInfo> byAll = parkInfoRepository.findAllByDeleteIsFalseAndAvailableIsTrue();
+        List<ParkInfoResponse> result = Lists.newArrayList();
+        byAll.forEach(temp -> {
+            ParkInfoResponse response = new ParkInfoResponse();
+            BeanUtils.copyProperties(temp, response);
+            result.add(response);
+        });
+        return Result.<List<ParkInfoResponse>>builder().success().data(result).build();
+    }
+
+    public Result<List<ArchiveInfoTypeResponse>> findAllType(String general){
+        Optional<ArchiveInfoType> byType = archiveInfoTypeRepository.findByTypeAndDeleteIsFalseAndAvailableIsTrue(general);
+        if(!byType.isPresent()){
+            throw new NormalException("类型不存在");
+        }
+        Set<ArchiveInfoType> children = byType.get().getChildren();
+        List<ArchiveInfoTypeResponse> result = Lists.newArrayList();
+        children.forEach(temp -> {
+            ArchiveInfoTypeResponse response = new ArchiveInfoTypeResponse();
+            BeanUtils.copyProperties(temp, response);
+            result.add(response);
+        });
+        return Result.<List<ArchiveInfoTypeResponse>>builder().success().data(result).build();
     }
 
 
