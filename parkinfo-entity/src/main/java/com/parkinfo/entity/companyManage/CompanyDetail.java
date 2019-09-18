@@ -18,7 +18,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.util.*;
 
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = {"parkInfo", "parkUser", "enteredInfos", "enclosureTotals"})
 @Data
 @Entity
 @Table(name = "c_company_detail")

@@ -9,10 +9,9 @@ import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.parkService.BusinessAmuseRepository;
 import com.parkinfo.repository.parkService.BusinessAmuseTypeRepository;
-import com.parkinfo.request.parkService.businessAmuse.AddBusinessAmuseRequest;
-import com.parkinfo.request.parkService.businessAmuse.EditBusinessAmuseRequest;
-import com.parkinfo.request.parkService.businessAmuse.SearchBusinessAmuseRequest;
+import com.parkinfo.request.parkService.businessAmuse.*;
 import com.parkinfo.response.parkService.BusinessAmuseResponse;
+import com.parkinfo.response.parkService.BusinessAmuseTypeResponse;
 import com.parkinfo.service.parkService.IBusinessAmuseService;
 import com.parkinfo.token.TokenUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -28,6 +27,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class BusinessAmuseServiceImpl implements IBusinessAmuseService {
@@ -40,26 +40,26 @@ public class BusinessAmuseServiceImpl implements IBusinessAmuseService {
 
     @Override
     public Result<Page<BusinessAmuseResponse>> searchBusinessAmuse(SearchBusinessAmuseRequest request) {
-        Pageable pageable = PageRequest.of(request.getPageNum(),request.getPageSize(), Sort.Direction.DESC,"createTime");
+        Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
         Specification<BusinessAmuse> specification = (Specification<BusinessAmuse>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = Lists.newArrayList();
-            if (StringUtils.isNotBlank(request.getCompanyName())){
-                predicates.add(criteriaBuilder.like(root.get("companyName").as(String.class),"%"+request.getCompanyName()+"%"));
+            if (StringUtils.isNotBlank(request.getCompanyName())) {
+                predicates.add(criteriaBuilder.like(root.get("companyName").as(String.class), "%" + request.getCompanyName() + "%"));
             }
-            if (StringUtils.isNotBlank(request.getSmallTypeId())){
-                predicates.add(criteriaBuilder.equal(root.get("type").as(BusinessAmuseType.class),this.checkBusinessAmuseType(request.getSmallTypeId())));
-            }else if (StringUtils.isNotBlank(request.getBigTypeId())){
+            if (StringUtils.isNotBlank(request.getSmallTypeId())) {
+                predicates.add(criteriaBuilder.equal(root.get("type").as(BusinessAmuseType.class), this.checkBusinessAmuseType(request.getSmallTypeId())));
+            } else if (StringUtils.isNotBlank(request.getBigTypeId())) {
                 BusinessAmuseType businessAmuseType = this.checkBusinessAmuseType(request.getBigTypeId());
                 CriteriaBuilder.In<BusinessAmuseType> type = criteriaBuilder.in(root.get("type").as(BusinessAmuseType.class));
                 businessAmuseType.getChildren().forEach(type::value);
                 predicates.add(type);
             }
-            predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class),Boolean.FALSE));
-            predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class),Boolean.TRUE));
-            predicates.add(criteriaBuilder.equal(root.get("parkInfo").as(ParkInfo.class),tokenUtils.getCurrentParkInfo()));
+            predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
+            predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
+            predicates.add(criteriaBuilder.equal(root.get("parkInfo").as(ParkInfo.class), tokenUtils.getCurrentParkInfo()));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
-        Page<BusinessAmuse> businessAmusePage = businessAmuseRepository.findAll(specification,pageable);
+        Page<BusinessAmuse> businessAmusePage = businessAmuseRepository.findAll(specification, pageable);
         Page<BusinessAmuseResponse> responses = this.convertBusinessAmuseResponse(businessAmusePage);
         return Result.<Page<BusinessAmuseResponse>>builder().success().data(responses).build();
     }
@@ -74,18 +74,20 @@ public class BusinessAmuseServiceImpl implements IBusinessAmuseService {
 
     @Override
     public Result<BusinessAmuseResponse> detailBusinessAmuse(String id) {
-        return null;
-    }
-
-    @Override
-    public Result<String> detailBusinessAmuseType() {
-        return null;
+        Optional<BusinessAmuse> byId = businessAmuseRepository.findByDeleteIsFalseAndId(id);
+        if (!byId.isPresent()) {
+            throw new NormalException("信息不存在");
+        }
+        BusinessAmuse businessAmuse = byId.get();
+        BusinessAmuseResponse response = new BusinessAmuseResponse();
+        BeanUtils.copyProperties(byId, response);
+        return Result.<BusinessAmuseResponse>builder().success().data(response).build();
     }
 
     @Override
     public Result<String> editBusinessAmuse(EditBusinessAmuseRequest request) {
         BusinessAmuse businessAmuse = this.checkBusinessAmuse(request.getId());
-        if (StringUtils.isNotBlank(request.getTypeId())){
+        if (StringUtils.isNotBlank(request.getTypeId())) {
             BusinessAmuseType businessAmuseType = this.checkBusinessAmuseType(request.getTypeId());
             businessAmuse.setType(businessAmuseType);
         }
@@ -101,7 +103,7 @@ public class BusinessAmuseServiceImpl implements IBusinessAmuseService {
 
     private BusinessAmuse checkBusinessAmuse(String id) {
         Optional<BusinessAmuse> businessAmuseOptional = businessAmuseRepository.findByDeleteIsFalseAndId(id);
-        if (!businessAmuseOptional.isPresent()){
+        if (!businessAmuseOptional.isPresent()) {
             throw new NormalException("服务商不存在");
         }
         return businessAmuseOptional.get();
@@ -110,8 +112,8 @@ public class BusinessAmuseServiceImpl implements IBusinessAmuseService {
     @Override
     public Result<String> addBusinessAmuse(AddBusinessAmuseRequest request) {
         BusinessAmuse businessAmuse = new BusinessAmuse();
-        BeanUtils.copyProperties(request,businessAmuse);
-        if (StringUtils.isNotBlank(request.getTypeId())){
+        BeanUtils.copyProperties(request, businessAmuse);
+        if (StringUtils.isNotBlank(request.getTypeId())) {
             BusinessAmuseType businessAmuseType = this.checkBusinessAmuseType(request.getTypeId());
             businessAmuse.setType(businessAmuseType);
         }
@@ -123,22 +125,107 @@ public class BusinessAmuseServiceImpl implements IBusinessAmuseService {
     }
 
 
-
     private Page<BusinessAmuseResponse> convertBusinessAmuseResponse(Page<BusinessAmuse> businessAmusePage) {
         List<BusinessAmuseResponse> responses = Lists.newArrayList();
         businessAmusePage.getContent().forEach(businessAmuse -> {
             BusinessAmuseResponse response = new BusinessAmuseResponse();
-            BeanUtils.copyProperties(businessAmuse,response);
+            BeanUtils.copyProperties(businessAmuse, response);
             responses.add(response);
         });
-        return new PageImpl<>(responses,businessAmusePage.getPageable(),businessAmusePage.getTotalElements());
+        return new PageImpl<>(responses, businessAmusePage.getPageable(), businessAmusePage.getTotalElements());
     }
 
     private BusinessAmuseType checkBusinessAmuseType(String typeId) {
         Optional<BusinessAmuseType> businessAmuseTypeOptional = businessAmuseTypeRepository.findById(typeId);
-        if (!businessAmuseTypeOptional.isPresent()){
+        if (!businessAmuseTypeOptional.isPresent()) {
             throw new NormalException("分类不存在");
         }
         return businessAmuseTypeOptional.get();
     }
+
+    @Override
+    public Result<List<BusinessAmuseTypeResponse>> findAllBusinessAmuseTypeByServe() {
+        Optional<BusinessAmuseType> byServe = businessAmuseTypeRepository.findByTypeAndDeleteIsFalseAndAvailableIsTrue("周边服务商");
+        if(!byServe.isPresent()){
+            throw new NormalException("类型不存在");
+        }
+        BusinessAmuseType businessAmuseType = byServe.get();
+        List<BusinessAmuseType> parent = businessAmuseTypeRepository.findByParentAndDeleteIsFalseAndAvailableIsTrue(businessAmuseType);
+        List<BusinessAmuseTypeResponse> result = Lists.newArrayList();
+        parent.forEach(temp -> {
+            BusinessAmuseTypeResponse response = new BusinessAmuseTypeResponse();
+            BeanUtils.copyProperties(temp, response);
+            result.add(response);
+        });
+        return Result.<List<BusinessAmuseTypeResponse>>builder().success().data(result).build();
+    }
+
+    @Override
+    public Result<List<BusinessAmuseTypeResponse>> findAllBusinessAmuseTypeByHappy() {
+        Optional<BusinessAmuseType> byHappy= businessAmuseTypeRepository.findByTypeAndDeleteIsFalseAndAvailableIsTrue("周边配套娱乐");
+        if(!byHappy.isPresent()){
+            throw new NormalException("类型不存在");
+        }
+        BusinessAmuseType businessAmuseType = byHappy.get();
+        List<BusinessAmuseType> parent = businessAmuseTypeRepository.findByParentAndDeleteIsFalseAndAvailableIsTrue(businessAmuseType);
+        List<BusinessAmuseTypeResponse> result = Lists.newArrayList();
+        parent.forEach(temp -> {
+            BusinessAmuseTypeResponse response = new BusinessAmuseTypeResponse();
+            BeanUtils.copyProperties(temp, response);
+            result.add(response);
+        });
+        return Result.<List<BusinessAmuseTypeResponse>>builder().success().data(result).build();
+    }
+
+    @Override
+    public Result<String> deleteBusinessAmuseType(String id) {
+        BusinessAmuseType businessAmuseType = checkBusinessAmuseType(id);
+        businessAmuseTypeRepository.delete(businessAmuseType);
+        return Result.<String>builder().success().data("删除成功").build();
+    }
+
+    @Override
+    public Result<String> editBusinessAmuseType(EditBusinessAmuseTypeRequest request) {
+        BusinessAmuseType businessAmuseType = checkBusinessAmuseType(request.getId());
+        BeanUtils.copyProperties(request, businessAmuseType);
+        businessAmuseTypeRepository.save(businessAmuseType);
+        return Result.<String>builder().success().data("编辑成功").build();
+    }
+
+    @Override
+    public Result<String> addBusinessAmuseHappyType(AddBusinessAmuseTypeRequest request) {
+        Optional<BusinessAmuseType> byHappy= businessAmuseTypeRepository.findByTypeAndDeleteIsFalseAndAvailableIsTrue("周边配套娱乐");
+        if(!byHappy.isPresent()){
+            throw new NormalException("类型不存在");
+        }
+        BusinessAmuseType businessAmuseType = byHappy.get();
+        BusinessAmuseType re = new BusinessAmuseType();
+        re.setParkInfo(businessAmuseType.getParkInfo());
+        re.setType(request.getType());
+        re.setDelete(false);
+        re.setAvailable(true);
+        Set<BusinessAmuseType> children = businessAmuseType.getChildren();
+        children.add(re);
+        businessAmuseTypeRepository.save(businessAmuseType);
+        return Result.<String>builder().success().data("新增成功").build();
+    }
+
+    @Override
+    public Result<String> addBusinessAmuseServeType(AddBusinessAmuseTypeRequest request) {
+        Optional<BusinessAmuseType> byHappy= businessAmuseTypeRepository.findByTypeAndDeleteIsFalseAndAvailableIsTrue("周边服务商");
+        if(!byHappy.isPresent()){
+            throw new NormalException("类型不存在");
+        }
+        BusinessAmuseType businessAmuseType = byHappy.get();
+        BusinessAmuseType re = new BusinessAmuseType();
+        re.setParkInfo(businessAmuseType.getParkInfo());
+        re.setType(request.getType());
+        re.setDelete(false);
+        re.setAvailable(true);
+        Set<BusinessAmuseType> children = businessAmuseType.getChildren();
+        children.add(re);
+        businessAmuseTypeRepository.save(businessAmuseType);
+        return Result.<String>builder().success().data("新增成功").build();
+    }
+
 }

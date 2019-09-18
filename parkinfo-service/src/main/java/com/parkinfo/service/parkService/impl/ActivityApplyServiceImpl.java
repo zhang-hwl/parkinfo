@@ -101,4 +101,12 @@ public class ActivityApplyServiceImpl implements IActivityApplyService {
         activityApplyRepository.save(activityApply);
         return Result.<String>builder().success().message("删除成功").build();
     }
+
+    @Override
+    public Result<ActivityApplyResponse> detailActivityApply(String id) {
+        ActivityApply activityApply = this.checkActivityApply(id);
+        ActivityApplyResponse response = new ActivityApplyResponse();
+        BeanUtils.copyProperties(activityApply, response);
+        return null;
+    }
 }

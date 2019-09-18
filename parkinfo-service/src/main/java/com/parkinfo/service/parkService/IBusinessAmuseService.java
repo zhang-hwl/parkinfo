@@ -1,11 +1,13 @@
 package com.parkinfo.service.parkService;
 
 import com.parkinfo.common.Result;
-import com.parkinfo.request.parkService.businessAmuse.AddBusinessAmuseRequest;
-import com.parkinfo.request.parkService.businessAmuse.EditBusinessAmuseRequest;
-import com.parkinfo.request.parkService.businessAmuse.SearchBusinessAmuseRequest;
+import com.parkinfo.entity.parkService.businessAmuse.BusinessAmuse;
+import com.parkinfo.request.parkService.businessAmuse.*;
 import com.parkinfo.response.parkService.BusinessAmuseResponse;
+import com.parkinfo.response.parkService.BusinessAmuseTypeResponse;
 import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 public interface IBusinessAmuseService {
     /**
@@ -38,5 +40,15 @@ public interface IBusinessAmuseService {
 
     Result<BusinessAmuseResponse> detailBusinessAmuse(String id);
 
-    Result<String> detailBusinessAmuseType();
+    Result<List<BusinessAmuseTypeResponse>> findAllBusinessAmuseTypeByServe();
+
+    Result<List<BusinessAmuseTypeResponse>> findAllBusinessAmuseTypeByHappy();
+
+    Result<String> deleteBusinessAmuseType(String id);
+
+    Result<String> editBusinessAmuseType(EditBusinessAmuseTypeRequest request);
+
+    Result<String> addBusinessAmuseHappyType(AddBusinessAmuseTypeRequest request);
+
+    Result<String> addBusinessAmuseServeType(AddBusinessAmuseTypeRequest request);
 }

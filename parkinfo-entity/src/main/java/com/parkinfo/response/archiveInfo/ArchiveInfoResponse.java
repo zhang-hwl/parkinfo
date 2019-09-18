@@ -22,6 +22,9 @@ public class ArchiveInfoResponse {
     @ApiModelProperty(value = "文件地址")
     private String fileAddress;
 
+    @ApiModelProperty(value = "PDF文件地址")
+    private String PDFAddress;
+
     @ApiModelProperty(value = "上传人")
     private String heir;
 

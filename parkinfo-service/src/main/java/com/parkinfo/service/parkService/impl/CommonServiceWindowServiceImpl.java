@@ -131,4 +131,9 @@ public class CommonServiceWindowServiceImpl implements ICommonServiceWindowServi
         commonServiceWindowRepository.save(commonServiceWindow);
         return Result.<String>builder().success().message("删除成功").build();
     }
+
+    @Override
+    public Result<CommonServiceWindowResponse> detail(String id) {
+        return null;
+    }
 }
