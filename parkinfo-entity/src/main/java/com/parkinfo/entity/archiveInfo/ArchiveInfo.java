@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = {"kind", "parkInfo", "archiveComments", "archiveReadRecords"})
 @Entity
 @Table(name = "c_archive_info", indexes = {@Index(columnList = "general_id")})
 @EntityListeners(AuditingEntityListener.class)
