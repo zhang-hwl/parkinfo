@@ -2,6 +2,7 @@ package com.parkinfo.web.archiveInfo;
 
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.archiveInfo.ArchiveReadRecord;
+import com.parkinfo.enums.ConvertStatus;
 import com.parkinfo.request.archiveInfo.AddArchiveInfoRequest;
 import com.parkinfo.request.archiveInfo.ArchiveCommentRequest;
 import com.parkinfo.request.archiveInfo.ArchiveReadRecordRequest;

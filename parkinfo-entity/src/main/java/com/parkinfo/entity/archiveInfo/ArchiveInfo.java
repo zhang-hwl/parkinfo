@@ -3,6 +3,7 @@ package com.parkinfo.entity.archiveInfo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.parkinfo.entity.base.BaseEntity;
 import com.parkinfo.entity.userConfig.ParkInfo;
+import com.parkinfo.enums.ConvertStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -31,7 +32,10 @@ public class ArchiveInfo extends BaseEntity {
     private String fileAddress;
 
     @ApiModelProperty(value = "文件地址")
-    private String PDFAddress;
+    private String pdfAddress;
+
+    @ApiModelProperty(value = "转换状态")
+    private ConvertStatus convertStatus;
 
     @ApiModelProperty(value = "上传人")
     private String heir;

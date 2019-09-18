@@ -25,6 +25,9 @@ public class ArchiveInfoResponse {
     @ApiModelProperty(value = "PDF文件地址")
     private String PDFAddress;
 
+    @ApiModelProperty(value = "园区名称")
+    private String parkName;
+
     @ApiModelProperty(value = "上传人")
     private String heir;
 
@@ -35,5 +38,7 @@ public class ArchiveInfoResponse {
     @ApiModelProperty(value = "文档说明")
     private String remark;
 
+    @ApiModelProperty(value = "是否对外")
+    private Boolean external;
 
 }
