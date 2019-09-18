@@ -105,7 +105,7 @@ public class PolicyPaperService extends ArchiveInfoServiceImpl {
         all.getContent().forEach(temp->{
             ArchiveInfoResponse archiveInfoResponse = new ArchiveInfoResponse();
             BeanUtils.copyProperties(temp, archiveInfoResponse);
-            archiveInfoResponse.setKindId(temp.getKind().getId());
+            archiveInfoResponse.setKind(temp.getKind().getId());
             archiveInfoResponse.setParkName(temp.getParkInfo().getName());
             response.add(archiveInfoResponse);
         });

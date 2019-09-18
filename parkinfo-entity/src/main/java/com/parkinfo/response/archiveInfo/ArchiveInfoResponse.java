@@ -23,8 +23,7 @@ public class ArchiveInfoResponse {
     private String fileType;
 
     @ApiModelProperty(value = "种类")
-    @JoinColumn(name = "kind_id")
-    private String kindId;
+    private String kind;
 
     @ApiModelProperty(value = "文件名")
     private String fileName;
