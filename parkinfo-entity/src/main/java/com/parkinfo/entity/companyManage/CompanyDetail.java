@@ -91,10 +91,6 @@ public class CompanyDetail extends BaseEntity{
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date foundTime;
 
-    @ApiModelProperty(value = "审核状态")
-    @Enumerated(EnumType.ORDINAL)//APPLYING,AGREE,REFUSE 申请中,同意,拒绝
-    private CheckStatus checkStatus;
-
     @ApiModelProperty(value = "入驻状态")
     @Enumerated(EnumType.ORDINAL)//WAITING,ENTERED,LEAVE 未入驻,已入住,已离园
     private EnterStatus enterStatus;

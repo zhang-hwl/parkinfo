@@ -19,7 +19,7 @@ public class PersonalCloudResponse {
     private String fileSize;
 
     @ApiModelProperty(value = "上传时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     private Date upTime;
 
     @ApiModelProperty(value = "备注")

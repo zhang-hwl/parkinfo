@@ -4,9 +4,9 @@ import com.parkinfo.common.Result;
 import com.parkinfo.request.compayManage.AddCompanyInfoRequest;
 import com.parkinfo.request.compayManage.QueryCompanyRequest;
 import com.parkinfo.request.compayManage.SetCompanyInfoRequest;
-import com.parkinfo.response.companyManage.CompanyDetailResponse;
+import com.parkinfo.response.companyManage.CompanyDemandResponse;
 import com.parkinfo.response.companyManage.CompanyResponse;
-import com.parkinfo.service.companyManage.ICompanyDetailService;
+import com.parkinfo.service.companyManage.ICompanyDemandService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -23,41 +23,40 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/companyManage/companyDetail")
 @Api(value = "/companyManage/companyDetail", tags = {"供需信息-企业信息需求"})
-public class CompanyDetailController {
+public class CompanyDemandController {
 
     @Autowired
-    private ICompanyDetailService companyDetailService;
+    private ICompanyDemandService companyDemandService;
 
     @PostMapping("/companyImport")
-    @ApiOperation("导入企业信息")
+    @ApiOperation("导入需求信息")
     @RequiresPermissions("companyManage:companyInfo:info_import")
     public Result companyImport(@RequestBody MultipartFile file) {
-        return companyDetailService.companyImport(file);
+        return companyDemandService.companyImport(file);
     }
 
     @GetMapping("/companyExport")
-    @ApiOperation("下载企业信息模板")
-    //@RequiresPermissions("companyManage:companyInfo:info_export")
+    @ApiOperation("下载需求信息模板")
     public Result companyExport(HttpServletResponse response) {
-        return companyDetailService.companyExport(response);
+        return companyDemandService.companyExport(response);
     }
 
     @PostMapping("/findAll")
-    @ApiOperation("分页查询所有企业信息")
+    @ApiOperation("分页查询所有需求信息")
     @RequiresPermissions("companyManage:companyInfo:info_find")
     public Result<Page<CompanyResponse>> findAll(@RequestBody QueryCompanyRequest request) {
-        return companyDetailService.findAll(request);
+        return companyDemandService.findAll(request);
     }
 
     @PostMapping("/query/{id}")
-    @ApiOperation("查询企业详细信息")
+    @ApiOperation("查询需求详细信息")
     @RequiresPermissions("companyManage:companyInfo:info_query")
-    public Result<CompanyDetailResponse> query(@PathVariable("id") String id) {
-        return companyDetailService.query(id);
+    public Result<CompanyDemandResponse> query(@PathVariable("id") String id) {
+        return companyDemandService.query(id);
     }
 
     @PostMapping("/add")
-    @ApiOperation("添加企业基本信息")
+    @ApiOperation("添加需求信息")
     @RequiresPermissions("companyManage:companyInfo:info_add")
     public Result add(@Valid @RequestBody AddCompanyInfoRequest request, BindingResult result) {
         if (result.hasErrors()) {
@@ -65,11 +64,11 @@ public class CompanyDetailController {
                 return Result.<String>builder().fail().code(500).message(error.getDefaultMessage()).build();
             }
         }
-        return companyDetailService.add(request);
+        return companyDemandService.add(request);
     }
 
     @PostMapping("/set")
-    @ApiOperation("修改企业基本信息")
+    @ApiOperation("修改需求信息")
     @RequiresPermissions("companyManage:companyInfo:info_set")
     public Result set(@Valid @RequestBody SetCompanyInfoRequest request, BindingResult result) {
         if (result.hasErrors()) {
@@ -77,13 +76,13 @@ public class CompanyDetailController {
                 return Result.<String>builder().fail().code(500).message(error.getDefaultMessage()).build();
             }
         }
-        return companyDetailService.set(request);
+        return companyDemandService.set(request);
     }
 
     @PostMapping("/delete/{id}")
-    @ApiOperation("删除企业信息")
+    @ApiOperation("删除需求信息")
     @RequiresPermissions("companyManage:companyInfo:info_delete")
     public Result delete(@PathVariable("id") String id) {
-        return companyDetailService.delete(id);
+        return companyDemandService.delete(id);
     }
 }

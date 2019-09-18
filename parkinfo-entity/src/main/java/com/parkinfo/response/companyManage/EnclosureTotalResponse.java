@@ -8,7 +8,7 @@ import lombok.Data;
 public class EnclosureTotalResponse {
 
     @ApiModelProperty(value = "附件id")
-    private String enclosureId;
+    private String id;
 
     @ApiModelProperty(value = "附件名称")
     private String fileName;

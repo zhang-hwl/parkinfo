@@ -11,7 +11,7 @@ import java.util.Date;
 public class EnteredInfoResponse {
 
     @ApiModelProperty(value = "入驻信息id")
-    private String enterId;
+    private String id;
 
     @ApiModelProperty(value = "入驻房间号")
     private String roomNum;

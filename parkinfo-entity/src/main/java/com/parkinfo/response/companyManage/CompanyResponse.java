@@ -5,8 +5,6 @@ import com.parkinfo.enums.CheckStatus;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import java.util.Date;
 
 @Data
@@ -42,11 +40,10 @@ public class CompanyResponse {
     @ApiModelProperty(value = "对接人")
     private String connectMan;
 
-    @ApiModelProperty(value = "申请日期")
+    /*@ApiModelProperty(value = "申请日期")
     @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
-    private Date applyTime;
+    private Date applyTime;*/
 
     @ApiModelProperty(value = "审核状态")
-    @Enumerated(EnumType.ORDINAL)
     private CheckStatus checkStatus;
 }

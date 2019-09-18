@@ -2,6 +2,7 @@ package com.parkinfo.service.personalCloud;
 
 import com.parkinfo.common.Result;
 import com.parkinfo.request.personalCloud.AddPersonalCloudRequest;
+import com.parkinfo.request.personalCloud.DeletePersonalCloudRequest;
 import com.parkinfo.request.personalCloud.QueryPersonalCloudRequest;
 import com.parkinfo.request.personalCloud.SetPersonalCloudRequest;
 import com.parkinfo.response.personalCloud.DownloadResponse;
@@ -55,4 +56,12 @@ public interface IPersonalCloudService {
      * @return
      */
     Result<DownloadResponse> download(String id);
+
+    /**
+     * 批量删除
+     * @param request
+     * @return
+     */
+    Result deleteAll(DeletePersonalCloudRequest request);
+
 }

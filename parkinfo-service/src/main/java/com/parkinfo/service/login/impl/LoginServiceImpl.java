@@ -50,8 +50,8 @@ public class LoginServiceImpl implements ILoginService {
         if (!password.equals(parkUser.getPassword())) {
             throw new NormalException("密码错误");
         }
-        //TODO
-        Optional<ParkInfo> optionalParkInfo = parkInfoRepository.findByIdAndDeleteIsFalse(request.getId());
+        //parkUser.getParkInfo();
+        /*Optional<ParkInfo> optionalParkInfo = parkInfoRepository.findByIdAndDeleteIsFalse(request.getId());
         if (!optionalParkInfo.isPresent()) {
             throw new NormalException("园区不存在");
         }
@@ -61,7 +61,7 @@ public class LoginServiceImpl implements ILoginService {
         }
         if (!parkUser.getParks().contains(park)) {
             throw new NormalException("请选择所在园区");
-        }
+        }*/
         token = tokenUtils.generateTokeCode(parkUser, request.getId());
         return Result.<String>builder().success().data(token).build();
     }

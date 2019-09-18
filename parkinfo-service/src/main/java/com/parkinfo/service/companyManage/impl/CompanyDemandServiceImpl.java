@@ -1,18 +1,18 @@
 package com.parkinfo.service.companyManage.impl;
 
 import com.parkinfo.common.Result;
+import com.parkinfo.entity.companyManage.CompanyDemand;
 import com.parkinfo.entity.companyManage.CompanyDetail;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.enums.CheckStatus;
-import com.parkinfo.enums.EnterStatus;
 import com.parkinfo.exception.NormalException;
-import com.parkinfo.repository.companyManage.CompanyDetailRepository;
+import com.parkinfo.repository.companyManage.CompanyDemandRepository;
 import com.parkinfo.request.compayManage.AddCompanyInfoRequest;
 import com.parkinfo.request.compayManage.QueryCompanyRequest;
 import com.parkinfo.request.compayManage.SetCompanyInfoRequest;
-import com.parkinfo.response.companyManage.CompanyDetailResponse;
+import com.parkinfo.response.companyManage.CompanyDemandResponse;
 import com.parkinfo.response.companyManage.CompanyResponse;
-import com.parkinfo.service.companyManage.ICompanyDetailService;
+import com.parkinfo.service.companyManage.ICompanyDemandService;
 import com.parkinfo.token.TokenUtils;
 import com.parkinfo.util.ExcelUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -34,10 +34,10 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
-public class CompanyDetailServiceImpl implements ICompanyDetailService {
+public class CompanyDemandServiceImpl implements ICompanyDemandService {
 
     @Autowired
-    private CompanyDetailRepository companyDetailRepository;
+    private CompanyDemandRepository companyDemandRepository;
 
     @Autowired
     private TokenUtils tokenUtils;
@@ -49,18 +49,15 @@ public class CompanyDetailServiceImpl implements ICompanyDetailService {
             throw new NormalException("上传文件格式不正确");
         }
         try {
-            List<CompanyDetail> companyDetails = ExcelUtils.importExcel(file, CompanyDetail.class);
-            if(companyDetails != null){
-                companyDetails.forEach(companyDetail -> {
+            List<CompanyDemand> companyDemands = ExcelUtils.importExcel(file, CompanyDemand.class);
+            if(companyDemands != null){
+                companyDemands.forEach(companyDemand -> {
                     ParkInfo parkInfo = tokenUtils.getCurrentParkInfo();
-                    companyDetail.setParkInfo(parkInfo);
-                    companyDetail.setAvailable(true);
-                    companyDetail.setDelete(false);
-                    companyDetail.setDeleteEnter(false);
-                    companyDetail.setEnterStatus(EnterStatus.WAITING);
-                    companyDetail.setEntered(false);
-                    companyDetail.setCheckStatus(CheckStatus.APPLYING);
-                    companyDetailRepository.save(companyDetail);
+                    companyDemand.setParkInfo(parkInfo);
+                    companyDemand.setAvailable(true);
+                    companyDemand.setDelete(false);
+                    companyDemand.setCheckStatus(CheckStatus.APPLYING);
+                    companyDemandRepository.save(companyDemand);
                 });
             }
         } catch (Exception e) {
@@ -71,11 +68,11 @@ public class CompanyDetailServiceImpl implements ICompanyDetailService {
 
     @Override
     public Result companyExport(HttpServletResponse response) {
-        CompanyDetail companyDetail = new CompanyDetail();
-        List<CompanyDetail> companyDetailList = new ArrayList<>();
-        companyDetailList.add(companyDetail);
+        CompanyDemand companyDemand = new CompanyDemand();
+        List<CompanyDemand> companyDemandList = new ArrayList<>();
+        companyDemandList.add(companyDemand);
         try {
-            ExcelUtils.exportExcel(companyDetailList, "企业信息模板", "企业信息模板", CompanyDetail.class, "company", response);
+            ExcelUtils.exportExcel(companyDemandList, "需求信息模板", "需求信息模板", CompanyDetail.class, "company", response);
         } catch (Exception e) {
             throw new NormalException("模板下载失败");
         }
@@ -85,7 +82,7 @@ public class CompanyDetailServiceImpl implements ICompanyDetailService {
     @Override
     public Result<Page<CompanyResponse>> findAll(QueryCompanyRequest request) {
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
-        Specification<CompanyDetail> specification = (Specification<CompanyDetail>) (root, criteriaQuery, criteriaBuilder) -> {
+        Specification<CompanyDemand> specification = (Specification<CompanyDemand>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             ParkInfo parkInfo = tokenUtils.getCurrentParkInfo();
             if (StringUtils.isNotBlank(request.getCompanyName())) {
@@ -100,74 +97,69 @@ public class CompanyDetailServiceImpl implements ICompanyDetailService {
             if (parkInfo == null) {
                 throw new NormalException("请先登录");
             }
-            Join<CompanyDetail, ParkInfo> join = root.join(root.getModel().getSingularAttribute("parkInfo", ParkInfo.class), JoinType.LEFT);
+            Join<CompanyDemand, ParkInfo> join = root.join(root.getModel().getSingularAttribute("parkInfo", ParkInfo.class), JoinType.LEFT);
             predicates.add(criteriaBuilder.equal(join.get("id").as(String.class), parkInfo.getId()));
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
-            predicates.add(criteriaBuilder.equal(root.get("entered").as(Boolean.class), Boolean.FALSE));
-            predicates.add(criteriaBuilder.equal(root.get("enterStatus").as(Integer.class), EnterStatus.WAITING.ordinal()));
-            //predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
+            predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
-        Page<CompanyDetail> companyDetailPage = companyDetailRepository.findAll(specification, pageable);
-        Page<CompanyResponse> responses = this.convertDetailPage(companyDetailPage);
+        Page<CompanyDemand> companyDemandPage = companyDemandRepository.findAll(specification, pageable);
+        Page<CompanyResponse> responses = this.convertDemandPage(companyDemandPage);
         return Result.<Page<CompanyResponse>>builder().success().data(responses).build();
     }
 
     @Override
-    public Result<CompanyDetailResponse> query(String id) {
-        CompanyDetail companyDetail = this.checkCompany(id);
-        CompanyDetailResponse response = new CompanyDetailResponse();
-        BeanUtils.copyProperties(companyDetail,response);
-        return Result.<CompanyDetailResponse>builder().success().data(response).build();
+    public Result<CompanyDemandResponse> query(String id) {
+        CompanyDemand companyDemand = this.checkCompany(id);
+        CompanyDemandResponse response = new CompanyDemandResponse();
+        BeanUtils.copyProperties(companyDemand,response);
+        return Result.<CompanyDemandResponse>builder().success().data(response).build();
     }
 
     @Override
     public Result add(AddCompanyInfoRequest request) {
-        CompanyDetail companyDetail = new CompanyDetail();
+        CompanyDemand companyDemand = new CompanyDemand();
         ParkInfo parkInfo = tokenUtils.getCurrentParkInfo();
-        BeanUtils.copyProperties(request,companyDetail);
-        companyDetail.setParkInfo(parkInfo);
-        companyDetail.setAvailable(true);
-        companyDetail.setDelete(false);
-        companyDetail.setDeleteEnter(false);
-        companyDetail.setEnterStatus(EnterStatus.WAITING);
-        companyDetail.setEntered(false);
-        companyDetail.setCheckStatus(CheckStatus.APPLYING);
-        companyDetailRepository.save(companyDetail);
+        BeanUtils.copyProperties(request,companyDemand);
+        companyDemand.setParkInfo(parkInfo);
+        companyDemand.setAvailable(true);
+        companyDemand.setDelete(false);
+        companyDemand.setCheckStatus(CheckStatus.APPLYING);
+        companyDemandRepository.save(companyDemand);
         return Result.builder().success().message("添加成功").build();
     }
 
     @Override
     public Result set(SetCompanyInfoRequest request) {
-        CompanyDetail company = this.checkCompany(request.getId());
-        BeanUtils.copyProperties(request,company);
-        companyDetailRepository.save(company);
+        CompanyDemand companyDemand = this.checkCompany(request.getId());
+        BeanUtils.copyProperties(request,companyDemand);
+        companyDemandRepository.save(companyDemand);
         return Result.builder().success().message("修改成功").build();
     }
 
     @Override
     public Result delete(String id) {
-        CompanyDetail company = this.checkCompany(id);
-        company.setDelete(true);
-        companyDetailRepository.save(company);
+        CompanyDemand companyDemand = this.checkCompany(id);
+        companyDemand.setDelete(true);
+        companyDemandRepository.save(companyDemand);
         return Result.builder().success().message("删除成功").build();
     }
 
-    private Page<CompanyResponse> convertDetailPage(Page<CompanyDetail> companyDetailPage) {
+    private Page<CompanyResponse> convertDemandPage(Page<CompanyDemand> companyDemandPage) {
         List<CompanyResponse> content = new ArrayList<>();
-        companyDetailPage.getContent().forEach(companyDetail -> {
+        companyDemandPage.getContent().forEach(companyDemand -> {
             CompanyResponse response = new CompanyResponse();
-            BeanUtils.copyProperties(companyDetail,response);
+            BeanUtils.copyProperties(companyDemand,response);
             content.add(response);
         });
-        return new PageImpl<>(content, companyDetailPage.getPageable(), companyDetailPage.getTotalElements());
+        return new PageImpl<>(content, companyDemandPage.getPageable(), companyDemandPage.getTotalElements());
     }
 
-    private CompanyDetail checkCompany(String id) {
-        Optional<CompanyDetail> companyDetailOptional = companyDetailRepository.findByIdAndDeleteIsFalse(id);
-        if (!companyDetailOptional.isPresent()) {
-            throw new NormalException("企业不存在");
+    private CompanyDemand checkCompany(String id) {
+        Optional<CompanyDemand> companyDemandOptional = companyDemandRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(id);
+        if (!companyDemandOptional.isPresent()) {
+            throw new NormalException("需求信息不存在");
         }
-        return companyDetailOptional.get();
+        return companyDemandOptional.get();
     }
 }
