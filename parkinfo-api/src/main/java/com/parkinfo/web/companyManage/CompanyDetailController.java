@@ -1,9 +1,9 @@
 package com.parkinfo.web.companyManage;
 
 import com.parkinfo.common.Result;
+import com.parkinfo.request.compayManage.AddCompanyInfoRequest;
 import com.parkinfo.request.compayManage.QueryCompanyRequest;
 import com.parkinfo.request.compayManage.SetCompanyInfoRequest;
-import com.parkinfo.request.compayManage.SetCompanyRequireRequest;
 import com.parkinfo.response.companyManage.CompanyDetailResponse;
 import com.parkinfo.response.companyManage.CompanyResponse;
 import com.parkinfo.service.companyManage.ICompanyDetailService;
@@ -35,9 +35,9 @@ public class CompanyDetailController {
         return companyDetailService.companyImport(file);
     }
 
-    @PostMapping("/companyExport")
+    @GetMapping("/companyExport")
     @ApiOperation("下载企业信息模板")
-    @RequiresPermissions("companyManage:companyInfo:info_export")
+    //@RequiresPermissions("companyManage:companyInfo:info_export")
     public Result companyExport(HttpServletResponse response) {
         return companyDetailService.companyExport(response);
     }
@@ -54,6 +54,18 @@ public class CompanyDetailController {
     @RequiresPermissions("companyManage:companyInfo:info_query")
     public Result<CompanyDetailResponse> query(@PathVariable("id") String id) {
         return companyDetailService.query(id);
+    }
+
+    @PostMapping("/add")
+    @ApiOperation("添加企业基本信息")
+    @RequiresPermissions("companyManage:companyInfo:info_add")
+    public Result add(@Valid @RequestBody AddCompanyInfoRequest request, BindingResult result) {
+        if (result.hasErrors()) {
+            for (ObjectError error : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
+        return companyDetailService.add(request);
     }
 
     @PostMapping("/set")

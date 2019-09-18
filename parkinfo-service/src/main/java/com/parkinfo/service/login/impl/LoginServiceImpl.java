@@ -8,7 +8,6 @@ import com.parkinfo.repository.userConfig.ParkInfoRepository;
 import com.parkinfo.repository.userConfig.ParkUserRepository;
 import com.parkinfo.request.login.LoginRequest;
 import com.parkinfo.request.login.QueryUserByParkRequest;
-import com.parkinfo.request.login.QueryUserCurrentRequest;
 import com.parkinfo.response.login.ParkUserResponse;
 import com.parkinfo.service.login.ILoginService;
 import com.parkinfo.token.TokenUtils;
@@ -25,7 +24,6 @@ import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class LoginServiceImpl implements ILoginService {
@@ -102,11 +100,37 @@ public class LoginServiceImpl implements ILoginService {
         return Result.<List<ParkUser>>builder().success().data(allByParksEquals).build();
     }
 
+    @Override
+    public Result<Page<ParkUserResponse>> search(QueryUserByParkRequest request) {
+        Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
+        Specification<ParkUser> specification = (Specification<ParkUser>) (root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            Join<ParkUser, ParkInfo> join = root.join(root.getModel().getSingularAttribute("parkInfo", ParkInfo.class), JoinType.LEFT);
+            predicates.add(criteriaBuilder.equal(join.get("id").as(String.class), request.getId()));
+            predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
+            predicates.add(criteriaBuilder.equal(root.get("entered").as(Boolean.class), Boolean.FALSE));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+        Page<ParkUser> parkUsers = parkUserRepository.findAll(specification, pageable);
+        Page<ParkUserResponse> userResponses = this.convertUserPage(parkUsers);
+        return Result.<Page<ParkUserResponse>>builder().success().data(userResponses).build();
+    }
+
     private ParkInfo checkPark(String id) {
         Optional<ParkInfo> parkInfoOptional = parkInfoRepository.findFirstByDeleteIsFalseAndAvailableIsTrueAndId(id);
         if (!parkInfoOptional.isPresent()) {
             throw new NormalException("园区不存在");
         }
         return parkInfoOptional.get();
+    }
+
+    private Page<ParkUserResponse> convertUserPage(Page<ParkUser> parkUserPage) {
+        List<ParkUserResponse> content = new ArrayList<>();
+        parkUserPage.getContent().forEach(parkUser -> {
+            ParkUserResponse response = new ParkUserResponse();
+            BeanUtils.copyProperties(parkUser, response);
+            content.add(response);
+        });
+        return new PageImpl<>(content, parkUserPage.getPageable(), parkUserPage.getTotalElements());
     }
 }

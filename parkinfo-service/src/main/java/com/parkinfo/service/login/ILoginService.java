@@ -20,4 +20,5 @@ public interface ILoginService {
 
     Result<List<ParkUser>> query(String parkId);
 
+    Result<Page<ParkUserResponse>> search(QueryUserByParkRequest request);
 }

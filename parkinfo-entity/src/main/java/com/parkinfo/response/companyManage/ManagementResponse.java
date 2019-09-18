@@ -41,11 +41,11 @@ public class ManagementResponse {
     private String requireArea;
 
     @ApiModelProperty(value = "公司成立日期")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     private Date foundTime;
 
     @ApiModelProperty(value = "对接时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     private Date connectTime;
 
     @ApiModelProperty(value = "对接方式")

@@ -1,6 +1,7 @@
 package com.parkinfo.service.companyManage;
 
 import com.parkinfo.common.Result;
+import com.parkinfo.request.compayManage.AddCompanyInfoRequest;
 import com.parkinfo.request.compayManage.QueryCompanyRequest;
 import com.parkinfo.request.compayManage.SetCompanyInfoRequest;
 import com.parkinfo.request.compayManage.SetCompanyRequireRequest;
@@ -40,6 +41,13 @@ public interface ICompanyDetailService {
      * @return
      */
     Result<CompanyDetailResponse> query(String id);
+
+    /**
+     * 添加企业信息
+     * @param request
+     * @return
+     */
+    Result add(AddCompanyInfoRequest request);
 
     /**
      * 修改企业信息

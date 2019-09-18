@@ -33,9 +33,9 @@ public class ManagementController {
         return managementService.investImport(file);
     }
 
-    @PostMapping("/investExport")
+    @GetMapping("/investExport")
     @ApiOperation("下载招商信息模板")
-    @RequiresPermissions("companyManage:investment:invest_export")
+    //@RequiresPermissions("companyManage:investment:invest_export")
     public Result investExport(HttpServletResponse response) {
         return managementService.investExport(response);
     }
