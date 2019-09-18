@@ -35,6 +35,7 @@ public class ArchiveInfo extends BaseEntity {
     private String pdfAddress;
 
     @ApiModelProperty(value = "转换状态")
+    @Enumerated(EnumType.STRING)
     private ConvertStatus convertStatus;
 
     @ApiModelProperty(value = "上传人")
