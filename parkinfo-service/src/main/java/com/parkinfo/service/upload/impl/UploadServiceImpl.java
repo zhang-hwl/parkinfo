@@ -20,7 +20,7 @@ public class UploadServiceImpl implements IUploadService {
     @Override
     public Result<String> FileUpload(HttpServletRequest request) {
         String parkId = tokenUtils.getCurrentParkInfo().getId();
-        String realPath = parkId + "/";
+        String realPath = "parkInfo/"+parkId;
         String url = ossService.MultipartFileUpload(request, realPath);
         return Result.<String>builder().success().data(url).build();
     }

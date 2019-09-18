@@ -5,6 +5,7 @@ import com.parkinfo.entity.archiveInfo.ArchiveInfoType;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ArchiveInfoTypeRepository extends JpaRepository<ArchiveInfoType, String> {
@@ -12,5 +13,7 @@ public interface ArchiveInfoTypeRepository extends JpaRepository<ArchiveInfoType
     Optional<ArchiveInfoType> findByIdAndDeleteIsFalseAndAvailableIsTrue(String id);
 
     Optional<ArchiveInfoType> findByTypeAndDeleteIsFalseAndAvailableIsTrue(String type);
+
+    List<ArchiveInfoType> findAllByDeleteIsFalseAndAvailableIsTrue();
 
 }

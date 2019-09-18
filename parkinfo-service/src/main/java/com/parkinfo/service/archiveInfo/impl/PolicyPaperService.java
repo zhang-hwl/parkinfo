@@ -11,6 +11,7 @@ import com.parkinfo.repository.archiveInfo.ArchiveInfoRepository;
 import com.parkinfo.repository.archiveInfo.ArchiveInfoTypeRepository;
 import com.parkinfo.request.archiveInfo.QueryArchiveInfoRequest;
 import com.parkinfo.response.archiveInfo.ArchiveInfoResponse;
+import com.parkinfo.response.archiveInfo.ArchiveInfoTypeResponse;
 import com.parkinfo.token.TokenUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -54,10 +55,10 @@ public class PolicyPaperService extends ArchiveInfoServiceImpl {
             @Override
             public Predicate toPredicate(Root<ArchiveInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder cb) {
                 List<Predicate> predicates = new ArrayList<>();
-                if(request.getGeneral() != null){
+                if(StringUtils.isNotBlank(request.getGeneral())){
                     predicates.add(cb.equal(root.get("generalId").as(String.class), general)); //文件大类
                 }
-                if(request.getKind() != null){
+                if(StringUtils.isNotBlank(request.getKind())){
                     predicates.add(cb.equal(root.get("kind").get("id").as(String.class), request.getKind())); //文件种类
                 }
                 if(StringUtils.isNotBlank(request.getParkId())){
@@ -76,7 +77,7 @@ public class PolicyPaperService extends ArchiveInfoServiceImpl {
                     predicates.add(cb.like(root.get("remark").as(String.class), "%"+request.getRemark()+"%")); //文档说明
                 }
                 if(request.getExternal() != null){
-                    predicates.add(cb.equal(root.get("remark").as(Boolean.class), request.getExternal())); //是否对外
+                    predicates.add(cb.equal(root.get("external").as(Boolean.class), request.getExternal())); //是否对外
                 }
                 predicates.add(cb.equal(root.get("delete").as(Boolean.class), false));  //没有被删除
                 predicates.add(cb.equal(root.get("available").as(Boolean.class), true));  //可用
@@ -104,10 +105,13 @@ public class PolicyPaperService extends ArchiveInfoServiceImpl {
         all.getContent().forEach(temp->{
             ArchiveInfoResponse archiveInfoResponse = new ArchiveInfoResponse();
             BeanUtils.copyProperties(temp, archiveInfoResponse);
+            archiveInfoResponse.setKind(temp.getKind().getId());
+            archiveInfoResponse.setParkName(temp.getParkInfo().getName());
             response.add(archiveInfoResponse);
         });
         Page<ArchiveInfoResponse> result = new PageImpl<>(response, all.getPageable(), all.getTotalElements());
         BeanUtils.copyProperties(all, result);
         return Result.<Page<ArchiveInfoResponse>>builder().success().data(result).build();
     }
+
 }

@@ -2,12 +2,15 @@ package com.parkinfo.web.archiveInfo;
 
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.archiveInfo.ArchiveReadRecord;
+import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.request.archiveInfo.AddArchiveInfoRequest;
 import com.parkinfo.request.archiveInfo.ArchiveCommentRequest;
 import com.parkinfo.request.archiveInfo.ArchiveReadRecordRequest;
 import com.parkinfo.request.archiveInfo.QueryArchiveInfoRequest;
 import com.parkinfo.response.archiveInfo.ArchiveInfoCommentResponse;
 import com.parkinfo.response.archiveInfo.ArchiveInfoResponse;
+import com.parkinfo.response.archiveInfo.ArchiveInfoTypeResponse;
+import com.parkinfo.response.login.ParkInfoResponse;
 import com.parkinfo.service.archiveInfo.IArchiveInfoService;
 import com.parkinfo.service.archiveInfo.impl.PolicyPaperService;
 import io.swagger.annotations.Api;
@@ -19,6 +22,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/archiveInfo/policy")
@@ -98,6 +102,18 @@ public class PolicyPaperController {
     public Result<String> download(@PathVariable("id") String id){
         Result<ArchiveInfoCommentResponse> byId = archiveInfoService.findById(id);
         return Result.<String>builder().success().data(byId.getData().getFileAddress()).build();
+    }
+
+    @PostMapping("/find/parkInfo")
+    @ApiOperation(value = "获取所有园区")
+    public Result<List<ParkInfoResponse>> findAllPark(){
+        return archiveInfoService.findAllPark();
+    }
+
+    @PostMapping("/find/type")
+    @ApiOperation(value = "获取所有类型")
+    public Result<List<ArchiveInfoTypeResponse>> findAllType(){
+        return archiveInfoService.findAllType("政策文件");
     }
 
 }

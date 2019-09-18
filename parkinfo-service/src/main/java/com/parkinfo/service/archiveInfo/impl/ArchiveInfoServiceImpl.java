@@ -23,6 +23,8 @@ import com.parkinfo.repository.userConfig.ParkUserRepository;
 import com.parkinfo.request.archiveInfo.*;
 import com.parkinfo.response.archiveInfo.ArchiveInfoCommentResponse;
 import com.parkinfo.response.archiveInfo.ArchiveInfoResponse;
+import com.parkinfo.response.archiveInfo.ArchiveInfoTypeResponse;
+import com.parkinfo.response.login.ParkInfoResponse;
 import com.parkinfo.service.archiveInfo.IArchiveInfoService;
 import com.parkinfo.token.TokenUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -70,6 +72,7 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
         }
         ArchiveInfoCommentResponse result = new ArchiveInfoCommentResponse();
         BeanUtils.copyProperties(byId.get(), result);
+        result.setPdfAddress(byId.get().getPdfAddress());
         return Result.<ArchiveInfoCommentResponse>builder().success().data(result).build();
     }
 
@@ -134,6 +137,14 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
         }
         ArchiveInfo archiveInfo = byId.get();
         BeanUtils.copyProperties(request, archiveInfo);
+        if(StringUtils.isNotBlank(request.getKind())){
+            Optional<ArchiveInfoType> byTypeId = archiveInfoTypeRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(request.getKind());
+            if(!byTypeId.isPresent()){
+                throw new NormalException("类型不存在");
+            }
+            ArchiveInfoType archiveInfoType = byTypeId.get();
+            archiveInfo.setKind(archiveInfoType);
+        }
         archiveInfoRepository.save(archiveInfo);
         return Result.<String>builder().success().data("编辑成功").build();
     }
@@ -221,6 +232,33 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
         }
         ArchiveInfoType archiveInfoType = byIdAndDeleteIsFalseAndAvailableIsTrue.get();
         return Result.<ArchiveInfoType>builder().success().data(archiveInfoType).build();
+    }
+
+    @Override
+    public Result<List<ParkInfoResponse>> findAllPark() {
+        List<ParkInfo> byAll = parkInfoRepository.findAllByDeleteIsFalseAndAvailableIsTrue();
+        List<ParkInfoResponse> result = Lists.newArrayList();
+        byAll.forEach(temp -> {
+            ParkInfoResponse response = new ParkInfoResponse();
+            BeanUtils.copyProperties(temp, response);
+            result.add(response);
+        });
+        return Result.<List<ParkInfoResponse>>builder().success().data(result).build();
+    }
+
+    public Result<List<ArchiveInfoTypeResponse>> findAllType(String general){
+        Optional<ArchiveInfoType> byType = archiveInfoTypeRepository.findByTypeAndDeleteIsFalseAndAvailableIsTrue(general);
+        if(!byType.isPresent()){
+            throw new NormalException("类型不存在");
+        }
+        Set<ArchiveInfoType> children = byType.get().getChildren();
+        List<ArchiveInfoTypeResponse> result = Lists.newArrayList();
+        children.forEach(temp -> {
+            ArchiveInfoTypeResponse response = new ArchiveInfoTypeResponse();
+            BeanUtils.copyProperties(temp, response);
+            result.add(response);
+        });
+        return Result.<List<ArchiveInfoTypeResponse>>builder().success().data(result).build();
     }
 
 
