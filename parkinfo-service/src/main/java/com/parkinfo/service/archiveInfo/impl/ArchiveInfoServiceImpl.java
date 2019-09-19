@@ -25,6 +25,7 @@ import com.parkinfo.response.archiveInfo.ArchiveInfoCommentResponse;
 import com.parkinfo.response.archiveInfo.ArchiveInfoResponse;
 import com.parkinfo.response.archiveInfo.ArchiveInfoTypeResponse;
 import com.parkinfo.response.login.ParkInfoResponse;
+import com.parkinfo.sender.OfficeFileTransferTaskSender;
 import com.parkinfo.service.archiveInfo.IArchiveInfoService;
 import com.parkinfo.token.TokenUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -58,6 +59,8 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
     private ArchiveInfoTypeRepository archiveInfoTypeRepository;
     @Autowired
     private LearningDataRepository learningDataRepository;
+    @Autowired
+    private OfficeFileTransferTaskSender sender;
 
     @Override
     public Result<Page<ArchiveInfoResponse>> search(QueryArchiveInfoRequest request) {
@@ -72,6 +75,7 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
         }
         ArchiveInfoCommentResponse result = new ArchiveInfoCommentResponse();
         BeanUtils.copyProperties(byId.get(), result);
+        result.setPdfAddress(byId.get().getPdfAddress());
         return Result.<ArchiveInfoCommentResponse>builder().success().data(result).build();
     }
 
@@ -124,7 +128,10 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
             learningData.setArchiveInfoType(archiveInfo.getKind());
             learningDataRepository.save(learningData);
         }
-        archiveInfoRepository.save(archiveInfo);
+        ArchiveInfo save = archiveInfoRepository.save(archiveInfo);
+        if(StringUtils.isNotBlank(save.getFileAddress())){
+
+        }
         return Result.<String>builder().success().data("新增成功").build();
     }
 
@@ -136,6 +143,14 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
         }
         ArchiveInfo archiveInfo = byId.get();
         BeanUtils.copyProperties(request, archiveInfo);
+        if(StringUtils.isNotBlank(request.getKind())){
+            Optional<ArchiveInfoType> byTypeId = archiveInfoTypeRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(request.getKind());
+            if(!byTypeId.isPresent()){
+                throw new NormalException("类型不存在");
+            }
+            ArchiveInfoType archiveInfoType = byTypeId.get();
+            archiveInfo.setKind(archiveInfoType);
+        }
         archiveInfoRepository.save(archiveInfo);
         return Result.<String>builder().success().data("编辑成功").build();
     }

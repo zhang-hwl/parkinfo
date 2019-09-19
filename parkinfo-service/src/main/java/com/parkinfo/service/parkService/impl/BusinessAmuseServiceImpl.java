@@ -74,13 +74,9 @@ public class BusinessAmuseServiceImpl implements IBusinessAmuseService {
 
     @Override
     public Result<BusinessAmuseResponse> detailBusinessAmuse(String id) {
-        Optional<BusinessAmuse> byId = businessAmuseRepository.findByDeleteIsFalseAndId(id);
-        if (!byId.isPresent()) {
-            throw new NormalException("信息不存在");
-        }
-        BusinessAmuse businessAmuse = byId.get();
+        BusinessAmuse businessAmuse = checkBusinessAmuse(id);
         BusinessAmuseResponse response = new BusinessAmuseResponse();
-        BeanUtils.copyProperties(byId, response);
+        BeanUtils.copyProperties(businessAmuse, response);
         return Result.<BusinessAmuseResponse>builder().success().data(response).build();
     }
 

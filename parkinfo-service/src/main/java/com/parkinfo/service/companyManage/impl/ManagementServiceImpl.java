@@ -4,7 +4,6 @@ import com.parkinfo.common.Result;
 import com.parkinfo.entity.companyManage.CompanyDetail;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.entity.userConfig.ParkUser;
-import com.parkinfo.enums.CheckStatus;
 import com.parkinfo.enums.DiscussStatus;
 import com.parkinfo.enums.EnterStatus;
 import com.parkinfo.exception.NormalException;
@@ -59,7 +58,6 @@ public class ManagementServiceImpl implements IManagementService {
                     companyDetail.setDeleteEnter(false);
                     companyDetail.setEntered(false);
                     companyDetail.setEnterStatus(EnterStatus.WAITING);
-                    companyDetail.setCheckStatus(CheckStatus.APPLYING);
                     companyDetailRepository.save(companyDetail);
                 });
             }
@@ -93,7 +91,6 @@ public class ManagementServiceImpl implements IManagementService {
         companyDetail.setDeleteEnter(false);
         companyDetail.setEntered(false);
         companyDetail.setEnterStatus(EnterStatus.WAITING);
-        companyDetail.setCheckStatus(CheckStatus.APPLYING);
         companyDetailRepository.save(companyDetail);
         return Result.builder().success().message("添加成功").build();
     }
@@ -174,7 +171,6 @@ public class ManagementServiceImpl implements IManagementService {
         }
         companyDetail.setEntered(true);
         companyDetail.setEnterStatus(EnterStatus.ENTERED);
-        companyDetail.setCheckStatus(CheckStatus.AGREE);
         companyDetailRepository.save(companyDetail);
         return Result.builder().success().message("入驻成功").build();
     }

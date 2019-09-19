@@ -4,4 +4,5 @@ public enum FileUploadType {
     COMPANY_ENCLOSURE,
     PERSONAL_CLOUD,
     AVATAR,
+    TEMPLATE
 }

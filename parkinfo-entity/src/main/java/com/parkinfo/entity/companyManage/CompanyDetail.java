@@ -35,6 +35,7 @@ public class CompanyDetail extends BaseEntity{
     private String companyAddress;
 
     @ApiModelProperty(value = "公司注册资金")
+    @Excel(name = "公司地址", width = 15)
     private String registerMoney;
 
     @Excel(name = "联系人", width = 15)
@@ -90,10 +91,6 @@ public class CompanyDetail extends BaseEntity{
     @ApiModelProperty(value = "公司成立日期")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date foundTime;
-
-    @ApiModelProperty(value = "审核状态")
-    @Enumerated(EnumType.ORDINAL)//APPLYING,AGREE,REFUSE 申请中,同意,拒绝
-    private CheckStatus checkStatus;
 
     @ApiModelProperty(value = "入驻状态")
     @Enumerated(EnumType.ORDINAL)//WAITING,ENTERED,LEAVE 未入驻,已入住,已离园

@@ -92,4 +92,11 @@ public class MeetingRoomController {
     public Result<String> deleteMeetingRoom(@PathVariable("id") String id){
         return meetingRoomService.deleteMeetingRoom(id);
     }
+
+    @PostMapping("/detail/{id}")
+    @ApiOperation(value = "查看园区会议室详情")
+    @RequiresPermissions("parkService:meetingRoomReserve:meetingRoomManage:detail")
+    public Result<MeetingRoomResponse> detailMeetingRoom(@PathVariable("id") String id){
+        return meetingRoomService.detailMeetingRoom(id);
+    }
 }

@@ -107,6 +107,6 @@ public class ActivityApplyServiceImpl implements IActivityApplyService {
         ActivityApply activityApply = this.checkActivityApply(id);
         ActivityApplyResponse response = new ActivityApplyResponse();
         BeanUtils.copyProperties(activityApply, response);
-        return null;
+        return Result.<ActivityApplyResponse>builder().success().data(response).build();
     }
 }

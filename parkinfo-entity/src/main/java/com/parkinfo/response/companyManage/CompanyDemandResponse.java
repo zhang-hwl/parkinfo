@@ -7,10 +7,10 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class CompanyDetailResponse {
+public class CompanyDemandResponse {
 
     @ApiModelProperty(value = "公司id")
-    private String companyId;
+    private String id;
 
     @ApiModelProperty(value = "公司名称")
     private String companyName;

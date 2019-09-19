@@ -27,39 +27,11 @@ public interface ICompanyEnterService {
     Result<Page<EnterResponse>> findAll(QueryEnterRequest request);
 
     /**
-     * 修改分页查询的企业信息
-     * @param request
-     * @return
-     */
-    Result modify(SetEnterRequest request);
-
-    /**
      * 修改入驻企业详情
      * @param request
      * @return
      */
     Result setCompany(ModifyCompanyRequest request);
-
-    /**
-     * 添加入驻信息
-     * @param request
-     * @return
-     */
-    Result addEnter(AddEnterDetailRequest request);
-
-    /**
-     * 修改入驻信息
-     * @param request
-     * @return
-     */
-    Result set(SetEnterDetailRequest request);
-
-    /**
-     * 删除入驻信息
-     * @param id
-     * @return
-     */
-    Result deleteEnter(String id);
 
     /**
      * 查询入驻企业详情
@@ -74,18 +46,4 @@ public interface ICompanyEnterService {
      * @return
      */
     Result delete(String id);
-
-    /**
-     * 上传文件
-     * @param request
-     * @return
-     */
-    Result<String> uploadFile(HttpServletRequest request);
-
-    /**
-     * 添加附件
-     * @param request
-     * @return
-     */
-    Result addFile(AddFileRequest request);
 }

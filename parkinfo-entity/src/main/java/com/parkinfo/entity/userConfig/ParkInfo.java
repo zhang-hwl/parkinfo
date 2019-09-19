@@ -3,6 +3,7 @@ package com.parkinfo.entity.userConfig;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.parkinfo.entity.base.BaseEntity;
+import com.parkinfo.entity.companyManage.CompanyDemand;
 import com.parkinfo.entity.companyManage.CompanyDetail;
 import com.parkinfo.entity.parkService.meetingRoom.MeetingRoom;
 import io.swagger.annotations.ApiModelProperty;
@@ -53,5 +54,9 @@ public class ParkInfo extends BaseEntity {
     @OneToMany(mappedBy = "parkInfo")
     @JsonIgnore
     private List<CompanyDetail> companyDetails = new ArrayList<>();
+
+    @OneToMany(mappedBy = "parkInfo")
+    @JsonIgnore
+    private List<CompanyDemand> companyDemands = new ArrayList<>();
 
 }

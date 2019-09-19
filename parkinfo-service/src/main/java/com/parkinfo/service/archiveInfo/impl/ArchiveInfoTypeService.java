@@ -22,7 +22,7 @@ public class ArchiveInfoTypeService implements IArchiveInfoTypeService {
 
     @Override
     public Result<List<AllArchiveInfoTypeResponse>> findAll() {
-        List<ArchiveInfoType> byAll = archiveInfoTypeRepository.findAllByDeleteIsFalseAndAvailableIsTrue();
+        List<ArchiveInfoType> byAll = archiveInfoTypeRepository.findAllByParentIsNullAndDeleteIsFalseAndAvailableIsTrue();
         List<AllArchiveInfoTypeResponse> result = Lists.newArrayList();
         byAll.forEach(temp -> {
             AllArchiveInfoTypeResponse response = new AllArchiveInfoTypeResponse();
