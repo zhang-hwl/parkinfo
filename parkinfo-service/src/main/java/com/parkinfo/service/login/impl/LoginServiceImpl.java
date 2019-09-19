@@ -1,6 +1,8 @@
 package com.parkinfo.service.login.impl;
 
+import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
+import com.parkinfo.dto.ParkUserDTO;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.exception.NormalException;
@@ -8,9 +10,13 @@ import com.parkinfo.repository.userConfig.ParkInfoRepository;
 import com.parkinfo.repository.userConfig.ParkUserRepository;
 import com.parkinfo.request.login.LoginRequest;
 import com.parkinfo.request.login.QueryUserByParkRequest;
+import com.parkinfo.response.login.LoginResponse;
+import com.parkinfo.response.login.ParkInfoListResponse;
 import com.parkinfo.response.login.ParkUserResponse;
 import com.parkinfo.service.login.ILoginService;
 import com.parkinfo.token.TokenUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +30,7 @@ import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class LoginServiceImpl implements ILoginService {
@@ -38,66 +45,41 @@ public class LoginServiceImpl implements ILoginService {
     private TokenUtils tokenUtils;
 
     @Override
-    public Result<String> login(LoginRequest request) {
-        String token;
+    public Result<LoginResponse> login(LoginRequest request) {
         Optional<ParkUser> optionalParkUser = parkUserRepository.findByAccountAndAvailableIsTrueAndDeleteIsFalse(request.getAccount());
         if (!optionalParkUser.isPresent()) {
             throw new NormalException("用户不存在");
         }
         ParkUser parkUser = optionalParkUser.get();
-        parkUser.setRoles(null);
         String password = new SimpleHash("MD5", request.getPassword(), parkUser.getSalt(), 1024).toHex();
         if (!password.equals(parkUser.getPassword())) {
             throw new NormalException("密码错误");
         }
-        //TODO
-        Optional<ParkInfo> optionalParkInfo = parkInfoRepository.findByIdAndDeleteIsFalse(request.getId());
-        if (!optionalParkInfo.isPresent()) {
-            throw new NormalException("园区不存在");
+        String token= tokenUtils.generateTokeCode(parkUser, null);
+        List<ParkInfo> parkInfoList = new ArrayList<>(parkUser.getParks());
+        LoginResponse response = new LoginResponse();
+        response.setToken(token);
+        List<ParkInfoListResponse> parkList  = this.convertParkInfoList(parkInfoList);
+        response.setParkList(parkList);
+        return Result.<LoginResponse>builder().success().data(response).build();
+    }
+
+    @Override
+    public Result<String> choosePark(String parkId) {
+//        ParkUser parkUser = tokenUtils.getLoginUser();
+        ParkUserDTO parkUserDTO = tokenUtils.getLoginUserDTO();
+        Optional<ParkUser> parkUserOptional = parkUserRepository.findById(parkUserDTO.getId());
+        if (!parkUserOptional.isPresent()){
+            throw new NormalException("用户不存在");
         }
-        ParkInfo park = optionalParkInfo.get();
-        if (null == parkUser.getParks()) {
-            throw new NormalException("请绑定园区");
+        ParkUser parkUser = parkUserOptional.get();
+        List<ParkInfo> parkInfoList = new ArrayList<>(parkUser.getParks());
+        List<String> parkIds = parkInfoList.stream().map(ParkInfo::getId).collect(Collectors.toList());
+        if (!parkIds.contains(parkId)){
+            throw new NormalException("该账号不属于该园区");
         }
-        if (!parkUser.getParks().contains(park)) {
-            throw new NormalException("请选择所在园区");
-        }
-        token = tokenUtils.generateTokeCode(parkUser, request.getId());
+        String token = tokenUtils.refreshToken(parkId);
         return Result.<String>builder().success().data(token).build();
-    }
-
-    @Override
-    public Result<List<ParkInfo>> findAllPark() {
-        ParkInfo exampleData = new ParkInfo();
-        ExampleMatcher matcher = ExampleMatcher.matching();
-        exampleData.setDelete(false);
-        exampleData.setAvailable(true);
-        Example<ParkInfo> example = Example.of(exampleData, matcher);
-        List<ParkInfo> parkInfos = parkInfoRepository.findAll(example, Sort.by(Sort.Direction.DESC, "createTime"));
-        return Result.<List<ParkInfo>>builder().success().data(parkInfos).build();
-    }
-
-    @Override
-    public Result<List<ParkUser>> findByCurrent() {
-        ParkInfo parkInfo = tokenUtils.getCurrentParkInfo();
-        List<ParkUser> allByParksEquals = parkUserRepository.findAllByParksEqualsAndDeleteIsFalseAndAvailableIsTrue(parkInfo);
-        return Result.<List<ParkUser>>builder().success().data(allByParksEquals).build();
-    }
-
-    @Override
-    public Result<List<ParkUser>> query(String parkId) {
-        ParkInfo parkInfo = this.checkPark(parkId);
-        /*List<ParkUser> response = new ArrayList<>();
-        ParkUser user = new ParkUser();
-        List<ParkUser> collect = parkInfo.getUsers().stream()
-                .filter(parkUser -> parkUser.getDelete().equals(false)&&parkUser.getAvailable().equals(true))
-                .collect(Collectors.toList());
-        collect.forEach(parkUser -> {
-            BeanUtils.copyProperties(parkUser, user);
-            response.add(user);
-        });*/
-        List<ParkUser> allByParksEquals = parkUserRepository.findAllByParksEqualsAndDeleteIsFalseAndAvailableIsTrue(parkInfo);
-        return Result.<List<ParkUser>>builder().success().data(allByParksEquals).build();
     }
 
     @Override
@@ -132,5 +114,15 @@ public class LoginServiceImpl implements ILoginService {
             content.add(response);
         });
         return new PageImpl<>(content, parkUserPage.getPageable(), parkUserPage.getTotalElements());
+    }
+
+    private List<ParkInfoListResponse> convertParkInfoList(List<ParkInfo> parkInfoList) {
+        List<ParkInfoListResponse> responseList = Lists.newArrayList();
+        parkInfoList.forEach(parkInfo -> {
+            ParkInfoListResponse response = new ParkInfoListResponse();
+            BeanUtils.copyProperties(parkInfo,response);
+            responseList.add(response);
+        });
+        return responseList;
     }
 }
