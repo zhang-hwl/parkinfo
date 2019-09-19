@@ -35,4 +35,6 @@ public interface ILearningDataService {
      * @return
      */
     Result<String> deleteLearningData(String id);
+
+    Result<LearningDateResponse> detailLearningData(String id);
 }

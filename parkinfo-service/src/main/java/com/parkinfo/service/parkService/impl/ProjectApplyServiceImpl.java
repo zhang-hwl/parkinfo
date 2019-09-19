@@ -85,6 +85,17 @@ public class ProjectApplyServiceImpl implements IProjectApplyService {
     }
 
     @Override
+    public Result<ProjectApplyRecordResponse> detailRecord(String recordId) {
+        ProjectApplyRecord projectApplyRecord = checkProjectApplyRecord(recordId);
+        ProjectApplyRecordResponse response = new ProjectApplyRecordResponse();
+        BeanUtils.copyProperties(projectApplyRecord, response);
+        response.setCompanyName(projectApplyRecord.getCompanyDetail().getCompanyName());
+        response.setContacts(projectApplyRecord.getCompanyDetail().getLinkMan());
+        response.setContactNumber(projectApplyRecord.getCompanyDetail().getPhone());
+        return Result.<ProjectApplyRecordResponse>builder().success().data(response).build();
+    }
+
+    @Override
     public Result<List<ProjectApplyRecordResponse>> searchMyApplyRecord() {
         ParkUserDTO loginUserDTO = tokenUtils.getLoginUserDTO();
         List<ProjectApplyRecord> projectApplyRecordList = projectApplyRecordRepository.findByDeleteIsFalseAndCompanyDetail_ParkUser_Id(loginUserDTO.getId());

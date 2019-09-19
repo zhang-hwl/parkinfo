@@ -122,7 +122,7 @@ public class InfoEquipmentServiceImpl implements IInfoEquipmentService {
     @Override
     public Result<List<InfoEquipmentRequest>> findAll() {
         String parkId = tokenUtils.getLoginUserDTO().getCurrentParkId();
-        Optional<InfoEquipment> byIdAndDeleteIsFalse = infoEquipmentRepository.findByIdAndDeleteIsFalse(parkId);
+        Optional<ParkInfo> byIdAndDeleteIsFalse = parkInfoRepository.findByIdAndDeleteIsFalse(parkId);
         if(!byIdAndDeleteIsFalse.isPresent()){
             throw new NormalException("该园区不存在");
         }

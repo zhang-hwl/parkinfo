@@ -12,6 +12,7 @@ import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.informationTotal.PolicyTotalRepository;
 import com.parkinfo.repository.userConfig.ParkInfoRepository;
 import com.parkinfo.repository.userConfig.ParkUserRepository;
+import com.parkinfo.request.infoTotalRequest.CompeteGradenInfoRequest;
 import com.parkinfo.request.infoTotalRequest.PolicyTotalRequest;
 import com.parkinfo.service.informationTotal.IPolicyTotalService;
 import com.parkinfo.token.TokenUtils;
@@ -69,7 +70,10 @@ public class PolicyTotalServiceImpl implements IPolicyTotalService {
 
     @Override
     public Result<List<PolicyTotalRequest>> findByVersion(String version) {
-        int flag = judgePremission();
+        int flag = judgePremission();   //判断查看权限
+        if(flag == -1){
+            return Result.<List<PolicyTotalRequest>>builder().success().data(null).build();
+        }
         ParkUserDTO loginUserDTO = tokenUtils.getLoginUserDTO();
         if(loginUserDTO == null){
             throw new NormalException("token不存在或已过期");
@@ -141,7 +145,10 @@ public class PolicyTotalServiceImpl implements IPolicyTotalService {
 
     @Override
     public Result<List<PolicyTotalRequest>> findAll() {
-        int flag = judgePremission();
+        int flag = judgePremission();   //判断查看权限
+        if(flag == -1){
+            return Result.<List<PolicyTotalRequest>>builder().success().data(null).build();
+        }
         ParkUserDTO loginUserDTO = tokenUtils.getLoginUserDTO();
         if(loginUserDTO == null){
             throw new NormalException("token不存在或已过期");

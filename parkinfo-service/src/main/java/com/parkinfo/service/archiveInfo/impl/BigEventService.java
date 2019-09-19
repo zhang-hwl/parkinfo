@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ActivityPaperService extends ArchiveInfoServiceImpl {
+public class BigEventService extends ArchiveInfoServiceImpl {
 
     @Autowired
     private ArchiveInfoRepository archiveInfoRepository;
@@ -81,7 +81,10 @@ public class ActivityPaperService extends ArchiveInfoServiceImpl {
                 predicates.add(cb.equal(root.get("delete").as(Boolean.class), false));  //没有被删除
                 predicates.add(cb.equal(root.get("available").as(Boolean.class), true));  //可用
                 List<Predicate> list = Lists.newArrayList();
-                if(!roles.contains(ParkRoleEnum.PRESIDENT.name()) && !roles.contains(ParkRoleEnum.GENERAL_MANAGER.name()) && !roles.contains(ParkRoleEnum.PARK_MANAGER.name())){
+                if(!roles.contains(ParkRoleEnum.PRESIDENT.name()) && !roles.contains(ParkRoleEnum.GENERAL_MANAGER.name())){
+                    if(roles.contains(ParkRoleEnum.PARK_MANAGER.name())){
+                        list.add(cb.and(cb.equal(root.get("parkInfo").get("id").as(String.class), parkId)));
+                    }
                     if(roles.contains(ParkRoleEnum.OFFICER.name())){
                         list.add(cb.equal(root.get("government").as(Boolean.class), true));
                     }
@@ -112,5 +115,4 @@ public class ActivityPaperService extends ArchiveInfoServiceImpl {
         BeanUtils.copyProperties(all, result);
         return Result.<Page<ArchiveInfoResponse>>builder().success().data(result).build();
     }
-
 }

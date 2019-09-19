@@ -66,4 +66,6 @@ public interface IProjectApplyService {
      * @return
      */
     Result<String> changeStatus(ChangeStatusRequest request);
+
+    Result<ProjectApplyRecordResponse> detailRecord(String recordId);
 }

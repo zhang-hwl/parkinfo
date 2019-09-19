@@ -51,4 +51,11 @@ public class ServiceFlowController {
         }
         return serviceFlowService.editServiceFlowImg(request);
     }
+
+    @PostMapping("/detail/{id}")
+    @ApiOperation(value = "查看园区服务流程图")
+    @RequiresPermissions("parkService:serviceFlow:serviceFlow:detail")
+    public Result<ServiceFlowImg> searchServiceFlowImg(String id){
+        return serviceFlowService.detailServiceFlowImg(id);
+    }
 }

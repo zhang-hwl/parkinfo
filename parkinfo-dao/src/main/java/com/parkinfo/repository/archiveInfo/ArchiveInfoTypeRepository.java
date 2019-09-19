@@ -16,4 +16,6 @@ public interface ArchiveInfoTypeRepository extends JpaRepository<ArchiveInfoType
 
     List<ArchiveInfoType> findAllByDeleteIsFalseAndAvailableIsTrue();
 
+    List<ArchiveInfoType> findAllByParentIsNullAndDeleteIsFalseAndAvailableIsTrue();
+
 }
