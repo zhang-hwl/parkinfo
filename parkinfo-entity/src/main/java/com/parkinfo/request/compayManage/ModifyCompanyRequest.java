@@ -6,7 +6,9 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class ModifyCompanyRequest {
@@ -47,4 +49,10 @@ public class ModifyCompanyRequest {
 
     @ApiModelProperty(value = "需求面积")
     private String requireArea;
+
+    @ApiModelProperty(value = "入驻信息")
+    List<AddEnterDetailRequest> enterDetailRequests = new ArrayList<>();
+
+    @ApiModelProperty(value = "附件")
+    List<AddFileRequest> fileRequests = new ArrayList<>();
 }

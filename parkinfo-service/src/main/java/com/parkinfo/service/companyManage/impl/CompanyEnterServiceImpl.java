@@ -97,36 +97,33 @@ public class CompanyEnterServiceImpl implements ICompanyEnterService {
         CompanyDetail companyDetail = this.checkEnter(request.getId());
         BeanUtils.copyProperties(request, companyDetail);
         companyDetailRepository.save(companyDetail);
+        enteredInfoRepository.deleteByCompanyDetail_Id(request.getId());
+        request.getEnterDetailRequests().forEach(AddEnterDetailRequest->{
+            EnteredInfo enteredInfo = new EnteredInfo();
+            BeanUtils.copyProperties(AddEnterDetailRequest,enteredInfo);
+            enteredInfo.setDelete(false);
+            enteredInfo.setAvailable(true);
+            enteredInfo.setCompanyDetail(companyDetail);
+            enteredInfoRepository.save(enteredInfo);
+        });
+        request.getFileRequests().forEach(AddFileRequest->{
+            Optional<EnclosureTotal> byEnclosureType = enclosureTotalRepository.findByEnclosureTypeAndAndDeleteIsFalse(AddFileRequest.getEnclosureType());
+            if (!byEnclosureType.isPresent()) {
+                EnclosureTotal enclosureTotal = new EnclosureTotal();
+                BeanUtils.copyProperties(AddFileRequest,enclosureTotal);
+                enclosureTotal.setAvailable(true);
+                enclosureTotal.setDelete(false);
+                enclosureTotal.setCompanyDetail(companyDetail);
+                enclosureTotalRepository.save(enclosureTotal);
+            }else {
+                EnclosureTotal enclosureTotal = byEnclosureType.get();
+                BeanUtils.copyProperties(AddFileRequest,enclosureTotal);
+                enclosureTotalRepository.save(enclosureTotal);
+            }
+        });
         return Result.builder().success().message("修改成功").build();
     }
 
-    @Override
-    public Result addEnter(AddEnterDetailRequest request) {
-        CompanyDetail companyDetail = this.checkEnter(request.getCompanyId());
-        EnteredInfo enteredInfo = new EnteredInfo();
-        BeanUtils.copyProperties(request, enteredInfo);
-        enteredInfo.setCompanyDetail(companyDetail);
-        enteredInfo.setDelete(false);
-        enteredInfo.setAvailable(true);
-        enteredInfoRepository.save(enteredInfo);
-        return Result.builder().success().message("添加成功").build();
-    }
-
-    @Override
-    public Result set(SetEnterDetailRequest request) {
-        EnteredInfo enteredInfo = this.checkEnterInfo(request.getEnterId());
-        BeanUtils.copyProperties(request, enteredInfo);
-        enteredInfoRepository.save(enteredInfo);
-        return Result.builder().success().message("修改成功").build();
-    }
-
-    @Override
-    public Result deleteEnter(String enterId) {
-        EnteredInfo enteredInfo = this.checkEnterInfo(enterId);
-        enteredInfo.setDelete(true);
-        enteredInfoRepository.save(enteredInfo);
-        return Result.builder().success().message("删除成功").build();
-    }
 
     @Override
     public Result<EnterDetailResponse> query(String id) {
@@ -168,19 +165,6 @@ public class CompanyEnterServiceImpl implements ICompanyEnterService {
         return Result.<String>builder().success().data(fileUpload).build();
     }
 
-    @Override
-    public Result addFile(AddFileRequest request) {
-        CompanyDetail companyDetail = this.checkEnter(request.getCompanyId());
-        EnclosureTotal enclosureTotal = new EnclosureTotal();
-        enclosureTotal.setCompanyDetail(companyDetail);
-        BeanUtils.copyProperties(request, enclosureTotal);
-        enclosureTotal.setDelete(false);
-        enclosureTotal.setAvailable(true);
-        enclosureTotalRepository.save(enclosureTotal);
-        return Result.builder().success().message("上传成功").build();
-    }
-
-
     private Page<EnterResponse> convertDetailPage(Page<CompanyDetail> companyDetailPage) {
         List<EnterResponse> content = new ArrayList<>();
         companyDetailPage.getContent().forEach(companyDetail -> {
@@ -197,13 +181,5 @@ public class CompanyEnterServiceImpl implements ICompanyEnterService {
             throw new NormalException("入驻企业不存在");
         }
         return companyDetailOptional.get();
-    }
-
-    private EnteredInfo checkEnterInfo(String id) {
-        Optional<EnteredInfo> enteredInfoOptional = enteredInfoRepository.findByIdAndDeleteIsFalse(id);
-        if (!enteredInfoOptional.isPresent()) {
-            throw new NormalException("入驻信息不存在");
-        }
-        return enteredInfoOptional.get();
     }
 }

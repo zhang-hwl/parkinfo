@@ -34,27 +34,6 @@ public interface ICompanyEnterService {
     Result setCompany(ModifyCompanyRequest request);
 
     /**
-     * 添加入驻信息
-     * @param request
-     * @return
-     */
-    Result addEnter(AddEnterDetailRequest request);
-
-    /**
-     * 修改入驻信息
-     * @param request
-     * @return
-     */
-    Result set(SetEnterDetailRequest request);
-
-    /**
-     * 删除入驻信息
-     * @param id
-     * @return
-     */
-    Result deleteEnter(String id);
-
-    /**
      * 查询入驻企业详情
      * @param id
      * @return
@@ -74,11 +53,4 @@ public interface ICompanyEnterService {
      * @return
      */
     Result<String> uploadFile(HttpServletRequest request);
-
-    /**
-     * 添加附件
-     * @param request
-     * @return
-     */
-    Result addFile(AddFileRequest request);
 }
