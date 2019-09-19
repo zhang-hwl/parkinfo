@@ -27,13 +27,6 @@ public interface ICompanyEnterService {
     Result<Page<EnterResponse>> findAll(QueryEnterRequest request);
 
     /**
-     * 修改分页查询的企业信息
-     * @param request
-     * @return
-     */
-    Result modify(SetEnterRequest request);
-
-    /**
      * 修改入驻企业详情
      * @param request
      * @return

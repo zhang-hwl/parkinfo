@@ -93,16 +93,6 @@ public class CompanyEnterServiceImpl implements ICompanyEnterService {
     }
 
     @Override
-    public Result modify(SetEnterRequest request) {
-        CompanyDetail checkEnter = this.checkEnter(request.getId());
-        checkEnter.setCompanyName(request.getCompanyName());
-        checkEnter.setNumber(request.getNumber());
-        checkEnter.setEnterStatus(request.getEnterStatus());
-        companyDetailRepository.save(checkEnter);
-        return Result.builder().success().message("修改成功").build();
-    }
-
-    @Override
     public Result setCompany(ModifyCompanyRequest request) {
         CompanyDetail companyDetail = this.checkEnter(request.getId());
         BeanUtils.copyProperties(request, companyDetail);

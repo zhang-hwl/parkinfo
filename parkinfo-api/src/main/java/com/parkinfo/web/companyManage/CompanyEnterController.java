@@ -28,7 +28,7 @@ public class CompanyEnterController {
 
     @GetMapping("/enterExport")
     @ApiOperation("导出入驻企业信息")
-    //@RequiresPermissions("companyManage:companyEnter:enter_export")
+    @RequiresPermissions("companyManage:companyEnter:enter_export")
     public Result enterExport(HttpServletResponse response) {
         return companyEnterService.enterExport(response);
     }
@@ -38,13 +38,6 @@ public class CompanyEnterController {
     @RequiresPermissions("companyManage:companyEnter:enter_findAll")
     public Result<Page<EnterResponse>> findAll(@RequestBody QueryEnterRequest request) {
         return companyEnterService.findAll(request);
-    }
-
-    @PostMapping("/modify")
-    @ApiOperation("修改分页查询的企业信息")
-    @RequiresPermissions("companyManage:companyEnter:enter_modify")
-    public Result modify(@RequestBody SetEnterRequest request) {
-        return companyEnterService.modify(request);
     }
 
     @PostMapping("/setCompany")
