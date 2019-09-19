@@ -46,11 +46,4 @@ public interface ICompanyEnterService {
      * @return
      */
     Result delete(String id);
-
-    /**
-     * 上传文件
-     * @param request
-     * @return
-     */
-    Result<String> uploadFile(HttpServletRequest request);
 }

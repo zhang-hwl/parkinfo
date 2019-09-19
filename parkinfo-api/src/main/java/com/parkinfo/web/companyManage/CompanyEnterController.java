@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @RestController
@@ -54,12 +53,5 @@ public class CompanyEnterController {
     @RequiresPermissions("companyManage:companyEnter:enter_delete")
     public Result delete(@PathVariable("id") String id) {
         return companyEnterService.delete(id);
-    }
-
-    @PostMapping("/uploadFile")
-    @ApiOperation("上传文件返回文件url")
-    @RequiresPermissions("companyManage:companyEnter:enter_ upload")
-    public Result<String> uploadFile(HttpServletRequest request) {
-        return companyEnterService.uploadFile(request);
     }
 }
