@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ActivityPaperService extends ArchiveInfoServiceImpl {
+public class SpotCheckService extends ArchiveInfoServiceImpl {
 
     @Autowired
     private ArchiveInfoRepository archiveInfoRepository;
@@ -46,6 +46,8 @@ public class ActivityPaperService extends ArchiveInfoServiceImpl {
         }
         String parkId = loginUserDTO.getCurrentParkId();
         Optional<ArchiveInfoType> byType = archiveInfoTypeRepository.findByTypeAndDeleteIsFalseAndAvailableIsTrue(request.getGeneral());
+        if(!byType.isPresent()){
+        }
         List<String> roles = loginUserDTO.getRole();
         ArchiveInfoType archiveInfoType = byType.get();
         String general = archiveInfoType.getId();
@@ -112,5 +114,4 @@ public class ActivityPaperService extends ArchiveInfoServiceImpl {
         BeanUtils.copyProperties(all, result);
         return Result.<Page<ArchiveInfoResponse>>builder().success().data(result).build();
     }
-
 }

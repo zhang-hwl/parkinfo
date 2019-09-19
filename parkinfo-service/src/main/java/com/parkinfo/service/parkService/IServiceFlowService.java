@@ -19,4 +19,7 @@ public interface IServiceFlowService {
      * @return
      */
     Result<String> editServiceFlowImg(AddServiceFlowImgRequest request);
+
+    Result<ServiceFlowImg> detailServiceFlowImg(String id);
+
 }

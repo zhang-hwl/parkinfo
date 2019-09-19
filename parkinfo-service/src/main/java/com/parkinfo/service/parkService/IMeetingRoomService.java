@@ -50,4 +50,6 @@ public interface IMeetingRoomService {
      * @return
      */
     Result<List<MeetingRoomReserveResponse>> searchMeetingRoomReserve(SearchMeetingRoomReverseRequest request);
+
+    Result<MeetingRoomResponse> detailMeetingRoom(String id);
 }

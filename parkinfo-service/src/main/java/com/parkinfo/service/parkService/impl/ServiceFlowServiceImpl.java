@@ -1,7 +1,9 @@
 package com.parkinfo.service.parkService.impl;
 
+import ch.qos.logback.core.pattern.util.RegularEscapeUtil;
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.parkService.serviceFlow.ServiceFlowImg;
+import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.parkService.ServiceFlowImgRepository;
 import com.parkinfo.request.parkService.serviceFlow.AddServiceFlowImgRequest;
 import com.parkinfo.request.parkService.serviceFlow.SearchServiceFlowImgRequest;
@@ -48,4 +50,13 @@ public class ServiceFlowServiceImpl implements IServiceFlowService {
         return Result.<String>builder().success().message("编辑或上传成功").build();
     }
 
+    @Override
+    public Result<ServiceFlowImg> detailServiceFlowImg(String id) {
+        Optional<ServiceFlowImg> byIdAndDeleteIsFalseAndAvailableIsTrue = serviceFlowImgRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(id);
+        if(!byIdAndDeleteIsFalseAndAvailableIsTrue.isPresent()){
+            throw new NormalException("流程图不存在");
+        }
+        ServiceFlowImg serviceFlowImg = byIdAndDeleteIsFalseAndAvailableIsTrue.get();
+        return Result.<ServiceFlowImg>builder().success().data(serviceFlowImg).build();
+    }
 }

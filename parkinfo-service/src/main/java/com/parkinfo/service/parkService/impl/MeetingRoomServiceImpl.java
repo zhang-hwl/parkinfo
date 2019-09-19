@@ -86,6 +86,15 @@ public class MeetingRoomServiceImpl implements IMeetingRoomService {
     }
 
     @Override
+    public Result<MeetingRoomResponse> detailMeetingRoom(String id) {
+        MeetingRoom meetingRoom = checkMeetingRoom(id);
+        MeetingRoomResponse response = new MeetingRoomResponse();
+        BeanUtils.copyProperties(meetingRoom, response);
+        response.setUserName(meetingRoom.getParkUser().getNickname());
+        return Result.<MeetingRoomResponse>builder().success().data(response).build();
+    }
+
+    @Override
     public Result<String> editMeetingRoom(EditMeetingRoomRequest request) {
         MeetingRoom meetingRoom = this.checkMeetingRoom(request.getRoomId());
         meetingRoom.setCapacity(request.getCapacity());

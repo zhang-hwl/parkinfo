@@ -134,6 +134,9 @@ public class CommonServiceWindowServiceImpl implements ICommonServiceWindowServi
 
     @Override
     public Result<CommonServiceWindowResponse> detail(String id) {
-        return null;
+        CommonServiceWindow commonServiceWindow = checkCommonServiceWindow(id);
+        CommonServiceWindowResponse response = new CommonServiceWindowResponse();
+        BeanUtils.copyProperties(commonServiceWindow, response);
+        return Result.<CommonServiceWindowResponse>builder().success().data(response).build();
     }
 }

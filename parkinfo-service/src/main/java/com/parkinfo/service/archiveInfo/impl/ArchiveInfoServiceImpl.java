@@ -25,6 +25,7 @@ import com.parkinfo.response.archiveInfo.ArchiveInfoCommentResponse;
 import com.parkinfo.response.archiveInfo.ArchiveInfoResponse;
 import com.parkinfo.response.archiveInfo.ArchiveInfoTypeResponse;
 import com.parkinfo.response.login.ParkInfoResponse;
+import com.parkinfo.sender.OfficeFileTransferTaskSender;
 import com.parkinfo.service.archiveInfo.IArchiveInfoService;
 import com.parkinfo.token.TokenUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -58,6 +59,8 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
     private ArchiveInfoTypeRepository archiveInfoTypeRepository;
     @Autowired
     private LearningDataRepository learningDataRepository;
+    @Autowired
+    private OfficeFileTransferTaskSender sender;
 
     @Override
     public Result<Page<ArchiveInfoResponse>> search(QueryArchiveInfoRequest request) {
@@ -125,7 +128,10 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
             learningData.setArchiveInfoType(archiveInfo.getKind());
             learningDataRepository.save(learningData);
         }
-        archiveInfoRepository.save(archiveInfo);
+        ArchiveInfo save = archiveInfoRepository.save(archiveInfo);
+        if(StringUtils.isNotBlank(save.getFileAddress())){
+
+        }
         return Result.<String>builder().success().data("新增成功").build();
     }
 
