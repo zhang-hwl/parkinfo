@@ -5,10 +5,12 @@ import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.request.login.LoginRequest;
 import com.parkinfo.request.login.QueryUserByParkRequest;
+import com.parkinfo.response.login.LoginResponse;
 import com.parkinfo.response.login.ParkUserResponse;
 import com.parkinfo.service.login.ILoginService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.BindingResult;
@@ -28,32 +30,22 @@ public class LoginController {
 
     @PostMapping("/login")
     @ApiOperation(value = "登录")
-    public Result<String> login(@Valid @RequestBody LoginRequest request, BindingResult result) {
+    public Result<LoginResponse> login(@Valid @RequestBody LoginRequest request, BindingResult result) {
         if (result.hasErrors()) {
             for (ObjectError error : result.getAllErrors()) {
-                return Result.<String>builder().fail().code(500).message(error.getDefaultMessage()).build();
+                return Result.<LoginResponse>builder().fail().code(500).message(error.getDefaultMessage()).build();
             }
         }
         return loginService.login(request);
     }
 
-    @PostMapping("/find")
-    @ApiOperation(value = "获取园区列表")
-    public Result<List<ParkInfo>> findAllPark() {
-        return loginService.findAllPark();
+    @PostMapping("/choosePark/{parkId}")
+    @RequiresAuthentication
+    @ApiOperation(value = "选择园区")
+    public Result<String> choosePark(@PathVariable("parkId")String parkId) {
+        return loginService.choosePark(parkId);
     }
 
-    @PostMapping("/search")
-    @ApiOperation(value = "获取本园区用户")
-    public Result<List<ParkUser>> findByCurrent() {
-        return loginService.findByCurrent();
-    }
-
-    @PostMapping("/query/{parkId}")
-    @ApiOperation(value = "根据园区获取用户")
-    public Result<List<ParkUser>> query(@PathVariable String parkId) {
-        return loginService.query(parkId);
-    }
 
     @PostMapping("/searchAll")
     @ApiOperation(value = "根据园区分页获取用户")

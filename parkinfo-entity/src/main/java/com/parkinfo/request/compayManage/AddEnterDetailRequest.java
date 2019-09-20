@@ -10,9 +10,6 @@ import java.util.Date;
 @Data
 public class AddEnterDetailRequest {
 
-    @ApiModelProperty(value = "入驻企业id")
-    private String companyId;
-
     @ApiModelProperty(value = "入驻房间号")
     private String roomNum;
 

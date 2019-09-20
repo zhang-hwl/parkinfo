@@ -132,6 +132,7 @@ public class TokenUtils {
         }
     }
 
+
     /**
      * 从数据库中查询
      *
@@ -170,6 +171,16 @@ public class TokenUtils {
         } catch (NoSuchAlgorithmException e) {
             throw new NormalException("token生成失败");
         }
+    }
+
+    public String refreshToken(String parkId){
+        ParkUserDTO parkUserDTO = this.getLoginUserDTO();
+        String token = SecurityUtils.getSubject().getPrincipal().toString();
+        parkUserDTO.setCurrentParkId(parkId);
+        redisCacheTemplate.opsForValue().set(TOKEN_PREFIX + token, parkUserDTO);
+        redisCacheTemplate.expire(TOKEN_PREFIX + token, 6, TimeUnit.HOURS);
+        redisCacheTemplate.opsForValue().set(USER_SURVIVE + parkUserDTO.getId(), TOKEN_PREFIX + token);  //存活的token更新
+        return token;
     }
 
     /**

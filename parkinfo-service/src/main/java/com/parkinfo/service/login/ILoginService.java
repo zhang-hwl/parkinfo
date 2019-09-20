@@ -5,6 +5,8 @@ import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.request.login.LoginRequest;
 import com.parkinfo.request.login.QueryUserByParkRequest;
+import com.parkinfo.response.login.LoginResponse;
+import com.parkinfo.response.login.ParkInfoListResponse;
 import com.parkinfo.response.login.ParkUserResponse;
 import org.springframework.data.domain.Page;
 
@@ -12,13 +14,9 @@ import java.util.List;
 
 public interface ILoginService {
 
-    Result<String> login(LoginRequest request);
+    Result<LoginResponse> login(LoginRequest request);
 
-    Result<List<ParkInfo>> findAllPark();
-
-    Result<List<ParkUser>> findByCurrent();
-
-    Result<List<ParkUser>> query(String parkId);
+    Result<String> choosePark(String parkId);
 
     Result<Page<ParkUserResponse>> search(QueryUserByParkRequest request);
 }
