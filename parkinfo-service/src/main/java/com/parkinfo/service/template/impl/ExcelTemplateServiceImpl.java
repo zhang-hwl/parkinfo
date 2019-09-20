@@ -33,9 +33,16 @@ public class ExcelTemplateServiceImpl implements IExcelTemplateService {
 
     @Override
     public Result add(AddExcelTemplateRequest request) {
-        ExcelTemplate excelTemplate = new ExcelTemplate();
-        BeanUtils.copyProperties(request,excelTemplate);
-        excelTemplateRepository.save(excelTemplate);
+        Optional<ExcelTemplate> optionalExcelTemplate = excelTemplateRepository.findByTypeAndDeleteIsFalse(request.getType());
+        if (!optionalExcelTemplate.isPresent()) {
+            ExcelTemplate excelTemplate = new ExcelTemplate();
+            BeanUtils.copyProperties(request,excelTemplate);
+            excelTemplateRepository.save(excelTemplate);
+        }else {
+            ExcelTemplate excelTemplate = optionalExcelTemplate.get();
+            BeanUtils.copyProperties(request,excelTemplate);
+            excelTemplateRepository.save(excelTemplate);
+        }
         return Result.builder().success().message("上传成功").build();
     }
 

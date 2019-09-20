@@ -1,10 +1,12 @@
 package com.parkinfo.service.companyManage.impl;
 
 import com.parkinfo.common.Result;
+import com.parkinfo.dto.ParkUserDTO;
 import com.parkinfo.entity.companyManage.CompanyDemand;
 import com.parkinfo.entity.companyManage.CompanyDetail;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.enums.CheckStatus;
+import com.parkinfo.enums.ParkRoleEnum;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.companyManage.CompanyDemandRepository;
 import com.parkinfo.request.compayManage.AddCompanyInfoRequest;
@@ -84,7 +86,7 @@ public class CompanyDemandServiceImpl implements ICompanyDemandService {
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
         Specification<CompanyDemand> specification = (Specification<CompanyDemand>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
-            ParkInfo parkInfo = tokenUtils.getCurrentParkInfo();
+            ParkUserDTO currentUser = tokenUtils.getLoginUserDTO();
             if (StringUtils.isNotBlank(request.getCompanyName())) {
                 predicates.add(criteriaBuilder.like(root.get("companyName").as(String.class), "%" + request.getCompanyName()+ "%"));
             }
@@ -94,11 +96,15 @@ public class CompanyDemandServiceImpl implements ICompanyDemandService {
             if (null != request.getCheckStatus()) {
                 predicates.add(criteriaBuilder.equal(root.get("checkStatus").as(Integer.class), request.getCheckStatus().ordinal()));
             }
-            if (parkInfo == null) {
-                throw new NormalException("请先登录");
+            if (currentUser.getRole().contains(ParkRoleEnum.PARK_MANAGER.toString())
+                    || currentUser.getRole().contains(ParkRoleEnum.PARK_USER.toString())
+                    || currentUser.getRole().contains(ParkRoleEnum.OFFICER.toString())) {
+                predicates.add(criteriaBuilder.equal(root.get("parkInfo").get("id").as(String.class), currentUser.getCurrentParkId()));
+            }else {
+                if (StringUtils.isNotBlank(request.getParkId())){
+                    predicates.add(criteriaBuilder.equal(root.get("parkInfo").get("id").as(String.class), request.getParkId()));
+                }
             }
-            Join<CompanyDemand, ParkInfo> join = root.join(root.getModel().getSingularAttribute("parkInfo", ParkInfo.class), JoinType.LEFT);
-            predicates.add(criteriaBuilder.equal(join.get("id").as(String.class), parkInfo.getId()));
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
             predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));

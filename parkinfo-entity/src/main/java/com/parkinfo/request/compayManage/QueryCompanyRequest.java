@@ -12,6 +12,10 @@ import javax.persistence.Enumerated;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class QueryCompanyRequest extends PageRequest {
+
+    @ApiModelProperty(value = "园区id")
+    private String parkId;
+
     @ApiModelProperty(value = "企业名称")
     private String companyName;
 

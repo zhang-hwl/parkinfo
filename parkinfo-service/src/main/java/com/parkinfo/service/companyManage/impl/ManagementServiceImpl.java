@@ -1,6 +1,7 @@
 package com.parkinfo.service.companyManage.impl;
 
 import com.parkinfo.common.Result;
+import com.parkinfo.dto.ParkUserDTO;
 import com.parkinfo.entity.companyManage.CompanyDetail;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.entity.userConfig.ParkUser;
@@ -100,25 +101,18 @@ public class ManagementServiceImpl implements IManagementService {
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
         Specification<CompanyDetail> specification = (Specification<CompanyDetail>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
-            ParkInfo parkInfo = tokenUtils.getCurrentParkInfo();
             if (StringUtils.isNotBlank(request.getLinkMan())) {
                 predicates.add(criteriaBuilder.like(root.get("linkMan").as(String.class), "%" + request.getLinkMan() + "%"));
             }
             if (StringUtils.isNotBlank(request.getConnectWay())) {
-                /*Join<CompanyDetail, DiscussDetail> join1 = root.join(root.getModel().getSingularAttribute("discussDetail", DiscussDetail.class), JoinType.LEFT);
-                predicates.add(criteriaBuilder.equal(join1.get("connectWay").as(String.class), request.getConnectWay()));*/
                 predicates.add(criteriaBuilder.equal(root.get("connectWay").as(String.class), request.getConnectWay()));
             }
             if (null != request.getDiscussStatus()) {
-               /* Join<CompanyDetail, DiscussDetail> join2 = root.join(root.getModel().getSingularAttribute("discussDetail", DiscussDetail.class), JoinType.LEFT);
-                predicates.add(criteriaBuilder.equal(join2.get("discussStatus").as(DiscussStatus.class), request.getDiscussStatus().ordinal()));*/
                 predicates.add(criteriaBuilder.equal(root.get("discussStatus").as(DiscussStatus.class), request.getDiscussStatus().ordinal()));
             }
-            if (parkInfo == null) {
-                throw new NormalException("请先登录");
+            if (StringUtils.isNotBlank(request.getParkId())){
+                predicates.add(criteriaBuilder.equal(root.get("parkInfo").get("id").as(String.class), request.getParkId()));
             }
-            Join<CompanyDetail, ParkInfo> join = root.join(root.getModel().getSingularAttribute("parkInfo", ParkInfo.class), JoinType.LEFT);
-            predicates.add(criteriaBuilder.equal(join.get("id").as(String.class), parkInfo.getId()));
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
             predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
             predicates.add(criteriaBuilder.equal(root.get("entered").as(Boolean.class), Boolean.FALSE));
