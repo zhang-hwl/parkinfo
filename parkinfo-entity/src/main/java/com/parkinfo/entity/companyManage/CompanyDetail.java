@@ -18,7 +18,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.util.*;
 
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = {"parkInfo", "parkUser", "enteredInfos", "enclosureTotals"})
 @Data
 @Entity
 @Table(name = "c_company_detail")
@@ -35,6 +35,7 @@ public class CompanyDetail extends BaseEntity{
     private String companyAddress;
 
     @ApiModelProperty(value = "公司注册资金")
+    @Excel(name = "公司地址", width = 15)
     private String registerMoney;
 
     @Excel(name = "联系人", width = 15)
@@ -63,7 +64,8 @@ public class CompanyDetail extends BaseEntity{
 
     @Excel(name = "需求时间", width = 15)
     @ApiModelProperty(value = "需求时间")
-    private String requireTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    private Date requireTime;
 
     @Excel(name = "需求位置", width = 15)
     @ApiModelProperty(value = "需求位置")
@@ -90,10 +92,6 @@ public class CompanyDetail extends BaseEntity{
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date foundTime;
 
-    @ApiModelProperty(value = "审核状态")
-    @Enumerated(EnumType.ORDINAL)//APPLYING,AGREE,REFUSE 申请中,同意,拒绝
-    private CheckStatus checkStatus;
-
     @ApiModelProperty(value = "入驻状态")
     @Enumerated(EnumType.ORDINAL)//WAITING,ENTERED,LEAVE 未入驻,已入住,已离园
     private EnterStatus enterStatus;
@@ -108,6 +106,7 @@ public class CompanyDetail extends BaseEntity{
 
     @Excel(name = "对接时间", width = 15)
     @ApiModelProperty(value = "对接时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date connectTime;
 
     @Excel(name = "意向", width = 15)

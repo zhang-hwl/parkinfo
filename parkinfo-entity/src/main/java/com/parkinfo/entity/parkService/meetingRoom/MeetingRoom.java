@@ -14,7 +14,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = {"parkInfo", "parkUser", "meetingRoomReserves"})
 @Data
 @Entity
 @Table(name = "c_ser_meeting_room")

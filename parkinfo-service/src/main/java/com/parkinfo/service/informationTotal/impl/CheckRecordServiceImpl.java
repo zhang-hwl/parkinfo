@@ -69,7 +69,13 @@ public class CheckRecordServiceImpl implements ICheckRecordService {
 
     @Override
     public Result<List<CheckRecordRequest>> findByVersion(String version) {
-        judgePremission();
+        if(StringUtils.isBlank(version)){
+            return findAll();
+        }
+        int flag = judgePremission();
+        if(flag == -1){
+            return Result.<List<CheckRecordRequest>>builder().success().data(null).build();
+        }
         List<CheckRecord> byVersionAndDeleteIsFalse = checkRecordRepository.findByVersionAndDeleteIsFalse(version);
         List<CheckRecordRequest> list = Lists.newArrayList();
         byVersionAndDeleteIsFalse.forEach(temp -> {
@@ -123,7 +129,10 @@ public class CheckRecordServiceImpl implements ICheckRecordService {
 
     @Override
     public Result<List<CheckRecordRequest>> findAll() {
-        judgePremission();
+        int flag = judgePremission();
+        if(flag == -1){
+            return Result.<List<CheckRecordRequest>>builder().success().data(null).build();
+        }
         String parkId = tokenUtils.getLoginUserDTO().getCurrentParkId();
         Optional<ParkInfo> byIdAndDeleteIsFalse = parkInfoRepository.findByIdAndDeleteIsFalse(parkId);
         if(!byIdAndDeleteIsFalse.isPresent()){
@@ -155,7 +164,7 @@ public class CheckRecordServiceImpl implements ICheckRecordService {
     public void download(HttpServletResponse response, String version) {
         judgePremission();
         List<CheckRecord> list = Lists.newArrayList();
-        if(StringUtils.isBlank(version)){
+        if(StringUtils.isNotBlank(version)){
             list.addAll(checkRecordRepository.findByVersionAndDeleteIsFalse(version));
         }
         else{
@@ -179,9 +188,6 @@ public class CheckRecordServiceImpl implements ICheckRecordService {
             else{
                 return 1;
             }
-        }
-        if(flag == -1){
-            throw new ShiroException();
         }
         return flag;
     }

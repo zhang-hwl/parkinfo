@@ -2,6 +2,7 @@ package com.parkinfo.web.personalCloud;
 
 import com.parkinfo.common.Result;
 import com.parkinfo.request.personalCloud.AddPersonalCloudRequest;
+import com.parkinfo.request.personalCloud.DeletePersonalCloudRequest;
 import com.parkinfo.request.personalCloud.QueryPersonalCloudRequest;
 import com.parkinfo.request.personalCloud.SetPersonalCloudRequest;
 import com.parkinfo.response.personalCloud.DownloadResponse;
@@ -59,5 +60,11 @@ public class PersonalCloudController {
     @ApiOperation("获取下载文件url和文件名")
     public Result<DownloadResponse> download(@PathVariable("id") String id) {
         return personalCloudService.download(id);
+    }
+
+    @PostMapping("/delete")
+    @ApiOperation("批量删除文件")
+    public Result deleteAll(DeletePersonalCloudRequest request) {
+        return personalCloudService.deleteAll(request);
     }
 }

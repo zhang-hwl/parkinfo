@@ -13,7 +13,7 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true,exclude = {"parent","children","parkInfo"})
 @Data
 @Entity
 @Table(name = "c_business_amuse_type")

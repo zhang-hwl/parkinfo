@@ -3,6 +3,7 @@ package com.parkinfo.entity.userConfig;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.parkinfo.entity.base.BaseEntity;
+import com.parkinfo.entity.companyManage.CompanyDemand;
 import com.parkinfo.entity.companyManage.CompanyDetail;
 import com.parkinfo.entity.parkService.meetingRoom.MeetingRoom;
 import io.swagger.annotations.ApiModelProperty;
@@ -23,10 +24,11 @@ import java.util.Set;
  * @author cnyuchu@gmail.com
  * @create 2019-09-05 09:59
  **/
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true,exclude = {"manager","users","meetingRooms","companyDetails"})
 @Data
 @Entity(name = "c_park_info")
 @Table(appliesTo = "c_park_info",comment = "园区信息表")
+@JsonIgnoreProperties(value={"hibernateLazyInitializer","handler","fieldHandler"})
 public class ParkInfo extends BaseEntity {
 
     /**
@@ -38,7 +40,6 @@ public class ParkInfo extends BaseEntity {
      * 园区负责人
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
     @JoinColumn(name = "manager_id")
     private ParkUser manager;
 
@@ -53,5 +54,9 @@ public class ParkInfo extends BaseEntity {
     @OneToMany(mappedBy = "parkInfo")
     @JsonIgnore
     private List<CompanyDetail> companyDetails = new ArrayList<>();
+
+    @OneToMany(mappedBy = "parkInfo")
+    @JsonIgnore
+    private List<CompanyDemand> companyDemands = new ArrayList<>();
 
 }

@@ -1,17 +1,17 @@
 package com.parkinfo.service.companyManage;
 
 import com.parkinfo.common.Result;
+import com.parkinfo.request.compayManage.AddCompanyInfoRequest;
 import com.parkinfo.request.compayManage.QueryCompanyRequest;
 import com.parkinfo.request.compayManage.SetCompanyInfoRequest;
-import com.parkinfo.request.compayManage.SetCompanyRequireRequest;
-import com.parkinfo.response.companyManage.CompanyDetailResponse;
+import com.parkinfo.response.companyManage.CompanyDemandResponse;
 import com.parkinfo.response.companyManage.CompanyResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 
-public interface ICompanyDetailService {
+public interface ICompanyDemandService {
 
     /**
      * 导入公司信息
@@ -39,7 +39,14 @@ public interface ICompanyDetailService {
      * @param id
      * @return
      */
-    Result<CompanyDetailResponse> query(String id);
+    Result<CompanyDemandResponse> query(String id);
+
+    /**
+     * 添加企业信息
+     * @param request
+     * @return
+     */
+    Result add(AddCompanyInfoRequest request);
 
     /**
      * 修改企业信息
@@ -47,13 +54,6 @@ public interface ICompanyDetailService {
      * @return
      */
     Result set(SetCompanyInfoRequest request);
-
-    /**
-     * 修改企业需求
-     * @param request
-     * @return
-     */
-    Result setRequire(SetCompanyRequireRequest request);
 
     /**
      * 删除企业信息

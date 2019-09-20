@@ -23,6 +23,9 @@ public class EnclosureTotal extends BaseEntity {
     @Enumerated(EnumType.ORDINAL)
     private EnclosureType enclosureType;
 
+    @ApiModelProperty(value = "附件名称")
+    private String fileName;
+
     @ApiModelProperty(value = "附件url")
     private String fileUrl;
 

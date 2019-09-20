@@ -68,7 +68,13 @@ public class BigEventServiceImpl implements IBigEventService {
 
     @Override
     public Result<List<BigEventRequest>> findByVersion(String version) {
+        if(StringUtils.isBlank(version)){
+            return findAll();
+        }
         int flag = judgePremission();   //判断查看权限
+        if(flag == -1){
+            return Result.<List<BigEventRequest>>builder().success().data(null).build();
+        }
         ParkUserDTO parkUserDTO = tokenUtils.getLoginUserDTO();
         if(parkUserDTO == null){
             throw new NormalException("token不存在或已过期");
@@ -140,6 +146,9 @@ public class BigEventServiceImpl implements IBigEventService {
     @Override
     public Result<List<BigEventRequest>> findAll() {
         int flag = judgePremission();   //判断查看权限
+        if(flag == -1){
+            return Result.<List<BigEventRequest>>builder().success().data(null).build();
+        }
         ParkUserDTO parkUserDTO = tokenUtils.getLoginUserDTO();
         if(parkUserDTO == null){
             throw new NormalException("token不存在或已过期");
@@ -182,12 +191,7 @@ public class BigEventServiceImpl implements IBigEventService {
     public void download(HttpServletResponse response, String version) {
         //仅下载权限内的文件
         List<BigEventRequest> bigEvents;
-        if(StringUtils.isNotBlank(version)){
-            bigEvents = findByVersion(version).getData();
-        }
-        else{
-            bigEvents = findAll().getData();
-        }
+        bigEvents = findByVersion(version).getData();
         List<BigEvent> list = Lists.newArrayList();
         bigEvents.forEach(temp -> {
             BigEvent bigEvent = new BigEvent();
@@ -201,7 +205,7 @@ public class BigEventServiceImpl implements IBigEventService {
         }
     }
 
-    //判断权限，1为有权限，0为仅本园区
+    //判断权限，1为查看所有，0为仅本园区，-1不能查看
     private int judgePremission(){
         int flag = -1;
         List<String> roles = tokenUtils.getLoginUserDTO().getRole();
@@ -213,9 +217,6 @@ public class BigEventServiceImpl implements IBigEventService {
             else if(role.equals(ParkRoleEnum.PARK_MANAGER.name()) || role.equals(ParkRoleEnum.OFFICER.name()) || role.equals(ParkRoleEnum.HR_USER.name())){
                 flag = 0;
             }
-        }
-        if(flag == -1){
-            throw new ShiroException();
         }
         return flag;
     }

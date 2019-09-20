@@ -1,6 +1,7 @@
 package com.parkinfo.web.parkService;
 
 import com.parkinfo.common.Result;
+import com.parkinfo.entity.parkService.activityApply.ActivityApply;
 import com.parkinfo.request.parkService.activityApply.AddActivityApplyRequest;
 import com.parkinfo.request.parkService.activityApply.EditActivityApplyRequest;
 import com.parkinfo.request.parkService.activityApply.SearchActivityApplyRequest;
@@ -29,6 +30,13 @@ public class ActivityApplyController {
     @RequiresPermissions("parkService:serviceDemandInfo:activityApplyManage:search")
     public Result<Page<ActivityApplyResponse>> searchActivityApply(@RequestBody SearchActivityApplyRequest request){
         return activityApplyService.searchActivityApply(request);
+    }
+
+    @PostMapping("/detail/{id}")
+    @ApiOperation(value = "查看活动申请")
+    @RequiresPermissions("parkService:serviceDemandInfo:activityApplyManage:detail")
+    public Result<ActivityApplyResponse> detail(@PathVariable("id") String id){
+        return activityApplyService.detailActivityApply(id);
     }
 
     @PostMapping("/add")

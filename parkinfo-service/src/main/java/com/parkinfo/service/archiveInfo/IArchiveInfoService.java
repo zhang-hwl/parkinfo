@@ -6,6 +6,8 @@ import com.parkinfo.entity.archiveInfo.ArchiveReadRecord;
 import com.parkinfo.request.archiveInfo.*;
 import com.parkinfo.response.archiveInfo.ArchiveInfoCommentResponse;
 import com.parkinfo.response.archiveInfo.ArchiveInfoResponse;
+import com.parkinfo.response.archiveInfo.ArchiveInfoTypeResponse;
+import com.parkinfo.response.login.ParkInfoResponse;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -13,8 +15,6 @@ import java.util.List;
 public interface IArchiveInfoService {
 
     Result<Page<ArchiveInfoResponse>> search(QueryArchiveInfoRequest request);
-
-    Result<List<ArchiveInfoResponse>> findAll();
 
     Result<ArchiveInfoCommentResponse> findById(String id);
 
@@ -30,12 +30,9 @@ public interface IArchiveInfoService {
 
     Result<Page<ArchiveReadRecord>> findReadRecord(ArchiveReadRecordRequest request);
 
-    Result<String> addType(ArchiveInfoTypeRequest request);
-
-    Result<String> editType(ArchiveInfoTypeRequest request);
-
-    Result<String> deleteType(String id);
-
     Result<ArchiveInfoType> findType(String id);
 
+    Result<List<ParkInfoResponse>> findAllPark();
+
+    public Result<List<ArchiveInfoTypeResponse>> findAllType(String general);
 }

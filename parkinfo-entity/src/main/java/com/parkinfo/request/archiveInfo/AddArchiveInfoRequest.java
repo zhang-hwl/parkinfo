@@ -11,7 +11,7 @@ public class AddArchiveInfoRequest {
     @ApiModelProperty(value = "文件类型")
     private String fileType;
 
-    @ApiModelProperty(value = "文件大类")
+    @ApiModelProperty(value = "文件大类,前端不传")
     private String general;
 
     @ApiModelProperty(value = "文件种类")
@@ -22,9 +22,6 @@ public class AddArchiveInfoRequest {
 
     @ApiModelProperty(value = "文件地址")
     private String fileAddress;
-
-    @ApiModelProperty(value = "PDF文件地址")
-    private String pdfAddress;
 
     @ApiModelProperty(value = "备注")
     private String remark;

@@ -35,4 +35,6 @@ public interface IActivityApplyService {
      * @return
      */
     Result<String> deleteActivityApply(String id);
+
+    Result<ActivityApplyResponse> detailActivityApply(String id);
 }

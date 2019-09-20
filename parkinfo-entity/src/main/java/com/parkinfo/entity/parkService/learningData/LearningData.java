@@ -18,6 +18,7 @@ import javax.persistence.*;
 @EntityListeners(AuditingEntityListener.class)
 @ApiModel(value = "LearningData", description = "学习资料")
 public class LearningData extends BaseEntity {
+
     @ApiModelProperty("文件类型")
     private String fileType;
 

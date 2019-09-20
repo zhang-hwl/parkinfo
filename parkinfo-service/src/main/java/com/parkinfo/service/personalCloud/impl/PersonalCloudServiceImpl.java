@@ -7,6 +7,7 @@ import com.parkinfo.enums.FileUploadType;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.personalCloud.CloudDiskRepository;
 import com.parkinfo.request.personalCloud.AddPersonalCloudRequest;
+import com.parkinfo.request.personalCloud.DeletePersonalCloudRequest;
 import com.parkinfo.request.personalCloud.QueryPersonalCloudRequest;
 import com.parkinfo.request.personalCloud.SetPersonalCloudRequest;
 import com.parkinfo.response.personalCloud.DownloadResponse;
@@ -137,6 +138,16 @@ public class PersonalCloudServiceImpl implements IPersonalCloudService {
         DownloadResponse response = new DownloadResponse();
         BeanUtils.copyProperties(cloudDisk,response);
         return Result.<DownloadResponse>builder().success().data(response).build();
+    }
+
+    @Override
+    public Result deleteAll(DeletePersonalCloudRequest request) {
+        List<CloudDisk> cloudDiskList = cloudDiskRepository.findAllById(request.getIds());
+        cloudDiskList.forEach(cloudDisk -> {
+            cloudDisk.setDelete(true);
+        });
+        cloudDiskRepository.saveAll(cloudDiskList);
+        return Result.builder().success().message("删除成功").build();
     }
 
     private Page<PersonalCloudResponse> convertCloudPage(Page<CloudDisk> cloudDiskPage) {

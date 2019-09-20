@@ -57,4 +57,11 @@ public class LearningDataController {
     public Result<String> deleteLearningData(@PathVariable("id") String id){
         return learningDataService.deleteLearningData(id);
     }
+
+    @PostMapping("/detail/{id}")
+    @ApiOperation(value = "查看学习资料")
+    @RequiresPermissions("parkService:serviceFlow:learningData:detail")
+    public Result<LearningDateResponse> detailLearningData(@PathVariable("id") String id){
+        return learningDataService.detailLearningData(id);
+    }
 }

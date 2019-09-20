@@ -33,6 +33,13 @@ public class CommonServiceWindowController {
         return commonServiceWindowService.searchCommonServiceWindow(request);
     }
 
+    @PostMapping("/detail/{id}")
+    @ApiOperation(value = "查看公共服务窗口详情")
+    @RequiresPermissions("parkService:serviceFlow:commonServiceWindow:detail")
+    public Result<CommonServiceWindowResponse> detail(@PathVariable("id") String id){
+        return commonServiceWindowService.detail(id);
+    }
+
     @PostMapping("/add")
     @ApiOperation(value = "新增公共服务窗口")
     @RequiresPermissions("parkService:serviceFlow:commonServiceWindow:add")

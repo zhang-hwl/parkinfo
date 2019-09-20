@@ -86,6 +86,14 @@ public class LearningDataServiceImpl implements ILearningDataService {
     }
 
     @Override
+    public Result<LearningDateResponse> detailLearningData(String id) {
+        LearningData learningData = checkLearningData(id);
+        LearningDateResponse response = new LearningDateResponse();
+        BeanUtils.copyProperties(learningData, response);
+        return Result.<LearningDateResponse>builder().success().data(response).build();
+    }
+
+    @Override
     public Result<String> editLearningData(EditLearningDataRequest request) {
         LearningData learningData = this.checkLearningData(request.getId());
         if (StringUtils.isNotBlank(request.getTypeId())){

@@ -7,11 +7,11 @@ import lombok.Data;
 @Data
 public class AddFileRequest {
 
-    @ApiModelProperty(value = "入驻企业id")
-    private String companyId;
-
     @ApiModelProperty(value = "附件类型")
     private EnclosureType enclosureType;
+
+    @ApiModelProperty(value = "附件名称")
+    private String fileName;
 
     @ApiModelProperty(value = "附件url")
     private String fileUrl;

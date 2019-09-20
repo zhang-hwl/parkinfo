@@ -6,7 +6,9 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class ModifyCompanyRequest {
@@ -39,7 +41,18 @@ public class ModifyCompanyRequest {
     @ApiModelProperty(value = "是否为百强企业")
     private String hundredCompany;
 
+    @ApiModelProperty(value = "是否为本地企业")
+    private String localCompany;
+
     @ApiModelProperty(value = "公司注册资金")
     private String registerMoney;
 
+    @ApiModelProperty(value = "需求面积")
+    private String requireArea;
+
+    @ApiModelProperty(value = "入驻信息")
+    List<AddEnterDetailRequest> enterDetailRequests = new ArrayList<>();
+
+    @ApiModelProperty(value = "附件")
+    List<AddFileRequest> fileRequests = new ArrayList<>();
 }

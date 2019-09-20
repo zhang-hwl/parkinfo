@@ -38,6 +38,15 @@ spring:
         physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
     open-in-view: true
     database-platform: org.hibernate.dialect.MySQL57InnoDBDialect  #不加这句则默认为myisam引擎
+  rabbitmq:
+    host: 47.102.207.156
+    port: 5672
+    username: admin
+    password: Lynkbey888
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
 logging:
   level:
     jdbc:
@@ -49,6 +58,6 @@ logging:
     com:
       hhsj:
         mybatis: DEBUG
-  #  path: /parkinfo/jar/logs/parinfo-web
+  #  path: /parkinfo/jar/logs/parkinfo-web
   pattern:
     file: '%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{15} - %msg%n'

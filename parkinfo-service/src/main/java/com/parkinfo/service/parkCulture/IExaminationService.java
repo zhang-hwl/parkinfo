@@ -7,6 +7,7 @@ import com.parkinfo.response.parkCulture.AnswerSheetListResponse;
 import com.parkinfo.response.parkCulture.QuestionDetailResponse;
 import com.parkinfo.response.parkCulture.QuestionListResponse;
 import org.springframework.data.domain.Page;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface IExaminationService {
 
@@ -29,6 +30,13 @@ public interface IExaminationService {
      * @return
      */
     Result addQuestion(AddQuestionRequest request);
+
+    /**
+     * 导入试题库
+     * @param file
+     * @return
+     */
+    Result importQuestion(MultipartFile file);
 
     /**
      * 编辑试题

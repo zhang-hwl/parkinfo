@@ -4,9 +4,11 @@ import com.parkinfo.common.Result;
 import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.userConfig.ParkUserRepository;
+import com.parkinfo.sender.OfficeFileTransferTaskSender;
 import com.parkinfo.token.TokenUtils;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,6 +33,9 @@ public class TempController {
     @Autowired
     private ParkUserRepository parkUserRepository;
 
+    @Autowired
+    private OfficeFileTransferTaskSender sender;
+
     @PostMapping("/generateToken")
     public Result<String> generateToken(){
         Optional<ParkUser> parkUserOptional = parkUserRepository.findById("fa8fb0515f7f4822a435fea9bb90dab5");
@@ -40,5 +45,11 @@ public class TempController {
         ParkUser parkUser = parkUserOptional.get();
         String token = tokenUtils.generateTokeCode(parkUser,"2b441280acf24d87b5a1272c8f1162ee");
         return Result.<String>builder().success().data(token).build();
+    }
+
+    @PostMapping("/sendMsg/{id}")
+    public Result sendMsg(@PathVariable("id")String id){
+        sender.send(id);
+        return Result.builder().success().message("发送成功").build();
     }
 }

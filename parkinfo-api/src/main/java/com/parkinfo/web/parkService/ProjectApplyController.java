@@ -95,5 +95,12 @@ public class ProjectApplyController {
         return projectApplyService.deleteRecord(recordId);
     }
 
+    @PostMapping("/applyRecord/detail/{recordId}")
+    @ApiOperation(value = "查看企业申请记录详情")
+    @RequiresPermissions("parkService:projectApply:projectApplyManage:deleteApplyRecord")
+    public Result<ProjectApplyRecordResponse> detailRecord(@PathVariable("recordId") String recordId){
+        return projectApplyService.detailRecord(recordId);
+    }
+
 
 }

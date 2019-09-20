@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface ServiceFlowImgRepository extends JpaRepository<ServiceFlowImg,String> {
 
     Optional<ServiceFlowImg> findFirstByDeleteIsFalseAndImgTypeAndParkInfo(ServiceFlowImgType type, ParkInfo parkInfo);
+
+    Optional<ServiceFlowImg> findByIdAndDeleteIsFalseAndAvailableIsTrue(String id);
 }

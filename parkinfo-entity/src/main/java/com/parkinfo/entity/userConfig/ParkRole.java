@@ -1,5 +1,6 @@
 package com.parkinfo.entity.userConfig;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.parkinfo.entity.base.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,6 +21,7 @@ import java.util.Set;
 @Data
 @Entity(name = "c_park_role")
 @Table(appliesTo = "c_park_role",comment = "园区权限表")
+@JsonIgnoreProperties(value={"hibernateLazyInitializer","handler","fieldHandler"})
 public class ParkRole extends BaseEntity {
 
     /**
@@ -34,6 +36,7 @@ public class ParkRole extends BaseEntity {
 
     @ManyToMany(targetEntity = ParkPermission.class, fetch = FetchType.LAZY)
     @JoinTable(name = "c_role_permission", joinColumns = {@JoinColumn(name = "role_id")}, inverseJoinColumns = {@JoinColumn(name = "permission_id")})
+    @JsonIgnoreProperties(value = "permissions")
     private Set<ParkPermission> permissions = new HashSet<>();
 
 }

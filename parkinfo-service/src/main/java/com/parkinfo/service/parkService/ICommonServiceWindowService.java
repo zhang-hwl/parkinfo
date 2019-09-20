@@ -35,4 +35,6 @@ public interface ICommonServiceWindowService {
      * @return
      */
     Result<String> deleteCommonServiceWindow(String id);
+
+    Result<CommonServiceWindowResponse> detail(String id);
 }
