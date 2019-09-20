@@ -24,10 +24,21 @@ public class BusinessAmuseController {
     @Autowired
     private IBusinessAmuseService businessAmuseService;
 
-    @PostMapping("/search")
-    @ApiOperation(value = "分页获取商务&周边娱乐")
+    @PostMapping("/search/serve")
+    @ApiOperation(value = "分页获取商务")
     @RequiresPermissions("parkService:serviceFlow:businessAmuse:search")
-    public Result<Page<BusinessAmuseResponse>> searchBusinessAmuse(@RequestBody SearchBusinessAmuseRequest request){
+    public Result<Page<BusinessAmuseResponse>> searchServeBusinessAmuse(@RequestBody SearchBusinessAmuseRequest request){
+        String bigTypeId = businessAmuseService.findGeneralId("周边服务商");
+        request.setBigTypeId(bigTypeId);
+        return businessAmuseService.searchBusinessAmuse(request);
+    }
+
+    @PostMapping("/search/happy")
+    @ApiOperation(value = "分页获取周边娱乐")
+    @RequiresPermissions("parkService:serviceFlow:businessAmuse:search")
+    public Result<Page<BusinessAmuseResponse>> searchHappyBusinessAmuse(@RequestBody SearchBusinessAmuseRequest request){
+        String bigTypeId = businessAmuseService.findGeneralId("周边配套娱乐");
+        request.setBigTypeId(bigTypeId);
         return businessAmuseService.searchBusinessAmuse(request);
     }
 

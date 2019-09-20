@@ -67,6 +67,9 @@ public class RoomInfoServiceImpl implements IRoomInfoService {
 
     @Override
     public Result<List<RoomInfoRequest>> findByVersion(String version) {
+        if(StringUtils.isBlank(version)){
+            return findAll();
+        }
         List<RoomInfo> byVersionAndDeleteIsFalse = roomInfoRepository.findByVersionAndDeleteIsFalse(version);
         List<RoomInfoRequest> list = Lists.newArrayList();
         byVersionAndDeleteIsFalse.forEach(temp -> {
@@ -150,7 +153,7 @@ public class RoomInfoServiceImpl implements IRoomInfoService {
     @Override
     public void download(HttpServletResponse response, String version) {
         List<RoomInfo> list = Lists.newArrayList();
-        if(StringUtils.isBlank(version) || version.equals("''") || version.equals("null")){
+        if(StringUtils.isNotBlank(version)){
             list.addAll(roomInfoRepository.findByVersionAndDeleteIsFalse(version));
         }
         else{

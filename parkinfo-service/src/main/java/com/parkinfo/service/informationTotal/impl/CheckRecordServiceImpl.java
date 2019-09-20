@@ -69,6 +69,9 @@ public class CheckRecordServiceImpl implements ICheckRecordService {
 
     @Override
     public Result<List<CheckRecordRequest>> findByVersion(String version) {
+        if(StringUtils.isBlank(version)){
+            return findAll();
+        }
         int flag = judgePremission();
         if(flag == -1){
             return Result.<List<CheckRecordRequest>>builder().success().data(null).build();
@@ -161,7 +164,7 @@ public class CheckRecordServiceImpl implements ICheckRecordService {
     public void download(HttpServletResponse response, String version) {
         judgePremission();
         List<CheckRecord> list = Lists.newArrayList();
-        if(StringUtils.isBlank(version)){
+        if(StringUtils.isNotBlank(version)){
             list.addAll(checkRecordRepository.findByVersionAndDeleteIsFalse(version));
         }
         else{

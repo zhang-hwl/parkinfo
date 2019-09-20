@@ -224,4 +224,14 @@ public class BusinessAmuseServiceImpl implements IBusinessAmuseService {
         return Result.<String>builder().success().data("新增成功").build();
     }
 
+    @Override
+    public String findGeneralId(String generalName) {
+        Optional<BusinessAmuseType> byType = businessAmuseTypeRepository.findByTypeAndDeleteIsFalseAndAvailableIsTrue(generalName);
+        if(!byType.isPresent()){
+            throw new NormalException("类型不存在");
+        }
+        String id = byType.get().getId();
+        return id;
+    }
+
 }

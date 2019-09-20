@@ -51,4 +51,7 @@ public interface IBusinessAmuseService {
     Result<String> addBusinessAmuseHappyType(AddBusinessAmuseTypeRequest request);
 
     Result<String> addBusinessAmuseServeType(AddBusinessAmuseTypeRequest request);
+
+    //根据类型名称获取类型id
+    String findGeneralId(String generalName);
 }

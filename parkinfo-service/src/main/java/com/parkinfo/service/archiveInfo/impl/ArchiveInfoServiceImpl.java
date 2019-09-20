@@ -118,16 +118,6 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
         archiveInfo.setUploadTime(new Date());
         archiveInfo.setDelete(false);
         archiveInfo.setAvailable(true);
-        if(archiveInfo.getExternal() == true){
-            //对外，存入学习资料
-            LearningData learningData = new LearningData();
-            BeanUtils.copyProperties(archiveInfo, learningData);
-            learningData.setParkInfo(archiveInfo.getParkInfo());
-            learningData.setFilePath(archiveInfo.getFileAddress());
-            learningData.setDescription(archiveInfo.getRemark());
-            learningData.setArchiveInfoType(archiveInfo.getKind());
-            learningDataRepository.save(learningData);
-        }
         ArchiveInfo save = archiveInfoRepository.save(archiveInfo);
         if(StringUtils.isNotBlank(save.getFileAddress())){
 
