@@ -9,6 +9,10 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class QueryManagementRequest extends PageRequest {
+
+    @ApiModelProperty(value = "园区id")
+    private String parkId;
+
     @ApiModelProperty(value = "联系人")
     private String linkMan;
 

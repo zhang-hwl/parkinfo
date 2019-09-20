@@ -1,11 +1,13 @@
 package com.parkinfo.service.companyManage.impl;
 
 import com.parkinfo.common.Result;
+import com.parkinfo.dto.ParkUserDTO;
 import com.parkinfo.entity.companyManage.CompanyDetail;
 import com.parkinfo.entity.companyManage.EnclosureTotal;
 import com.parkinfo.entity.companyManage.EnteredInfo;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.enums.FileUploadType;
+import com.parkinfo.enums.ParkRoleEnum;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.companyManage.CompanyDetailRepository;
 import com.parkinfo.repository.companyManage.EnclosureTotalRepository;
@@ -51,9 +53,6 @@ public class CompanyEnterServiceImpl implements ICompanyEnterService {
     @Autowired
     private TokenUtils tokenUtils;
 
-    @Autowired
-    private IOssService ossService;
-
     @Override
     public Result enterExport(HttpServletResponse response) {
         CompanyDetail enterDetail = new CompanyDetail();
@@ -72,18 +71,22 @@ public class CompanyEnterServiceImpl implements ICompanyEnterService {
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
         Specification<CompanyDetail> specification = (Specification<CompanyDetail>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
-            ParkInfo parkInfo = tokenUtils.getCurrentParkInfo();
+            ParkUserDTO currentUser = tokenUtils.getLoginUserDTO();
             if (StringUtils.isNotBlank(request.getCompanyName())) {
                 predicates.add(criteriaBuilder.like(root.get("companyName").as(String.class), "%" + request.getCompanyName() + "%"));
             }
             if (null != request.getEnterStatus()) {
                 predicates.add(criteriaBuilder.equal(root.get("enterStatus").as(Integer.class), request.getEnterStatus().ordinal()));
             }
-            if (parkInfo == null) {
-                throw new NormalException("请先登录");
+            if (currentUser.getRole().contains(ParkRoleEnum.PARK_MANAGER.toString())
+                    || currentUser.getRole().contains(ParkRoleEnum.PARK_USER.toString())
+                    || currentUser.getRole().contains(ParkRoleEnum.OFFICER.toString())) {
+                predicates.add(criteriaBuilder.equal(root.get("parkInfo").get("id").as(String.class), currentUser.getCurrentParkId()));
+            }else {
+                if (StringUtils.isNotBlank(request.getParkId())){
+                    predicates.add(criteriaBuilder.equal(root.get("parkInfo").get("id").as(String.class), request.getParkId()));
+                }
             }
-            Join<CompanyDetail, ParkInfo> join = root.join(root.getModel().getSingularAttribute("parkInfo", ParkInfo.class), JoinType.LEFT);
-            predicates.add(criteriaBuilder.equal(join.get("id").as(String.class), parkInfo.getId()));
             predicates.add(criteriaBuilder.equal(root.get("deleteEnter").as(Boolean.class), Boolean.FALSE));
             predicates.add(criteriaBuilder.equal(root.get("entered").as(Boolean.class), Boolean.TRUE));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
