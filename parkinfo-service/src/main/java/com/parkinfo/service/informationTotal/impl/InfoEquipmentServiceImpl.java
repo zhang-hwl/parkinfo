@@ -68,6 +68,9 @@ public class InfoEquipmentServiceImpl implements IInfoEquipmentService {
 
     @Override
     public Result<List<InfoEquipmentRequest>> findByVersion(String version) {
+        if(StringUtils.isBlank(version)){
+            return findAll();
+        }
         List<InfoEquipment> byVersion = infoEquipmentRepository.findByVersionAndDeleteIsFalse(version);
         List<InfoEquipmentRequest> list = Lists.newArrayList();
         byVersion.forEach(temp -> {
@@ -151,7 +154,7 @@ public class InfoEquipmentServiceImpl implements IInfoEquipmentService {
     @Override
     public void download(HttpServletResponse response, String version) {
         List<InfoEquipment> list = Lists.newArrayList();
-        if(StringUtils.isBlank(version) || version.equals("''") || version.equals("null")){
+        if(StringUtils.isNotBlank(version)){
             list.addAll(infoEquipmentRepository.findByVersionAndDeleteIsFalse(version));
         }
         else{

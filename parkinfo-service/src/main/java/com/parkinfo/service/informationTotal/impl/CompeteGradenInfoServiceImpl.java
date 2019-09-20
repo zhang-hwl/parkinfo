@@ -70,6 +70,9 @@ public class CompeteGradenInfoServiceImpl implements ICompeteGradenInfoService {
 
     @Override
     public Result<List<CompeteGradenInfoRequest>> findByVersion(String version) {
+        if(StringUtils.isBlank(version)){
+            return findAll();
+        }
         int flag = judgePremission();   //判断查看权限
         if(flag == -1){
             return Result.<List<CompeteGradenInfoRequest>>builder().success().data(null).build();
@@ -193,12 +196,7 @@ public class CompeteGradenInfoServiceImpl implements ICompeteGradenInfoService {
     @Override
     public void download(HttpServletResponse response, String version) {
         List<CompeteGradenInfoRequest> list;
-        if(StringUtils.isNotBlank(version)){
-            list = findByVersion(version).getData();
-        }
-        else{
-            list = findAll().getData();
-        }
+        list = findByVersion(version).getData();
         List<CompeteGradenInfo> competeGradenInfos = Lists.newArrayList();
         list.forEach(temp -> {
             CompeteGradenInfo competeGradenInfo = new CompeteGradenInfo();

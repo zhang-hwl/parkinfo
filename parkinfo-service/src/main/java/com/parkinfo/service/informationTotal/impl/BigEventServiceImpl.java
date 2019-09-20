@@ -68,6 +68,9 @@ public class BigEventServiceImpl implements IBigEventService {
 
     @Override
     public Result<List<BigEventRequest>> findByVersion(String version) {
+        if(StringUtils.isBlank(version)){
+            return findAll();
+        }
         int flag = judgePremission();   //判断查看权限
         if(flag == -1){
             return Result.<List<BigEventRequest>>builder().success().data(null).build();
@@ -188,12 +191,7 @@ public class BigEventServiceImpl implements IBigEventService {
     public void download(HttpServletResponse response, String version) {
         //仅下载权限内的文件
         List<BigEventRequest> bigEvents;
-        if(StringUtils.isNotBlank(version)){
-            bigEvents = findByVersion(version).getData();
-        }
-        else{
-            bigEvents = findAll().getData();
-        }
+        bigEvents = findByVersion(version).getData();
         List<BigEvent> list = Lists.newArrayList();
         bigEvents.forEach(temp -> {
             BigEvent bigEvent = new BigEvent();

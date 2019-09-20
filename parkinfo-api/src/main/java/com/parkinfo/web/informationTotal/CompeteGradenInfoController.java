@@ -3,8 +3,10 @@ package com.parkinfo.web.informationTotal;
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.informationTotal.CompeteGradenInfo;
 import com.parkinfo.entity.informationTotal.PolicyTotal;
+import com.parkinfo.entity.informationTotal.QueryByVersionRequest;
 import com.parkinfo.request.infoTotalRequest.CompeteGradenInfoRequest;
 import com.parkinfo.service.informationTotal.ICompeteGradenInfoService;
+import com.parkinfo.service.informationTotal.IInfoTotalTemplateService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -22,6 +24,8 @@ public class CompeteGradenInfoController {
 
     @Autowired
     private ICompeteGradenInfoService competeGradenInfoService;
+    @Autowired
+    private IInfoTotalTemplateService templateService;
 
     @PostMapping("/add")
     @ApiOperation(value = "新增竞争园区信息")
@@ -51,31 +55,43 @@ public class CompeteGradenInfoController {
         return competeGradenInfoService.findAll();
     }
 
-    @PostMapping("/search/{version}")
+    @PostMapping("/search")
     @ApiOperation(value = "根据版本查询竞争园区信息")
     @RequiresPermissions(value = "infoTotal:compete:search")
-    public Result<List<CompeteGradenInfoRequest>> findByVersion(@PathVariable("version") String version){
-        return competeGradenInfoService.findByVersion(version);
+    public Result<List<CompeteGradenInfoRequest>> findByVersion(@RequestBody QueryByVersionRequest request){
+        return competeGradenInfoService.findByVersion(request.getVersion());
     }
 
     @PostMapping("/import")
-    @ApiOperation(value = "导入政策统计")
+    @ApiOperation(value = "导入竞争园区信息")
     @RequiresPermissions(value = "infoTotal:compete:add")
     public Result<String> policyTotalImport(@RequestBody MultipartFile multipartFile){
         return competeGradenInfoService.competeGradenInfoImport(multipartFile);
     }
 
+//    @PostMapping("/export")
+//    @ApiOperation(value = "下载竞争园区信息模板")
+//    public Result<String> policyTotalExport(HttpServletResponse response){
+//        return competeGradenInfoService.competeGradenInfoExport(response);
+//    }
+
     @PostMapping("/export")
-    @ApiOperation(value = "下载政策统计模板")
-    public Result<String> policyTotalExport(HttpServletResponse response){
-        return competeGradenInfoService.competeGradenInfoExport(response);
+    @ApiOperation(value = "下载竞争园区信息模板")
+    public Result<String> export(){
+        return templateService.getTemplateUrl("竞争园区信息");
     }
 
     @PostMapping("/download")
     @ApiOperation(value = "文件导出")
     @RequiresPermissions(value = "infoTotal:compete:export")
-    public void download(HttpServletResponse response, @RequestBody String version){
-        competeGradenInfoService.download(response, version);
+    public void download(HttpServletResponse response, @RequestBody QueryByVersionRequest request){
+        competeGradenInfoService.download(response, request.getVersion());
+    }
+
+    @PostMapping("/find/version")
+    @ApiOperation(value = "查询所有文件版本")
+    public Result<List<String>> findAllVersion(){
+        return null;
     }
 
 }

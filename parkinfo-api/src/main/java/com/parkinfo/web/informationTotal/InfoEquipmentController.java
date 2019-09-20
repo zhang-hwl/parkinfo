@@ -1,9 +1,11 @@
 package com.parkinfo.web.informationTotal;
 
 import com.parkinfo.common.Result;
+import com.parkinfo.entity.informationTotal.QueryByVersionRequest;
 import com.parkinfo.request.infoTotalRequest.InfoEquipmentRequest;
 import com.parkinfo.request.infoTotalRequest.PolicyTotalRequest;
 import com.parkinfo.service.informationTotal.IInfoEquipmentService;
+import com.parkinfo.service.informationTotal.IInfoTotalTemplateService;
 import com.parkinfo.service.informationTotal.IPolicyTotalService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -22,6 +24,8 @@ public class InfoEquipmentController {
 
     @Autowired
     private IInfoEquipmentService infoEquipmentService;
+    @Autowired
+    private IInfoTotalTemplateService templateService;
 
     @PostMapping("/add")
     @ApiOperation(value = "新增信息化设备")
@@ -51,11 +55,11 @@ public class InfoEquipmentController {
         return infoEquipmentService.findAll();
     }
 
-    @PostMapping("/search/{version}")
+    @PostMapping("/search")
     @ApiOperation(value = "根据版本查询信息化设备")
     @RequiresPermissions(value = "infoTotal:info:search")
-    public Result<List<InfoEquipmentRequest>> findByVersion(@PathVariable("version") String version){
-        return infoEquipmentService.findByVersion(version);
+    public Result<List<InfoEquipmentRequest>> findByVersion(@RequestBody QueryByVersionRequest request){
+        return infoEquipmentService.findByVersion(request.getVersion());
     }
 
     @PostMapping("/import")
@@ -65,17 +69,29 @@ public class InfoEquipmentController {
         return infoEquipmentService.myImport(multipartFile);
     }
 
+//    @PostMapping("/export")
+//    @ApiOperation(value = "下载信息化设备模板")
+//    public Result<String> policyTotalExport(HttpServletResponse response){
+//        return infoEquipmentService.export(response);
+//    }
+
     @PostMapping("/export")
     @ApiOperation(value = "下载信息化设备模板")
-    public Result<String> policyTotalExport(HttpServletResponse response){
-        return infoEquipmentService.export(response);
+    public Result<String> export(){
+        return templateService.getTemplateUrl("信息化设备");
     }
 
     @PostMapping("/download")
     @ApiOperation(value = "文件导出")
     @RequiresPermissions(value = "infoTotal:info:export")
-    public void download(HttpServletResponse response, @RequestBody String version){
-        infoEquipmentService.download(response, version);
+    public void download(HttpServletResponse response, @RequestBody QueryByVersionRequest request){
+        infoEquipmentService.download(response, request.getVersion());
+    }
+
+    @PostMapping("/find/version")
+    @ApiOperation(value = "查询所有文件版本")
+    public Result<List<String>> findAllVersion(){
+        return null;
     }
 
 }

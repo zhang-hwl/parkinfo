@@ -70,6 +70,9 @@ public class PolicyTotalServiceImpl implements IPolicyTotalService {
 
     @Override
     public Result<List<PolicyTotalRequest>> findByVersion(String version) {
+        if(StringUtils.isBlank(version)){
+            return findAll();
+        }
         int flag = judgePremission();   //判断查看权限
         if(flag == -1){
             return Result.<List<PolicyTotalRequest>>builder().success().data(null).build();

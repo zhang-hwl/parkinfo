@@ -11,7 +11,7 @@ public class SearchBusinessAmuseRequest extends PageRequest {
     @ApiModelProperty("公司名称")
     private String companyName;
 
-    @ApiModelProperty("大类 id")
+    @ApiModelProperty("大类 id，前端不传")
     private String bigTypeId;
 
     @ApiModelProperty("小类 id")
