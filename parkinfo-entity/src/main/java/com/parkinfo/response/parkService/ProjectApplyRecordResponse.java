@@ -27,4 +27,16 @@ public class ProjectApplyRecordResponse {
 
     @ApiModelProperty(value = "申请状态",allowableValues = "APPLYING,FINISHED,REFUSED")
     private ProjectApplyStatus status;
+
+    @ApiModelProperty("项目名称")
+    private String projectName;
+
+    @ApiModelProperty("项目类型")
+    private String projectType;
+
+    @ApiModelProperty("项目奖励")
+    private String projectAward;
+
+    @ApiModelProperty("项目类型Id")
+    private String typeId;
 }

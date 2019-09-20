@@ -20,4 +20,7 @@ public class ProjectInfoResponse {
 
     @ApiModelProperty("分类名称")
     private String typeName;
+
+    @ApiModelProperty("分类id")
+    private String typeId;
 }

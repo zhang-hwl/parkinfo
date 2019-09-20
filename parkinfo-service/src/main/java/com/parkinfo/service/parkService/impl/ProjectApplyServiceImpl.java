@@ -23,6 +23,7 @@ import com.parkinfo.request.parkService.projectApply.EditProjectInfoRequest;
 import com.parkinfo.request.parkService.projectApply.SearchProjectInfoRequest;
 import com.parkinfo.response.parkService.ActivityApplyResponse;
 import com.parkinfo.response.parkService.ProjectApplyRecordResponse;
+import com.parkinfo.response.parkService.ProjectApplyRecordTypeResponse;
 import com.parkinfo.response.parkService.ProjectInfoResponse;
 import com.parkinfo.service.parkService.IProjectApplyService;
 import com.parkinfo.token.TokenUtils;
@@ -96,6 +97,44 @@ public class ProjectApplyServiceImpl implements IProjectApplyService {
     }
 
     @Override
+    public Result<String> addType(ProjectApplyRecordTypeResponse recordTypeResponse) {
+        ProjectType projectType = new ProjectType();
+        projectType.setDelete(false);
+        projectType.setAvailable(true);
+        projectType.setValue(recordTypeResponse.getType());
+        projectTypeRepository.save(projectType);
+        return Result.<String>builder().success().data("新增成功").build();
+    }
+
+    @Override
+    public Result<String> deleteType(String id) {
+        ProjectType projectType = checkProjectType(id);
+        projectTypeRepository.delete(projectType);
+        return Result.<String>builder().success().data("删除成功").build();
+    }
+
+    @Override
+    public Result<String> editType(ProjectApplyRecordTypeResponse recordTypeResponse) {
+        ProjectType projectType = checkProjectType(recordTypeResponse.getId());
+        projectType.setValue(recordTypeResponse.getType());
+        projectTypeRepository.save(projectType);
+        return Result.<String>builder().success().data("编辑成功").build();
+    }
+
+    @Override
+    public Result<List<ProjectApplyRecordTypeResponse>> findAllType() {
+        List<ProjectType> all = projectTypeRepository.findAllByDeleteIsFalseAndAvailableIsTrue();
+        List<ProjectApplyRecordTypeResponse> result = Lists.newArrayList();
+        all.forEach(temp -> {
+            ProjectApplyRecordTypeResponse response = new ProjectApplyRecordTypeResponse();
+            BeanUtils.copyProperties(temp, response);
+            response.setType(temp.getValue());
+            result.add(response);
+        });
+        return Result.<List<ProjectApplyRecordTypeResponse>>builder().success().data(result).build();
+    }
+
+    @Override
     public Result<List<ProjectApplyRecordResponse>> searchMyApplyRecord() {
         ParkUserDTO loginUserDTO = tokenUtils.getLoginUserDTO();
         List<ProjectApplyRecord> projectApplyRecordList = projectApplyRecordRepository.findByDeleteIsFalseAndCompanyDetail_ParkUser_Id(loginUserDTO.getId());
@@ -115,6 +154,10 @@ public class ProjectApplyServiceImpl implements IProjectApplyService {
                 recordResponse.setContacts(projectApplyRecord.getCompanyDetail().getLinkMan());
                 recordResponse.setContactNumber(projectApplyRecord.getCompanyDetail().getPhone());
             }
+            recordResponse.setProjectName(projectApplyRecord.getProjectInfo().getProjectName());
+            recordResponse.setProjectType(projectApplyRecord.getProjectInfo().getProjectType().getValue());
+            recordResponse.setTypeId(projectApplyRecord.getProjectInfo().getProjectType().getId());
+            recordResponse.setProjectAward(projectApplyRecord.getProjectInfo().getProjectPraise());
             responses.add(recordResponse);
         });
         return responses;
@@ -140,6 +183,10 @@ public class ProjectApplyServiceImpl implements IProjectApplyService {
     public Result<String> applyProject(String id) {
         ProjectInfo projectInfo = this.checkProjectInfo(id);
         ParkUser loginUser = tokenUtils.getLoginUser();
+        Optional<ProjectApplyRecord> byId = projectApplyRecordRepository.findByDeleteIsFalseAndCompanyDetail_ParkUser_IdAndProjectInfo_Id(loginUser.getId(), id);
+        if(!byId.isPresent()){
+            throw new NormalException("重复申请");
+        }
         CompanyDetail companyDetail = this.checkCompanyDetailByUserId(loginUser.getId());
         ProjectApplyRecord projectApplyRecord = new ProjectApplyRecord();
         projectApplyRecord.setAppleDate(new Date());
@@ -148,6 +195,7 @@ public class ProjectApplyServiceImpl implements IProjectApplyService {
         projectApplyRecord.setDelete(Boolean.FALSE);
         projectApplyRecord.setAvailable(Boolean.TRUE);
         projectApplyRecord.setStatus(ProjectApplyStatus.APPLYING);
+        projectApplyRecordRepository.save(projectApplyRecord);
         return Result.<String>builder().success().message("项目申请成功").build();
     }
 
@@ -211,6 +259,7 @@ public class ProjectApplyServiceImpl implements IProjectApplyService {
             ProjectInfoResponse response = new ProjectInfoResponse();
             BeanUtils.copyProperties(projectInfo,response);
             response.setTypeName(projectInfo.getProjectType().getValue());
+            response.setTypeId(projectInfo.getProjectType().getId());
             responses.add(response);
         });
         return new PageImpl<>(responses,projectInfoPage.getPageable(),projectInfoPage.getTotalElements());

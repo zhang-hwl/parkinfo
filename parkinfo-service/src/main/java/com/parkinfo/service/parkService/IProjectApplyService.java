@@ -6,6 +6,7 @@ import com.parkinfo.request.parkService.projectApply.ChangeStatusRequest;
 import com.parkinfo.request.parkService.projectApply.EditProjectInfoRequest;
 import com.parkinfo.request.parkService.projectApply.SearchProjectInfoRequest;
 import com.parkinfo.response.parkService.ProjectApplyRecordResponse;
+import com.parkinfo.response.parkService.ProjectApplyRecordTypeResponse;
 import com.parkinfo.response.parkService.ProjectInfoResponse;
 import org.springframework.data.domain.Page;
 
@@ -68,4 +69,12 @@ public interface IProjectApplyService {
     Result<String> changeStatus(ChangeStatusRequest request);
 
     Result<ProjectApplyRecordResponse> detailRecord(String recordId);
+
+    Result<List<ProjectApplyRecordTypeResponse>> findAllType();
+
+    Result<String> addType(ProjectApplyRecordTypeResponse recordTypeResponse);
+
+    Result<String> deleteType(String id);
+
+    Result<String> editType(ProjectApplyRecordTypeResponse recordTypeResponse);
 }

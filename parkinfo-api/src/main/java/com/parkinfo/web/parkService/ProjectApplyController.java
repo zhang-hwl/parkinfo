@@ -8,6 +8,7 @@ import com.parkinfo.request.parkService.projectApply.ChangeStatusRequest;
 import com.parkinfo.request.parkService.projectApply.EditProjectInfoRequest;
 import com.parkinfo.request.parkService.projectApply.SearchProjectInfoRequest;
 import com.parkinfo.response.parkService.ProjectApplyRecordResponse;
+import com.parkinfo.response.parkService.ProjectApplyRecordTypeResponse;
 import com.parkinfo.response.parkService.ProjectInfoResponse;
 import com.parkinfo.service.parkService.IProjectApplyService;
 import io.swagger.annotations.Api;
@@ -26,6 +27,7 @@ import java.util.List;
 @RequestMapping("/parkService/projectApply")
 @Api(value = "/parkService/projectApply", tags = {"园区服务-项目申请"})
 public class ProjectApplyController {
+
     @Autowired
     private IProjectApplyService projectApplyService;
 
@@ -102,5 +104,28 @@ public class ProjectApplyController {
         return projectApplyService.detailRecord(recordId);
     }
 
+    @PostMapping("/find/type")
+    @ApiOperation(value = "获取企业申请记录类型")
+    public Result<List<ProjectApplyRecordTypeResponse>> findAllType(){
+        return projectApplyService.findAllType();
+    }
+
+    @PostMapping("/add/type")
+    @ApiOperation(value = "获取企业申请记录类型")
+    public Result<String> addType(@RequestBody  ProjectApplyRecordTypeResponse recordTypeResponse){
+        return projectApplyService.addType(recordTypeResponse);
+    }
+
+    @PostMapping("/delete/type/{id}")
+    @ApiOperation(value = "获取企业申请记录类型")
+    public Result<String> deleteType(@PathVariable("id") String id){
+        return projectApplyService.deleteType(id);
+    }
+
+    @PostMapping("/edit/type")
+    @ApiOperation(value = "获取企业申请记录类型")
+    public Result<String> editType(@RequestBody  ProjectApplyRecordTypeResponse recordTypeResponse){
+        return projectApplyService.editType(recordTypeResponse);
+    }
 
 }
