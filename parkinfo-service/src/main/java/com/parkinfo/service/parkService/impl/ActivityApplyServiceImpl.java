@@ -6,6 +6,7 @@ import com.parkinfo.entity.archiveInfo.ArchiveInfoType;
 import com.parkinfo.entity.parkService.activityApply.ActivityApply;
 import com.parkinfo.entity.parkService.learningData.LearningData;
 import com.parkinfo.entity.userConfig.ParkInfo;
+import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.parkService.ActivityApplyRepository;
 import com.parkinfo.request.parkService.activityApply.AddActivityApplyRequest;
@@ -58,6 +59,7 @@ public class ActivityApplyServiceImpl implements IActivityApplyService {
         activityApplyPage.getContent().forEach(activityApply -> {
             ActivityApplyResponse response = new ActivityApplyResponse();
             BeanUtils.copyProperties(activityApply,response);
+            response.setCompanyName(activityApply.getCompanyDetail().getCompanyName());
             responses.add(response);
         });
         return new PageImpl<>(responses,activityApplyPage.getPageable(),activityApplyPage.getTotalElements());
@@ -65,8 +67,12 @@ public class ActivityApplyServiceImpl implements IActivityApplyService {
 
     @Override
     public Result<String> addActivityApply(AddActivityApplyRequest request) {
+        ParkUser loginUser = tokenUtils.getLoginUser();
         ActivityApply activityApply = new ActivityApply();
         BeanUtils.copyProperties(request,activityApply);
+        if (loginUser.getCompanyDetail() != null){
+            activityApply.setCompanyDetail(loginUser.getCompanyDetail());
+        }
         activityApply.setParkInfo(tokenUtils.getCurrentParkInfo());
         activityApply.setDelete(Boolean.FALSE);
         activityApply.setAvailable(Boolean.TRUE);

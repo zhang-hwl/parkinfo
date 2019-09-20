@@ -7,6 +7,7 @@ import com.parkinfo.entity.companyManage.EnclosureTotal;
 import com.parkinfo.enums.EnclosureType;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.companyManage.CompanyDetailRepository;
+import com.parkinfo.repository.companyManage.EnclosureTotalRepository;
 import com.parkinfo.response.parkService.CompanyDataResponse;
 import com.parkinfo.service.parkService.IServiceInfoService;
 import com.parkinfo.token.TokenUtils;
@@ -24,6 +25,8 @@ public class ServiceInfoServiceImpl implements IServiceInfoService {
     private CompanyDetailRepository companyDetailRepository;
     @Autowired
     private TokenUtils tokenUtils;
+    @Autowired
+    private EnclosureTotalRepository enclosureTotalRepository;
 
     @Override
     public Result<CompanyDataResponse> getCompanyDataResponse() {
@@ -45,8 +48,16 @@ public class ServiceInfoServiceImpl implements IServiceInfoService {
             throw new NormalException("信息不存在");
         }
         CompanyDetail companyDetail = byId.get();
-        companyDetail.setEnclosureTotals(companyDataResponse.getEnclosureTotals());
-        companyDetailRepository.save(companyDetail);
+        Set<EnclosureTotal> set = companyDataResponse.getEnclosureTotals();
+        set.forEach(temp -> {
+            Optional<EnclosureTotal> byTemp = enclosureTotalRepository.findById(temp.getId());
+            if(!byTemp.isPresent()){
+                throw new NormalException("附件不存在");
+            }
+            EnclosureTotal enclosureTotal = byTemp.get();
+            BeanUtils.copyProperties(temp, enclosureTotal);
+            enclosureTotalRepository.save(enclosureTotal);
+        });
         return Result.<String>builder().success().data("保存成功").build();
     }
 }

@@ -2,6 +2,7 @@ package com.parkinfo.response.parkService;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.parkinfo.entity.userConfig.ParkInfo;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -15,7 +16,7 @@ public class ActivityApplyResponse {
     private String activityName;
 
     @ApiModelProperty("活动时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     private Date activityTime;
 
     @ApiModelProperty("活动描述")
@@ -29,4 +30,7 @@ public class ActivityApplyResponse {
 
     @ApiModelProperty("id")
     private String id;
+
+    @ApiModelProperty("公司名称")
+    private String companyName ;
 }

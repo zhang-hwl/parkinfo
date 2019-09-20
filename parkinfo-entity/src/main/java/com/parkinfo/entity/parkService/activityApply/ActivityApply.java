@@ -2,6 +2,7 @@ package com.parkinfo.entity.parkService.activityApply;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.parkinfo.entity.base.BaseEntity;
+import com.parkinfo.entity.companyManage.CompanyDetail;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -38,4 +39,8 @@ public class ActivityApply extends BaseEntity {
 
     @ApiModelProperty("联系方式")
     private String contactNumber;
+
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private CompanyDetail companyDetail;
 }

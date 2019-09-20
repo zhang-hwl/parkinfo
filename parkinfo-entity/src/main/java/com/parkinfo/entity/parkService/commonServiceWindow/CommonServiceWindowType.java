@@ -30,7 +30,7 @@ public class CommonServiceWindowType extends BaseEntity {
     private ParkInfo parkInfo;
 
     //上一级分类类型
-    @ManyToOne(fetch= FetchType.LAZY)
+    @ManyToOne(fetch= FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name="parent_id")
     private CommonServiceWindowType parent;
 

@@ -1,9 +1,10 @@
 package com.parkinfo.web.parkService;
 
 import com.parkinfo.common.Result;
-import com.parkinfo.entity.parkService.serviceFlow.ServiceFlowImg;
 import com.parkinfo.request.parkService.learningData.AddLearningDataRequest;
 import com.parkinfo.request.parkService.learningData.EditLearningDataRequest;
+import com.parkinfo.request.parkService.learningData.LearnDataTypeRequest;
+import com.parkinfo.response.parkService.LearnDataTypeResponse;
 import com.parkinfo.response.parkService.LearningDateResponse;
 import com.parkinfo.request.parkService.learningData.SearchLearningDateRequest;
 import com.parkinfo.service.parkService.ILearningDataService;
@@ -17,6 +18,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/parkService/learningData")
@@ -64,4 +66,29 @@ public class LearningDataController {
     public Result<LearningDateResponse> detailLearningData(@PathVariable("id") String id){
         return learningDataService.detailLearningData(id);
     }
+
+    @PostMapping("/find/type")
+    @ApiOperation(value = "查看学习资料类型")
+    public Result<List<LearnDataTypeResponse>> findLearnDataType(){
+        return learningDataService.findAllType();
+    }
+
+    @PostMapping("/add/type")
+    @ApiOperation(value = "新增学习资料类型", notes = "小类名称为空时,新增大类")
+    public Result<String> addType(@RequestBody LearnDataTypeRequest request){
+        return learningDataService.addType(request);
+    }
+
+    @PostMapping("/edit/type")
+    @ApiOperation(value = "编辑学习资料类型",notes = "小类id为空时,大类")
+    public Result<String> editType(@RequestBody LearnDataTypeRequest request){
+        return learningDataService.editType(request);
+    }
+
+    @PostMapping("/delete/type/{id}")
+    @ApiOperation(value = "删除学习资料类型")
+    public Result<String> deleteType(@PathVariable("id") String id){
+        return learningDataService.deleteType(id);
+    }
+
 }

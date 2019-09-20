@@ -33,7 +33,7 @@ public class LearningData extends BaseEntity {
     @ApiModelProperty("书籍分类")
     @ManyToOne()
     @JoinColumn(name = "type")
-    private ArchiveInfoType archiveInfoType;
+    private LearnDataType learnDataType;
 
     @ApiModelProperty("书籍地址")
     @Column(columnDefinition = "text")

@@ -32,4 +32,7 @@ public class BusinessAmuseResponse {
 
     @ApiModelProperty("营业时间")
     private String businessHours;
+
+    @ApiModelProperty("备注")
+    private String remark;
 }
