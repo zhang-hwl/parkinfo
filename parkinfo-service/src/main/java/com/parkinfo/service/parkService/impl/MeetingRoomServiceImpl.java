@@ -118,6 +118,7 @@ public class MeetingRoomServiceImpl implements IMeetingRoomService {
         }
         MeetingRoomReserve meetingRoomReserve = new MeetingRoomReserve();
         meetingRoomReserve.setReserveUser(loginUser);
+        meetingRoomReserve.setMeetingRoomSections(request.getMeetingRoomSections());
         meetingRoomReserve.setStartTime(request.getStartTime());
         meetingRoomReserve.setEndTime(request.getEndTime());
         meetingRoomReserve.setMeetingRoom(meetingRoom);

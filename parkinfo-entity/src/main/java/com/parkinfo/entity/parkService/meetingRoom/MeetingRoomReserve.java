@@ -39,6 +39,7 @@ public class MeetingRoomReserve extends BaseEntity {
     @ApiModelProperty("预约人")
     private ParkUser reserveUser;
 
-
+    @ApiModelProperty("会议室预约时间区间")
+    private String meetingRoomSections;
 
 }

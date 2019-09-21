@@ -18,4 +18,7 @@ public class MeetingRoomReserveResponse {
 
     @ApiModelProperty("预订人id")
     private String userId;
+
+    @ApiModelProperty("会议室预约时间区间")
+    private String meetingRoomSections;
 }
