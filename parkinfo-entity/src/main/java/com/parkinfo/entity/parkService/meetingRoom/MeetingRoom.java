@@ -20,6 +20,7 @@ import java.util.List;
 @Table(name = "c_ser_meeting_room")
 @EntityListeners(AuditingEntityListener.class)
 @ApiModel(value = "MeetingRoom", description = "会议室")
+@JsonIgnoreProperties(value={"hibernateLazyInitializer","handler"})
 public class MeetingRoom extends BaseEntity {
     @ApiModelProperty(value = "会议室名称")
     private String roomName;

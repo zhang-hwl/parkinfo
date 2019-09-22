@@ -184,7 +184,7 @@ public class ProjectApplyServiceImpl implements IProjectApplyService {
         ProjectInfo projectInfo = this.checkProjectInfo(id);
         ParkUser loginUser = tokenUtils.getLoginUser();
         Optional<ProjectApplyRecord> byId = projectApplyRecordRepository.findByDeleteIsFalseAndCompanyDetail_ParkUser_IdAndProjectInfo_Id(loginUser.getId(), id);
-        if(!byId.isPresent()){
+        if(byId.isPresent()){
             throw new NormalException("重复申请");
         }
         CompanyDetail companyDetail = this.checkCompanyDetailByUserId(loginUser.getId());

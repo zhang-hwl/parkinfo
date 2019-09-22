@@ -1,6 +1,7 @@
 package com.parkinfo.entity.archiveInfo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.parkinfo.entity.base.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -16,6 +17,7 @@ import java.util.Date;
 @Entity
 @Table(name = "c_archive_read_record")
 @ApiModel(value = "ArchiveReadRecord", description = "存档资料-阅读记录")
+@JsonIgnoreProperties(value={"hibernateLazyInitializer","handler"})
 public class ArchiveReadRecord extends BaseEntity {
 
     @ApiModelProperty(value = "阅读人头像")

@@ -2,6 +2,7 @@ package com.parkinfo.entity.parkService.projectApply;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.parkinfo.entity.base.BaseEntity;
 import com.parkinfo.entity.companyManage.CompanyDetail;
 import com.parkinfo.enums.ProjectApplyStatus;
@@ -20,6 +21,7 @@ import java.util.Date;
 @Table(name = "c_project_apply_record")
 @EntityListeners(AuditingEntityListener.class)
 @ApiModel(value = "ProjectApplyRecord", description = "项目申报记录")
+@JsonIgnoreProperties(value={"hibernateLazyInitializer","handler"})
 public class ProjectApplyRecord extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "company_id")

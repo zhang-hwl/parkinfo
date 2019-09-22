@@ -1,6 +1,7 @@
 package com.parkinfo.entity.parkService.activityApply;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.parkinfo.entity.base.BaseEntity;
 import com.parkinfo.entity.companyManage.CompanyDetail;
 import com.parkinfo.entity.userConfig.ParkInfo;
@@ -19,6 +20,7 @@ import java.util.Date;
 @Table(name = "c_activity_apply")
 @EntityListeners(AuditingEntityListener.class)
 @ApiModel(value = "ActivityApply",description =  "协助举办活动")
+@JsonIgnoreProperties(value={"hibernateLazyInitializer","handler"})
 public class ActivityApply extends BaseEntity {
     @ApiModelProperty("活动名称")
     private String activityName;

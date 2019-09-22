@@ -1,6 +1,7 @@
 package com.parkinfo.entity.parkService.serviceFlow;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.parkinfo.entity.base.BaseEntity;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.enums.ServiceFlowImgType;
@@ -18,6 +19,7 @@ import javax.persistence.*;
 @Table(name = "c_service_flow_img")
 @EntityListeners(AuditingEntityListener.class)
 @ApiModel(value = "ServiceFlowImg", description = "园区服务流程图")
+@JsonIgnoreProperties(value={"hibernateLazyInitializer","handler"})
 public class ServiceFlowImg extends BaseEntity {
 
     @ApiModelProperty("流程图类型")

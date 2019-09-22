@@ -15,6 +15,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true,exclude = {"parent","children"})
 @Entity(name = "c_archive_info_type")
 @Table(appliesTo = "c_archive_info_type",comment = "存档资料类型表")
+@JsonIgnoreProperties(value={"hibernateLazyInitializer","handler"})
 public class ArchiveInfoType extends BaseEntity {
 
     //类型

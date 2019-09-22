@@ -57,7 +57,7 @@ public class ArchiveInfoTypeService implements IArchiveInfoTypeService {
 
     @Override
     public Result<Page<LearnDataInfoResponse>> search(QueryLearnDataInfoRequest request) {
-        Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.DEFAULT_DIRECTION.DESC, "uploadTime");
+        Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "uploadTime");
         Specification<ArchiveInfo> specification = new Specification<ArchiveInfo>() {
             @Override
             public Predicate toPredicate(Root<ArchiveInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder cb) {
@@ -71,7 +71,7 @@ public class ArchiveInfoTypeService implements IArchiveInfoTypeService {
                 predicates.add(cb.equal(root.get("external").as(Boolean.class), true)); //对外
                 predicates.add(cb.equal(root.get("delete").as(Boolean.class), false));  //没有被删除
                 predicates.add(cb.equal(root.get("available").as(Boolean.class), true));  //可用
-                return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+                return cb.and(predicates.toArray(new Predicate[0]));
             }
         };
         Page<ArchiveInfo> all = archiveInfoRepository.findAll(specification, pageable);

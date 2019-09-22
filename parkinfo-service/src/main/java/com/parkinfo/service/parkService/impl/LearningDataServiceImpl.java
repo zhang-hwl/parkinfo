@@ -61,7 +61,7 @@ public class LearningDataServiceImpl implements ILearningDataService {
             }
             predicateLists.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class),Boolean.FALSE));
             predicateLists.add(criteriaBuilder.equal(root.get("available").as(Boolean.class),Boolean.TRUE));
-            predicateLists.add(criteriaBuilder.equal(root.get("parkInfo").as(ParkInfo.class),tokenUtils.getCurrentParkInfo()));
+//            predicateLists.add(criteriaBuilder.equal(root.get("parkInfo").as(ParkInfo.class),tokenUtils.getCurrentParkInfo()));
             return criteriaBuilder.and(predicateLists.toArray(new Predicate[0]));
         };
         Page<LearningData> learningDataPage = learningDataRepository.findAll(specification,pageable);

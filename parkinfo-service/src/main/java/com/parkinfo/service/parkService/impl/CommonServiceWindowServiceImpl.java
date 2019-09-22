@@ -115,6 +115,7 @@ public class CommonServiceWindowServiceImpl implements ICommonServiceWindowServi
         commonServiceWindow.setContactNumber(request.getContactNumber());
         commonServiceWindow.setBusinessDetails(request.getServiceName());
         commonServiceWindow.setLogo(request.getLogo());
+        commonServiceWindow.setRemark(request.getRemark());
         commonServiceWindowRepository.save(commonServiceWindow);
         return Result.<String>builder().success().message("编辑成功").build();
     }

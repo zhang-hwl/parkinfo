@@ -19,6 +19,7 @@ import java.util.Set;
 @Table(name = "c_business_amuse_type")
 @EntityListeners(AuditingEntityListener.class)
 @ApiModel(value = "BusinessAmuseType",description =  "商务与周边娱乐类型")
+@JsonIgnoreProperties(value={"hibernateLazyInitializer","handler"})
 public class BusinessAmuseType extends BaseEntity {
     //类型
     private String type;

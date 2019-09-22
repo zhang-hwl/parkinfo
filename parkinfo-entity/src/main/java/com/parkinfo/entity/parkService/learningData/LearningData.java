@@ -1,5 +1,6 @@
 package com.parkinfo.entity.parkService.learningData;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.parkinfo.entity.archiveInfo.ArchiveInfoType;
 import com.parkinfo.entity.base.BaseEntity;
 import com.parkinfo.entity.userConfig.ParkInfo;
@@ -17,6 +18,7 @@ import javax.persistence.*;
 @Table(name = "c_learning_data")
 @EntityListeners(AuditingEntityListener.class)
 @ApiModel(value = "LearningData", description = "学习资料")
+@JsonIgnoreProperties(value={"hibernateLazyInitializer","handler"})
 public class LearningData extends BaseEntity {
 
     @ApiModelProperty("文件类型")

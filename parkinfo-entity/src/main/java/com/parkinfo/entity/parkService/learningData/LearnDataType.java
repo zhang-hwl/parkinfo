@@ -15,6 +15,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true,exclude = {"parent","children"})
 @Entity(name = "c_learn_data_type")
 @Table(appliesTo = "c_learn_data_type",comment = "学习资料类型")
+@JsonIgnoreProperties(value={"hibernateLazyInitializer","handler"})
 public class LearnDataType extends BaseEntity {
 
     //类型

@@ -59,7 +59,9 @@ public class ActivityApplyServiceImpl implements IActivityApplyService {
         activityApplyPage.getContent().forEach(activityApply -> {
             ActivityApplyResponse response = new ActivityApplyResponse();
             BeanUtils.copyProperties(activityApply,response);
-            response.setCompanyName(activityApply.getCompanyDetail().getCompanyName());
+            if (activityApply.getCompanyDetail() != null){
+                response.setCompanyName(activityApply.getCompanyDetail().getCompanyName());
+            }
             responses.add(response);
         });
         return new PageImpl<>(responses,activityApplyPage.getPageable(),activityApplyPage.getTotalElements());

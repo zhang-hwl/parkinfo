@@ -72,25 +72,25 @@ public class CommonServiceWindowController {
 
     @PostMapping("/find/type")
     @ApiOperation(value = "查看公共服务窗口类型")
-    private Result<List<CommonServiceWindowTypeResponse>> findAllType(){
+    public Result<List<CommonServiceWindowTypeResponse>> findAllType(){
         return commonServiceWindowService.findAllType();
     }
 
     @PostMapping("/edit/type")
     @ApiOperation(value = "编辑公共服务窗口类型", notes = "小类名称为空时,新增大类")
-    private Result<String> editType(@RequestBody CommonServiceWindowTypeRequest request){
+    public Result<String> editType(@RequestBody CommonServiceWindowTypeRequest request){
         return commonServiceWindowService.editType(request);
     }
 
     @PostMapping("/add/type")
     @ApiOperation(value = "新增公共服务窗口类型", notes = "小类名称为空时,新增大类")
-    private Result<String> addType(@RequestBody CommonServiceWindowTypeRequest request){
+    public Result<String> addType(@RequestBody CommonServiceWindowTypeRequest request){
         return commonServiceWindowService.addType(request);
     }
 
     @PostMapping("/delete/type/{id}")
     @ApiOperation(value = "删除公共服务窗口类型")
-    private Result<String> deleteType(@PathVariable("id") String id){
+    public Result<String> deleteType(@PathVariable("id") String id){
         return commonServiceWindowService.deleteType(id);
     }
 

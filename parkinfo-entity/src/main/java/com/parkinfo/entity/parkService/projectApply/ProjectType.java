@@ -1,5 +1,6 @@
 package com.parkinfo.entity.parkService.projectApply;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.parkinfo.entity.base.BaseEntity;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import io.swagger.annotations.ApiModel;
@@ -16,6 +17,7 @@ import javax.persistence.*;
 @Table(name = "c_project_type")
 @EntityListeners(AuditingEntityListener.class)
 @ApiModel(value = "ProjectType", description = "项目类别")
+@JsonIgnoreProperties(value={"hibernateLazyInitializer","handler"})
 public class ProjectType extends BaseEntity {
 
     @ApiModelProperty("名称")

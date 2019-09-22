@@ -19,6 +19,7 @@ import java.util.Date;
 @Table(name = "c_ser_meeting_room_reserve")
 @EntityListeners(AuditingEntityListener.class)
 @ApiModel(value = "MeetingRoomReserve", description = "会议室预定")
+@JsonIgnoreProperties(value={"hibernateLazyInitializer","handler"})
 public class MeetingRoomReserve extends BaseEntity {
 
     @ApiModelProperty(value = "预定开始时间")

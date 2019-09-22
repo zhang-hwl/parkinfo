@@ -1,5 +1,6 @@
 package com.parkinfo.entity.parkService.projectApply;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.parkinfo.entity.base.BaseEntity;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import io.swagger.annotations.ApiModel;
@@ -16,6 +17,7 @@ import javax.persistence.*;
 @Table(name = "c_project_info")
 @EntityListeners(AuditingEntityListener.class)
 @ApiModel(value = "ProjectInfo", description = "项目信息")
+@JsonIgnoreProperties(value={"hibernateLazyInitializer","handler"})
 public class ProjectInfo extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "park_id")

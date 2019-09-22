@@ -1,5 +1,6 @@
 package com.parkinfo.response.parkService;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.parkinfo.entity.parkService.commonServiceWindow.CommonServiceWindowType;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import io.swagger.annotations.ApiModelProperty;
@@ -19,6 +20,9 @@ public class CommonServiceWindowResponse {
 
     @ApiModelProperty("服务名称")
     private String serviceName;
+
+    @ApiModelProperty("备注")
+    private String remark;
 
     @ApiModelProperty("联系地址")
     private String contactAddress;
