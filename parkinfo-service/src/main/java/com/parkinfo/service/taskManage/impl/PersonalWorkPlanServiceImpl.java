@@ -66,14 +66,16 @@ public class PersonalWorkPlanServiceImpl implements IPersonalWorkPlanService {
             if (request.getCreateTimeFrom() != null && request.getCreateTimeTo() != null) {
                 predicates.add(criteriaBuilder.between(root.get("createTime"), request.getCreateTimeFrom(), request.getCreateTimeTo()));
             }
+            predicates.add(criteriaBuilder.equal(root.get("park").get("id").as(String.class), currentUser.getCurrentParkId()));
             if (currentUser.getRole().contains(ParkRoleEnum.PARK_USER.toString())) {  //普通员工
                 predicates.add(criteriaBuilder.equal(root.get("author").get("id").as(String.class), currentUser.getId()));
-                predicates.add(criteriaBuilder.equal(root.get("park").get("id").as(String.class), currentUser.getCurrentParkId()));
-            }else {
-                if (StringUtils.isNotBlank(request.getParkId())){
-                    predicates.add(criteriaBuilder.equal(root.get("park").get("id").as(String.class), request.getParkId()));
-                }
+
             }
+//            else {
+//                if (StringUtils.isNotBlank(request.getParkId())){
+//                    predicates.add(criteriaBuilder.equal(root.get("park").get("id").as(String.class), request.getParkId()));
+//                }
+//            }
             predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));

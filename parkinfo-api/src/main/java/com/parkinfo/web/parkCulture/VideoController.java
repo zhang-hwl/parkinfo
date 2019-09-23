@@ -18,6 +18,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * When I wrote this, only God and I understood what I was doing
@@ -159,9 +160,9 @@ public class VideoController {
     }
 
     @PostMapping("/category/search")
-    @ApiOperation(value = "分页查看图书的分类")
+    @ApiOperation(value = "分页查看视频的分类")
     @RequiresPermissions("parkCulture:video:category_search")
-    public Result<Page<VideoCategoryListResponse>> search(@Valid @RequestBody QueryVideoCategoryListRequest request, BindingResult result){
+    public Result<Page<VideoCategoryListResponse>> search(@Valid @RequestBody QueryVideoCategoryPageRequest request, BindingResult result){
         if (result.hasErrors()){
             for (ObjectError error:result.getAllErrors()) {
                 return Result.<Page<VideoCategoryListResponse>>builder().fail().code(500).message(error.getDefaultMessage()).build();
@@ -170,8 +171,15 @@ public class VideoController {
         return videoService.search(request);
     }
 
+    @PostMapping("/category/list")
+    @ApiOperation(value = "不分页查看视频的分类")
+//    @RequiresPermissions("parkCulture:video:category_search")
+    public Result<List<VideoCategoryListResponse>> search( @RequestBody QueryVideoCategoryListRequest request){
+        return videoService.search(request);
+    }
+
     @PostMapping("/category/add")
-    @ApiOperation(value = "添加图书分类")
+    @ApiOperation(value = "添加视频分类")
     @RequiresPermissions("parkCulture:video:category_add")
     public Result addVideoCategory(@Valid @RequestBody AddVideoCategoryRequest request,BindingResult result){
         if (result.hasErrors()){
@@ -183,7 +191,7 @@ public class VideoController {
     }
 
     @PostMapping("/category/set")
-    @ApiOperation(value = "修改图书分类")
+    @ApiOperation(value = "修改视频分类")
     @RequiresPermissions("parkCulture:video:category_set")
     public Result setVideoCategory(@Valid @RequestBody SetVideoCategoryRequest request,BindingResult result){
         if (result.hasErrors()){
@@ -195,7 +203,7 @@ public class VideoController {
     }
 
     @PostMapping("/category/delete/{id}")
-    @ApiOperation(value = "删除图书分类")
+    @ApiOperation(value = "删除视频分类")
     @RequiresPermissions("parkCulture:video:category_delete")
     public Result deleteVideoCategory(@PathVariable("id")String id){
         return videoService.deleteVideoCategory(id);

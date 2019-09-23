@@ -2,6 +2,7 @@ package com.parkinfo.service.parkCulture.impl;
 
 import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
+import com.parkinfo.dto.ParkUserDTO;
 import com.parkinfo.entity.parkCulture.Book;
 import com.parkinfo.entity.parkCulture.BookCategory;
 import com.parkinfo.entity.parkCulture.BookComment;
@@ -161,11 +162,48 @@ public class LibraryServiceImpl implements ILibraryService {
     }
 
     @Override
-    public Result<Page<BookCategoryListResponse>> search(QueryCategoryListRequest request) {
+    public Result addBook(AddBookRequest request) {
+        ParkUserDTO currentUser = tokenUtils.getLoginUserDTO();
+        Book book = new Book();
+        BeanUtils.copyProperties(request,book);
+        book.setAvailable(true);
+        book.setDelete(false);
+        book.setUploader(currentUser.getAccount());
+        book.setReadNum(0);
+        bookRepository.save(book);
+        return Result.builder().success().message("保存图书成功").build();
+    }
+
+    @Override
+    public Result setBookStatus(String bookId) {
+        Book book = this.checkBook(bookId);
+        book.setAvailable(book.getAvailable() != null && !book.getAvailable());
+        bookRepository.save(book);
+        return Result.builder().success().message("成功").build();
+    }
+
+    @Override
+    public Result deleteBook(String bookId) {
+        Book book = this.checkBook(bookId);
+        book.setDelete(true);
+        bookRepository.save(book);
+        return Result.builder().success().message("成功").build();
+    }
+
+    @Override
+    public Result setBook(SetBookRequest request) {
+        Book book = this.checkBook(request.getId());
+        BeanUtils.copyProperties(request,book);
+        bookRepository.save(book);
+        return Result.builder().success().message("保存图书成功").build();
+    }
+
+    @Override
+    public Result<Page<BookCategoryListResponse>> search(QueryCategoryPageRequest request) {
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
         Specification<BookCategory> bookCategorySpecification = (Specification<BookCategory>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
-            predicates.add(criteriaBuilder.equal(root.get("parent"), null));
+            predicates.add(criteriaBuilder.isNull(root.get("parent")));
             predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
@@ -175,6 +213,23 @@ public class LibraryServiceImpl implements ILibraryService {
         return Result.<Page<BookCategoryListResponse>>builder().success().data(responsePage).build();
     }
 
+    @Override
+    public Result<List<BookCategoryListResponse>> search(QueryCategoryListRequest request) {
+        Specification<BookCategory> bookCategorySpecification = (Specification<BookCategory>) (root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if (StringUtils.isNotBlank(request.getParentId())){
+                predicates.add(criteriaBuilder.equal(root.get("parent").get("id"),request.getParentId()));
+            }else {
+                predicates.add(criteriaBuilder.isNull(root.get("parent")));
+            }
+            predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
+            predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+        List<BookCategory> bookCategoryList = bookCategoryRepository.findAll(bookCategorySpecification);
+        List<BookCategoryListResponse> responseList = this.convertBookCategoryList(bookCategoryList);
+        return Result.<List<BookCategoryListResponse>>builder().success().data(responseList).build();
+    }
 
     @Override
     public Result addBookCategory(AddBookCategoryRequest request) {
@@ -241,6 +296,17 @@ public class LibraryServiceImpl implements ILibraryService {
             content.add(response);
         });
         return new PageImpl<>(content, bookCategoryPage.getPageable(), bookCategoryPage.getTotalElements());
+    }
+
+    private List<BookCategoryListResponse> convertBookCategoryList(List<BookCategory> bookCategoryList) {
+        List<BookCategoryListResponse> content = Lists.newArrayList();
+        bookCategoryList.forEach(bookCategory -> {
+            BookCategoryListResponse response = new BookCategoryListResponse();
+            BeanUtils.copyProperties(bookCategory, response);
+            content.add(response);
+        });
+        return content;
+
     }
     /**
      * convert from Book to BookDetailResponse

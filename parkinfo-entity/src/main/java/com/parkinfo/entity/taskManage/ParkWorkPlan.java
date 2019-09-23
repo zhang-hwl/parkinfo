@@ -69,4 +69,9 @@ public class ParkWorkPlan extends BaseEntity {
      * 是否完成
      */
     private Boolean finished;
+
+    /**
+     * 结果反馈
+     */
+    private String resultFeedback;
 }

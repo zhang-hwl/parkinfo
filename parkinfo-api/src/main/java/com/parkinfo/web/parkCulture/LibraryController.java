@@ -14,6 +14,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * When I wrote this, only God and I understood what I was doing
@@ -94,10 +95,17 @@ public class LibraryController{
         return libraryService.setReadProcess(request);
     }
 
+    @PostMapping("/category/list")
+    @ApiOperation(value = "不分页查看图书的分类")
+//    @RequiresPermissions("parkCulture:library:category_search")
+    public Result<List<BookCategoryListResponse>> search( @RequestBody QueryCategoryListRequest request){
+        return libraryService.search(request);
+    }
+
     @PostMapping("/category/search")
     @ApiOperation(value = "分页查看图书的分类")
     @RequiresPermissions("parkCulture:library:category_search")
-    public Result<Page<BookCategoryListResponse>> search(@Valid @RequestBody QueryCategoryListRequest request, BindingResult result){
+    public Result<Page<BookCategoryListResponse>> search(@Valid @RequestBody QueryCategoryPageRequest request, BindingResult result){
         if (result.hasErrors()){
             for (ObjectError error:result.getAllErrors()) {
                 return Result.<Page<BookCategoryListResponse>>builder().fail().code(500).message(error.getDefaultMessage()).build();
@@ -105,6 +113,7 @@ public class LibraryController{
         }
         return libraryService.search(request);
     }
+
 
     @PostMapping("/category/add")
     @ApiOperation(value = "添加图书分类")
@@ -136,4 +145,45 @@ public class LibraryController{
     public Result deleteBookCategory(@PathVariable("id")String id){
         return libraryService.deleteBookCategory(id);
     }
+
+    @PostMapping("/add")
+    @ApiOperation(value = "添加图书")
+    @RequiresPermissions("parkCulture:library:book_add")
+    public Result addBook(@Valid @RequestBody AddBookRequest request,BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError error:result.getAllErrors()) {
+                return Result.builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
+        return libraryService.addBook(request);
+    }
+
+    @PostMapping("/setStatus/{bookId}")
+    @ApiOperation(value = "修改图书状态")
+    @RequiresPermissions("parkCulture:library:book_setStatus")
+    public Result setBookStatus(@PathVariable("bookId") String bookId){
+        return libraryService.setBookStatus(bookId);
+    }
+
+
+    @PostMapping("/delete/{bookId}")
+    @ApiOperation(value = "删除图书")
+    @RequiresPermissions("parkCulture:library:book_delete")
+    public Result deleteBook(@PathVariable("bookId") String bookId){
+        return libraryService.deleteBook(bookId);
+    }
+
+    @PostMapping("/set")
+    @ApiOperation(value = "修改图书")
+    @RequiresPermissions("parkCulture:library:book_set")
+    public Result setBook(@Valid @RequestBody SetBookRequest request,BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError error:result.getAllErrors()) {
+                return Result.builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
+        return libraryService.setBook(request);
+    }
+
+
 }

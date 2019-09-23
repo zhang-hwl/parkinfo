@@ -79,11 +79,11 @@ public class LiveServiceImpl implements ILiveService {
     public Result addLiveBroadcast(AddLiveBroadcastRequest request) {
         Live newData = new Live();
         BeanUtils.copyProperties(request, newData);
-        newData.setPullDomain("rtmp://live.lingouu.com");
-        newData.setPullKey("xJGmAyC8iu");
-        newData.setPushDomain("rtmp://player.lingouu.com");
-        newData.setPushKey("nH6DIdjtnO");
-        newData.setAppName("lingouu");
+        newData.setPullDomain("rtmp://getvideo.ehrsip.com");
+        newData.setPullKey("Gp585rMFE0");
+        newData.setPushDomain("rtmp://pushvideo.ehrsip.com");
+        newData.setPushKey("h66xZE8qiA");
+        newData.setAppName("ehrsip");
         newData.setLive(BroadcastType.WAIT);
         newData.setStreamName(RandomStringUtils.randomAlphanumeric(8));
         newData.setAvailable(Boolean.TRUE);
