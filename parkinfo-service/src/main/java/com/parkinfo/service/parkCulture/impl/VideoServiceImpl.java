@@ -66,7 +66,7 @@ public class VideoServiceImpl implements IVideoService {
     @Override
     public Result<Page<VideoListResponse>> search(QueryVideoListRequest request) {
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
-        Specification<Book> bookSpecification = (Specification<Book>) (root, criteriaQuery, criteriaBuilder) -> {
+        Specification<Video> videoSpecification = (Specification<Video>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (StringUtils.isNotBlank(request.getName())) {
                 predicates.add(criteriaBuilder.like(root.get("name").as(String.class), "%" + request.getName() + "%"));
@@ -80,7 +80,7 @@ public class VideoServiceImpl implements IVideoService {
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
-        Page<Video> videoPage = videoRepository.findAll(bookSpecification, pageable);
+        Page<Video> videoPage = videoRepository.findAll(videoSpecification, pageable);
         Page<VideoListResponse> responsePage = this.convertVideoPage(videoPage);
         return Result.<Page<VideoListResponse>>builder().success().data(responsePage).build();
     }
@@ -179,7 +179,7 @@ public class VideoServiceImpl implements IVideoService {
     public Result<Page<VideoManageListResponse>> manageVideo(QueryVideoManageRequest request) {
         ParkUserDTO currentUser = tokenUtils.getLoginUserDTO();
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
-        Specification<Book> bookSpecification = (Specification<Book>) (root, criteriaQuery, criteriaBuilder) -> {
+        Specification<Video> videoSpecification = (Specification<Video>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (StringUtils.isNotBlank(request.getName())) {
                 predicates.add(criteriaBuilder.like(root.get("name").as(String.class), "%" + request.getName() + "%"));
@@ -196,7 +196,7 @@ public class VideoServiceImpl implements IVideoService {
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
-        Page<Video> videoPage = videoRepository.findAll(bookSpecification, pageable);
+        Page<Video> videoPage = videoRepository.findAll(videoSpecification, pageable);
         Page<VideoManageListResponse> responsePage = this.convertVideoManagePage(videoPage);
         return Result.<Page<VideoManageListResponse>>builder().success().data(responsePage).build();
     }

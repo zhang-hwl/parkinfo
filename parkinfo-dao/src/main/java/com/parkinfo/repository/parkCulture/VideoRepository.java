@@ -8,5 +8,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface VideoRepository extends JpaRepository<Video,String> {
-    Page<Video> findAll(Specification<Book> bookSpecification, Pageable pageable);
+
+    Page<Video> findAll(Specification<Video> videoSpecification, Pageable pageable);
 }

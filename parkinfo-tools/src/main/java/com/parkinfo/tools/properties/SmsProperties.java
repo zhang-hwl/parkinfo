@@ -13,7 +13,7 @@ public class SmsProperties {
 
     private String accessKeySecret;
 
-    private String msgSign="灵狗优优";
+    private String msgSign="";
 
     private String templateCode;
 }

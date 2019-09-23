@@ -239,6 +239,8 @@ public class LibraryServiceImpl implements ILibraryService {
             BookCategory parent = this.checkBookCategory(request.getParentId());
             bookCategory.setParent(parent);
         }
+        bookCategory.setDelete(false);
+        bookCategory.setAvailable(true);
         bookCategoryRepository.save(bookCategory);
         return Result.builder().success().message("添加图书分类成功").build();
     }
@@ -289,8 +291,18 @@ public class LibraryServiceImpl implements ILibraryService {
                 if (childrenCategory.getAvailable()&&!childrenCategory.getDelete()) {
                     BookCategoryListResponse childrenResponse = new BookCategoryListResponse();
                     BeanUtils.copyProperties(childrenCategory, childrenResponse);
+                    List<BookCategoryListResponse> grandSon = Lists.newArrayList();
+                    childrenCategory.getChildren().forEach(grandSonCategory->{
+                        if (grandSonCategory.getAvailable()&&!grandSonCategory.getDelete()) {
+                            BookCategoryListResponse grandSonResponse = new BookCategoryListResponse();
+                            BeanUtils.copyProperties(grandSonCategory, grandSonResponse);
+                            grandSon.add(grandSonResponse);
+                        }
+                    });
+                    childrenResponse.setChildren(grandSon);
                     children.add(childrenResponse);
                 }
+
             });
             response.setChildren(children);
             content.add(response);
