@@ -43,6 +43,9 @@ public class WorkPlanDetailRequest {
     @ApiModelProperty(value = "支持人")
     private String supporters;
 
+    @ApiModelProperty(value = "完成情况")
+    private Boolean finished;
+
     /**
      * 实施时间
      */

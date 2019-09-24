@@ -52,6 +52,12 @@ public class WorkPlanDetail extends BaseEntity {
     private String supporters;
 
     /**
+     * 完成情况
+     */
+    @ApiModelProperty(value = "完成情况")
+    private Boolean finished;
+
+    /**
      * 实施时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
