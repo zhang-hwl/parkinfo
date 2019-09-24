@@ -90,6 +90,14 @@ public class VideoServiceImpl implements IVideoService {
         Video video = this.checkVideo(id);
         VideoDetailResponse response = new VideoDetailResponse();
         BeanUtils.copyProperties(video, response);
+        VideoCategory secondCategory = video.getCategory();
+        if (secondCategory!=null){
+            response.setSecondCategoryId(secondCategory.getId());
+            VideoCategory firstCategory = secondCategory.getParent();
+            if (firstCategory!=null){
+                response.setFirstCategoryId(firstCategory.getId());
+            }
+        }
         //添加观看记录
         VideoRecord videoRecord = new VideoRecord();
         ParkUser parkUser = tokenUtils.getLoginUser();
@@ -161,6 +169,8 @@ public class VideoServiceImpl implements IVideoService {
     public Result addVideo(AddVideoRequest request) {
         Video video = new Video();
         BeanUtils.copyProperties(request, video);
+        VideoCategory videoCategory = this.checkVideoCategory(request.getCategoryId());
+        video.setCategory(videoCategory);
         video.setAvailable(true);
         video.setDelete(false);
         videoRepository.save(video);

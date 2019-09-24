@@ -31,4 +31,10 @@ public class VideoDetailResponse {
 
     @ApiModelProperty(value = "视频id")
     private String videoId;
+
+    @ApiModelProperty(value = "一级分类id")
+    private String firstCategoryId;
+
+    @ApiModelProperty(value = "二级分类id")
+    private String secondCategoryId;
 }

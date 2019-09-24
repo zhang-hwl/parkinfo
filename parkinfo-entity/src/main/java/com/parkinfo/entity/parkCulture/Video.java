@@ -57,4 +57,8 @@ public class Video extends BaseEntity {
      */
     private String remark;
 
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private VideoCategory category;
 }

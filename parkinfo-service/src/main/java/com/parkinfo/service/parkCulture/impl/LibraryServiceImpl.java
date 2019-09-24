@@ -329,6 +329,18 @@ public class LibraryServiceImpl implements ILibraryService {
     private BookDetailResponse convertBookDetail(Book book) {
         BookDetailResponse response = new BookDetailResponse();
         BeanUtils.copyProperties(book, response);
+        BookCategory thirdCategory = book.getCategory();
+        if (thirdCategory!=null){
+            response.setThirdCategoryId(thirdCategory.getId());
+            BookCategory secondCategory = thirdCategory.getParent();
+            if (secondCategory!=null){
+                response.setSecondCategoryId(secondCategory.getId());
+                BookCategory firstCategory = secondCategory.getParent();
+                if (firstCategory!=null){
+                    response.setFirstCategoryId(firstCategory.getId());
+                }
+            }
+        }
         return response;
     }
 
