@@ -1,19 +1,19 @@
 package com.parkinfo.request.infoTotalRequest;
 
 import com.parkinfo.entity.base.BaseEntity;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class RoomInfoRequest extends BaseEntity {
+public class RoomInfoRequest{
+
+    @ApiModelProperty(value = "id")
+    private String id;
 
     @ApiModelProperty(value = "版本标签")
     private String version;
-
-    @ApiModelProperty(value = "文件类型")
-    private String fileType;
 
     @ApiModelProperty(value = "房间号")
     private String roomId;
@@ -32,6 +32,9 @@ public class RoomInfoRequest extends BaseEntity {
 
     @ApiModelProperty(value = "是否独立水表")
     private String waterMeter;
+
+    @ApiModelProperty(value = "是否独立电表")
+    private String ammeter;
 
     @ApiModelProperty(value = "是否有空调")
     private String airConditioner;

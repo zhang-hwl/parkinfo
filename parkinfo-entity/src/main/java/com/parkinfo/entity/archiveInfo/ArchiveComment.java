@@ -14,7 +14,7 @@ import javax.persistence.Table;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "c_archive_comment")
-@ApiModel(value = "ArchiveComment", description = "存档资料-用户评论")
+@ApiModel(value = "LearnDataComment", description = "存档资料-用户评论")
 @JsonIgnoreProperties(value={"hibernateLazyInitializer","handler"})
 public class ArchiveComment extends BaseEntity {
 

@@ -1,15 +1,21 @@
 package com.parkinfo.web.informationTotal;
 
+import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
-import com.parkinfo.entity.informationTotal.QueryByVersionRequest;
-import com.parkinfo.request.infoTotalRequest.BigEventRequest;
+import com.parkinfo.entity.informationTotal.TemplateField;
+import com.parkinfo.request.infoTotalRequest.QueryByVersionRequest;
 import com.parkinfo.request.infoTotalRequest.CheckRecordRequest;
+import com.parkinfo.request.infoTotalRequest.UploadAndVersionRequest;
 import com.parkinfo.service.informationTotal.ICheckRecordService;
 import com.parkinfo.service.informationTotal.IInfoTotalTemplateService;
+import com.parkinfo.service.informationTotal.IInfoVersionService;
+import com.parkinfo.service.informationTotal.ITemplateFieldService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,6 +31,10 @@ public class CheckRecordController {
     private ICheckRecordService checkRecordService;
     @Autowired
     private IInfoTotalTemplateService templateService;
+    @Autowired
+    private ITemplateFieldService templateFieldService;
+    @Autowired
+    private IInfoVersionService infoVersionService;
 
     @PostMapping("/add")
     @ApiOperation(value = "新增点检记录表")
@@ -47,32 +57,22 @@ public class CheckRecordController {
         return checkRecordService.deleteCheckRecord(id);
     }
 
-    @PostMapping("/all")
-    @ApiOperation(value = "查询所有点检记录表")
-    @RequiresPermissions(value = "infoTotal:checkRecord:search")
-    public Result<List<CheckRecordRequest>> findAll(){
-        return checkRecordService.findAll();
-    }
-
     @PostMapping("/search")
     @ApiOperation(value = "根据版本查询点检记录表")
     @RequiresPermissions(value = "infoTotal:checkRecord:search")
-    public Result<List<CheckRecordRequest>> findByVersion(@RequestBody QueryByVersionRequest request){
-        return checkRecordService.findByVersion(request.getVersion());
+    public Result<Page<CheckRecordRequest>> findByVersion(@RequestBody QueryByVersionRequest request){
+        return checkRecordService.findByVersion(request);
     }
 
     @PostMapping("/import")
     @ApiOperation(value = "导入点检记录表")
     @RequiresPermissions(value = "infoTotal:checkRecord:add")
-    public Result<String> myImport(@RequestBody MultipartFile multipartFile){
-        return checkRecordService.checkRecordImport(multipartFile);
+    public Result<String> myImport(@RequestParam("version") String version , @RequestParam("multipartFile") MultipartFile multipartFile){
+        UploadAndVersionRequest request = new UploadAndVersionRequest();
+        request.setMultipartFile(multipartFile);
+        request.setVersion(version);
+        return checkRecordService.checkRecordImport(request);
     }
-
-//    @PostMapping("/export")
-//    @ApiOperation(value = "下载点检记录表模板")
-//    public Result<String> export(HttpServletResponse response){
-//        return checkRecordService.checkRecordExport(response);
-//    }
 
     @PostMapping("/export")
     @ApiOperation(value = "下载点检记录表模板")
@@ -80,17 +80,31 @@ public class CheckRecordController {
         return templateService.getTemplateUrl("点检记录表");
     }
 
-    @PostMapping("/download")
+    @GetMapping("/download/{id}")
     @ApiOperation(value = "文件导出")
     @RequiresPermissions(value = "infoTotal:checkRecord:export")
-    public void download(HttpServletResponse response, @RequestBody QueryByVersionRequest request){
-        checkRecordService.download(response, request.getVersion());
+    public void download(@PathVariable("id")String id, HttpServletResponse response){
+        checkRecordService.download(id, response);
     }
 
     @PostMapping("/find/version")
     @ApiOperation(value = "查询所有文件版本")
     public Result<List<String>> findAllVersion(){
-        return null;
+        List<String> list = infoVersionService.findByGeneral("点检记录表").getData();
+        return Result.<List<String>>builder().success().data(list).build();
+    }
+
+    @ApiOperation(value = "查询所有模板中的类型")
+    @PostMapping("/find/template/type")
+    public Result<List<String>> findTemplateType(){
+        List<String> list = Lists.newArrayList();
+        List<TemplateField> byGeneral = templateFieldService.findByGeneral("点检记录表");
+        byGeneral.forEach(temp -> {
+            if(StringUtils.isNotBlank(temp.getType())){
+                list.add(temp.getType());
+            }
+        });
+        return Result.<List<String>>builder().success().data(list).build();
     }
 
 }

@@ -7,15 +7,16 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Date;
+
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class CheckRecordRequest extends BaseEntity {
+public class CheckRecordRequest {
+
+    @ApiModelProperty(value = "id")
+    private String id;
 
     @ApiModelProperty(value = "版本标签")
     private String version;
-
-    @ApiModelProperty(value = "文件类型")
-    private String fileType;
 
     @ApiModelProperty(value = "分类")
     private String classification;
@@ -34,6 +35,6 @@ public class CheckRecordRequest extends BaseEntity {
 
     @ApiModelProperty(value = "点检时间")
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
-    private String checkDate;
+    private Date checkDate;
 
 }

@@ -16,7 +16,7 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "c_archive_read_record")
-@ApiModel(value = "ArchiveReadRecord", description = "存档资料-阅读记录")
+@ApiModel(value = "LearnReadRecord", description = "存档资料-阅读记录")
 @JsonIgnoreProperties(value={"hibernateLazyInitializer","handler"})
 public class ArchiveReadRecord extends BaseEntity {
 

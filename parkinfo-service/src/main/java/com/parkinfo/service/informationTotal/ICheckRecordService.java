@@ -3,6 +3,9 @@ package com.parkinfo.service.informationTotal;
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.informationTotal.CheckRecord;
 import com.parkinfo.request.infoTotalRequest.CheckRecordRequest;
+import com.parkinfo.request.infoTotalRequest.QueryByVersionRequest;
+import com.parkinfo.request.infoTotalRequest.UploadAndVersionRequest;
+import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -15,16 +18,12 @@ public interface ICheckRecordService {
 
     Result<String> editCheckRecord(CheckRecordRequest checkRecord);
 
-    Result<List<CheckRecordRequest>> findByVersion(String version);
+    Result<Page<CheckRecordRequest>> findByVersion(QueryByVersionRequest request);
 
-    Result<String> checkRecordImport(MultipartFile file);
-
-    Result<String> checkRecordExport(HttpServletResponse response);
-
-    Result<List<CheckRecordRequest>> findAll();
+    Result<String> checkRecordImport(UploadAndVersionRequest request);
 
     Result<String> deleteCheckRecord(String id);
 
-    void download(HttpServletResponse response, String version);
+    void download(String id, HttpServletResponse response);
 
 }
