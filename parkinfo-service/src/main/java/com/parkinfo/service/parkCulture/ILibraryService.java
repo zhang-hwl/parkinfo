@@ -6,6 +6,8 @@ import com.parkinfo.response.parkCulture.*;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
+
 /**
  * When I wrote this, only God and I understood what I was doing
  * Now, God only knows
@@ -66,7 +68,12 @@ public interface ILibraryService {
     /**
      * 分页查询图书分类
      */
-    Result<Page<BookCategoryListResponse>> search(QueryCategoryListRequest request);
+    Result<Page<BookCategoryListResponse>> search(QueryCategoryPageRequest request);
+
+    /**
+     * 不分页查询图书分类
+     */
+    Result<List<BookCategoryListResponse>> search(QueryCategoryListRequest request);
 
     /**
      * 添加图书分类
@@ -88,4 +95,32 @@ public interface ILibraryService {
      * @return
      */
     Result deleteBookCategory(String id);
+
+    /**
+     * 管理员添加图书
+     * @param request
+     * @return
+     */
+    Result addBook(AddBookRequest request);
+
+    /**
+     * 设置图书状态
+     * @param bookId
+     * @return
+     */
+    Result setBookStatus(String bookId);
+
+    /**
+     * 删除图书
+     * @param bookId
+     * @return
+     */
+    Result deleteBook(String bookId);
+
+    /**
+     * 管理员编辑图书
+     * @param request
+     * @return
+     */
+    Result setBook(SetBookRequest request);
 }

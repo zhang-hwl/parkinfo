@@ -27,4 +27,13 @@ public class BookDetailResponse {
 
     @ApiModelProperty(value = "简介")
     private String summary;
+
+    @ApiModelProperty(value = "一级分类id")
+    private String thirdCategoryId;
+
+    @ApiModelProperty(value = "二级分类id")
+    private String secondCategoryId;
+
+    @ApiModelProperty(value = "三级分类id")
+    private String firstCategoryId;
 }

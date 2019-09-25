@@ -18,7 +18,7 @@ import java.util.Set;
  * @author cnyuchu@gmail.com
  * @create 2019-09-05 14:54
  **/
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true,exclude = {"parent","children"})
 @Data
 @Entity(name = "c_book_category")
 @Table(appliesTo = "c_book_category",comment = "图书分类表")

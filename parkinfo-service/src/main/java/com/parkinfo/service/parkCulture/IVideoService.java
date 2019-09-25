@@ -9,6 +9,8 @@ import com.parkinfo.request.parkCulture.*;
 import com.parkinfo.response.parkCulture.*;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+
 public interface IVideoService {
 
     /**
@@ -97,26 +99,33 @@ public interface IVideoService {
     Result<RefreshUploadVideoResponse> refreshUploadVideo(String videoId) throws Exception;
 
     /**
-     * 分页查询图书分类
+     * 分页查询视频分类
      */
-    Result<Page<VideoCategoryListResponse>> search(QueryVideoCategoryListRequest request);
+    Result<Page<VideoCategoryListResponse>> search(QueryVideoCategoryPageRequest request);
 
     /**
-     * 添加图书分类
+     * 查询视频分类
+     * @param request
+     * @return
+     */
+    Result<List<VideoCategoryListResponse>> search(QueryVideoCategoryListRequest request);
+
+    /**
+     * 添加视频分类
      * @param request
      * @return
      */
     Result addVideoCategory(AddVideoCategoryRequest request);
 
     /**
-     * 修改图书分类
+     * 修改视频分类
      * @param request
      * @return
      */
     Result setVideoCategory(SetVideoCategoryRequest request);
 
     /**
-     * 删除图书分类
+     * 删除视频分类
      * @param id
      * @return
      */

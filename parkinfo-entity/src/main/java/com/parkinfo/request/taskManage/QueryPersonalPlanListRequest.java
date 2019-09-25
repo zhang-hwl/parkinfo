@@ -26,8 +26,8 @@ public class QueryPersonalPlanListRequest extends PageRequest {
     @ApiModelProperty(value = "类型")
     private PlanType planType;
 
-    @ApiModelProperty(value = "园区id")
-    private String parkId;
+//    @ApiModelProperty(value = "园区id")
+//    private String parkId;
 
     @ApiModelProperty(value = "提交时间起")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")

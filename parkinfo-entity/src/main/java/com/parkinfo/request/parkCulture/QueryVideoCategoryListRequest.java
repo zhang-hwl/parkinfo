@@ -1,17 +1,18 @@
 package com.parkinfo.request.parkCulture;
 
-import com.parkinfo.request.base.PageRequest;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 /**
  * When I wrote this, only God and I understood what I was doing
  * Now, God only knows
  *
  * @author cnyuchu@gmail.com
- * @create 2019-09-16 15:15
+ * @create 2019-09-23 09:51
  **/
-@EqualsAndHashCode(callSuper = true)
 @Data
-public class QueryVideoCategoryListRequest extends PageRequest {
+public class QueryVideoCategoryListRequest {
+
+    @ApiModelProperty(value = "上级分类id，不传为顶级")
+    private String parentId;
 }

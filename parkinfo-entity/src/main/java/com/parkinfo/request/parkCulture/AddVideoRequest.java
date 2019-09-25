@@ -20,6 +20,7 @@ public class AddVideoRequest {
     private String cover;
 
     @ApiModelProperty(value = "分类id")
+    @NotBlank(message = "视频分类不能为空")
     private String categoryId;
 
     @ApiModelProperty(value = "视频名称")

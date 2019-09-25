@@ -117,11 +117,12 @@ public class ParkWorkPlanServiceImpl implements IParkWorkPlanService {
     }
 
     @Override
+    @Transactional
     public Result setTask(SetParkWorkPlanRequest request) {
         ParkWorkPlan parkWorkPlan = this.checkParkWorkPlan(request.getId());
         if (request.getAgree()) {
             parkWorkPlan.setStep(parkWorkPlan.getStep() + 1);
-            if (parkWorkPlan.getStep() == 3) {
+            if (parkWorkPlan.getStep() == 4) {
                 parkWorkPlan.setFinished(true);
             }
         } else {
