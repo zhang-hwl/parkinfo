@@ -96,6 +96,7 @@ public class ParkWorkPlanServiceImpl implements IParkWorkPlanService {
     @Override
     @Transactional
     public Result addTask(AddParkWorkPlanRequest request) {
+//        ParkUserDTO currentUser = tokenUtils.getLoginUserDTO();
         ParkWorkPlan parkWorkPlan = new ParkWorkPlan();
         BeanUtils.copyProperties(request, parkWorkPlan);
         parkWorkPlan.setAuthor(tokenUtils.getLoginUser());
@@ -104,6 +105,8 @@ public class ParkWorkPlanServiceImpl implements IParkWorkPlanService {
         parkWorkPlan.setStep(2);  //流转下一级
         parkWorkPlan.setAvailable(true);
         parkWorkPlan.setDelete(false);
+        parkWorkPlan.setFinished(false);
+        parkWorkPlan.setPark(parkInfo);
         parkWorkPlanRepository.save(parkWorkPlan);
         request.getWorkPlanDetailRequestList().forEach(workPlanDetailRequest -> {
             WorkPlanDetail workPlanDetail = new WorkPlanDetail();

@@ -49,4 +49,7 @@ public class AddBookRequest {
     @ApiModelProperty(value = "文件路径")
     @NotBlank(message = "文件路径不能为空")
     private String source;
+
+    @ApiModelProperty(value = "文件名称")
+    private String fileName;
 }

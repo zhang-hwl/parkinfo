@@ -97,7 +97,7 @@ public class ExaminationController {
     }
 
     @PostMapping("/answerSheet/search")
-    @ApiOperation(value = "生成试卷")
+    @ApiOperation(value = "查找答卷")
     @RequiresPermissions("parkCulture:examination:answerSheet_search")
     public Result<Page<AnswerSheetListResponse>> search(@Valid @RequestBody QueryAnswerSheetListRequest request, BindingResult result) {
         if (result.hasErrors()) {

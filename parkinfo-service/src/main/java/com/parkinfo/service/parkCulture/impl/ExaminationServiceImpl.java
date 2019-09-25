@@ -71,6 +71,12 @@ public class ExaminationServiceImpl implements IExaminationService {
             if (StringUtils.isNotBlank(request.getCategoryId())) {
                 predicates.add(criteriaBuilder.equal(root.get("category").get("id").as(String.class), request.getCategoryId()));
             }
+            if (request.getQuestionType()!=null){
+                predicates.add(criteriaBuilder.equal(root.get("questionType"), request.getQuestionType()));
+            }
+            if (StringUtils.isNotBlank(request.getQuestion())){
+                predicates.add(criteriaBuilder.like(root.get("question").as(String.class), "%"+request.getQuestion()+"%"));
+            }
             predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
@@ -248,6 +254,9 @@ public class ExaminationServiceImpl implements IExaminationService {
             BeanUtils.copyProperties(question, response);
             if (question.getUploader() != null) {
                 response.setUploader(question.getUploader().getNickname());
+            }
+            if (question.getCategory()!=null){
+                response.setCategoryId(question.getCategory().getId());
             }
             content.add(response);
         });

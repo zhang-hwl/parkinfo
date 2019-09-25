@@ -24,13 +24,17 @@ public class QuestionListResponse {
      * 题目名称
      */
     @ApiModelProperty(value = "题目名称")
-    private String name;
+    private String question;
 
     /**
      * 上传人
      */
     @ApiModelProperty(value = "上传人")
     private String uploader;
+
+
+    @ApiModelProperty(value = "分类id")
+    private String categoryId;
 
     /**
      * 题目类型

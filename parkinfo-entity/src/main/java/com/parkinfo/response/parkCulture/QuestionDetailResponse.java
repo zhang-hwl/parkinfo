@@ -17,6 +17,9 @@ import lombok.EqualsAndHashCode;
 @Data
 public class QuestionDetailResponse extends QuestionListResponse{
 
+    @ApiModelProperty(value = "试题id")
+    private String id;
+
     @ApiModelProperty(value = "试题分类id")
     private String categoryId;
 

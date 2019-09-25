@@ -1,5 +1,6 @@
 package com.parkinfo.request.parkCulture;
 
+import com.parkinfo.enums.QuestionType;
 import com.parkinfo.request.base.PageRequest;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -20,5 +21,11 @@ public class QueryQuestionListRequest extends PageRequest {
 
     @ApiModelProperty(value = "问题分类id")
     private String categoryId;
+
+    @ApiModelProperty(value = "题目类型")
+    private QuestionType questionType;
+
+    @ApiModelProperty(value = "试题")
+    private String question;
 
 }
