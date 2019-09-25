@@ -1,11 +1,12 @@
 package com.parkinfo.web.informationTotal;
 
+import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
-import com.parkinfo.entity.informationTotal.PolicyTotal;
-import com.parkinfo.entity.informationTotal.QueryByVersionRequest;
-import com.parkinfo.entity.informationTotal.RoomInfo;
+import com.parkinfo.request.infoTotalRequest.QueryByVersionRequest;
 import com.parkinfo.request.infoTotalRequest.RoomInfoRequest;
+import com.parkinfo.request.infoTotalRequest.UploadAndVersionRequest;
 import com.parkinfo.service.informationTotal.IInfoTotalTemplateService;
+import com.parkinfo.service.informationTotal.IInfoVersionService;
 import com.parkinfo.service.informationTotal.IRoomInfoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -27,6 +28,8 @@ public class RoomInfoController {
     private IRoomInfoService roomInfoService;
     @Autowired
     private IInfoTotalTemplateService templateService;
+    @Autowired
+    private IInfoVersionService infoVersionService;
 
     @PostMapping("/add")
     @ApiOperation(value = "新增本园区房间统计")
@@ -49,32 +52,22 @@ public class RoomInfoController {
         return roomInfoService.delete(id);
     }
 
-    @PostMapping("/all")
-    @ApiOperation(value = "查询本园区所有房间")
-    @RequiresPermissions(value = "infoTotal:room:search")
-    public Result<List<RoomInfoRequest>> findAll(){
-        return roomInfoService.findAll();
-    }
-
     @PostMapping("/search")
     @ApiOperation(value = "根据版本查询本园区房间统计")
     @RequiresPermissions(value = "infoTotal:room:search")
-    public Result<List<RoomInfoRequest>> findByVersion(@RequestBody QueryByVersionRequest request){
-        return roomInfoService.findByVersion(request.getVersion());
+    public Result<Page<RoomInfoRequest>> findByVersion(@RequestBody QueryByVersionRequest request){
+        return roomInfoService.findByVersion(request);
     }
 
     @PostMapping("/import")
     @ApiOperation(value = "导入本园区房间统计")
     @RequiresPermissions(value = "infoTotal:room:add")
-    public Result<String> myImport(@RequestBody MultipartFile multipartFile){
-        return roomInfoService.myImport(multipartFile);
+    public Result<String> myImport(@RequestParam("version") String version , @RequestParam("multipartFile") MultipartFile multipartFile){
+        UploadAndVersionRequest request = new UploadAndVersionRequest();
+        request.setMultipartFile(multipartFile);
+        request.setVersion(version);
+        return roomInfoService.myImport(request);
     }
-
-//    @PostMapping("/export")
-//    @ApiOperation(value = "下载本园区房间统计模板")
-//    public Result<String> export(HttpServletResponse response){
-//        return roomInfoService.export(response);
-//    }
 
     @PostMapping("/export")
     @ApiOperation(value = "下载本园区房间统计模板")
@@ -82,17 +75,17 @@ public class RoomInfoController {
         return templateService.getTemplateUrl("本园区房间统计");
     }
 
-    @PostMapping("/download")
+    @GetMapping("/download/{id}")
     @ApiOperation(value = "文件导出")
-    @RequiresPermissions(value = "infoTotal:room:export")
-    public void download(HttpServletResponse response, @RequestBody QueryByVersionRequest request){
-        roomInfoService.download(response, request.getVersion());
+    public void download(@PathVariable("id")String id, HttpServletResponse response){
+        roomInfoService.download(id, response);
     }
 
     @PostMapping("/find/version")
     @ApiOperation(value = "查询所有文件版本")
     public Result<List<String>> findAllVersion(){
-        return null;
+        List<String> list = infoVersionService.findByGeneral("本园区房间统计").getData();
+        return Result.<List<String>>builder().success().data(list).build();
     }
 
 }

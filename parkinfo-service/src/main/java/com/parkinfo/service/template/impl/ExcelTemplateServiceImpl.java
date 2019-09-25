@@ -1,18 +1,17 @@
 package com.parkinfo.service.template.impl;
 
+import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
-import com.parkinfo.entity.template.ExcelTemplate;
-import com.parkinfo.enums.FileUploadType;
+import com.parkinfo.entity.informationTotal.InfoTotalTemplate;
 import com.parkinfo.exception.NormalException;
-import com.parkinfo.repository.template.ExcelTemplateRepository;
-import com.parkinfo.request.template.AddExcelTemplateRequest;
+import com.parkinfo.repository.archiveInfo.InfoTotalTemplateRepository;
+import com.parkinfo.request.template.ExcelTemplateRequest;
+import com.parkinfo.response.template.ExcelTemplateTypeResponse;
 import com.parkinfo.service.template.IExcelTemplateService;
-import com.parkinfo.tools.oss.IOssService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,45 +19,30 @@ import java.util.Optional;
 public class ExcelTemplateServiceImpl implements IExcelTemplateService {
 
     @Autowired
-    private ExcelTemplateRepository excelTemplateRepository;
-
-    @Autowired
-    private IOssService ossService;
+    private InfoTotalTemplateRepository infoTotalTemplateRepository;
 
     @Override
-    public Result<String> upload(HttpServletRequest request) {
-        String url = ossService.MultipartFileUpload(request, FileUploadType.TEMPLATE.toString());
-        return Result.<String>builder().success().data(url).build();
-    }
-
-    @Override
-    public Result add(AddExcelTemplateRequest request) {
-        Optional<ExcelTemplate> optionalExcelTemplate = excelTemplateRepository.findByTypeAndDeleteIsFalse(request.getType());
-        if (!optionalExcelTemplate.isPresent()) {
-            ExcelTemplate excelTemplate = new ExcelTemplate();
-            BeanUtils.copyProperties(request,excelTemplate);
-            excelTemplateRepository.save(excelTemplate);
-        }else {
-            ExcelTemplate excelTemplate = optionalExcelTemplate.get();
-            BeanUtils.copyProperties(request,excelTemplate);
-            excelTemplateRepository.save(excelTemplate);
+    public Result<String> upload(ExcelTemplateRequest request) {
+        Optional<InfoTotalTemplate> byId = infoTotalTemplateRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(request.getTypeId());
+        if(!byId.isPresent()){
+            throw new NormalException("类型不存在");
         }
-        return Result.builder().success().message("上传成功").build();
+        InfoTotalTemplate infoTotalTemplate = byId.get();
+        infoTotalTemplate.setTemplateUrl(request.getUrl());
+        return Result.<String>builder().success().data("上传成功").build();
     }
 
     @Override
-    public Result<List<ExcelTemplate>> find() {
-        List<ExcelTemplate> templateList = excelTemplateRepository.findAllByDeleteIsFalse();
-        return Result.<List<ExcelTemplate>>builder().success().data(templateList).build();
+    public Result<List<ExcelTemplateTypeResponse>> findAllType() {
+        List<InfoTotalTemplate> all = infoTotalTemplateRepository.findAllByDeleteIsFalseAndAvailableIsTrue();
+        List<ExcelTemplateTypeResponse> result = Lists.newArrayList();
+        all.forEach(temp -> {
+            ExcelTemplateTypeResponse response = new ExcelTemplateTypeResponse();
+            BeanUtils.copyProperties(temp, response);
+            result.add(response);
+        });
+        return Result.<List<ExcelTemplateTypeResponse>>builder().success().data(result).build();
     }
 
-    @Override
-    public Result<ExcelTemplate> down(String id) {
-        Optional<ExcelTemplate> optionalExcelTemplate = excelTemplateRepository.findByIdAndDeleteIsFalse(id);
-        if (!optionalExcelTemplate.isPresent()) {
-            throw new NormalException("模板不存在");
-        }
-        ExcelTemplate excelTemplate = optionalExcelTemplate.get();
-        return Result.<ExcelTemplate>builder().success().data(excelTemplate).build();
-    }
+
 }

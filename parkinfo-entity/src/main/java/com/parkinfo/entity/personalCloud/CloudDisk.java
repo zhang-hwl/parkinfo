@@ -27,17 +27,17 @@ public class CloudDisk extends BaseEntity {
     @ApiModelProperty(value = "文件大小")
     private String fileSize;
 
-    @ApiModelProperty(value = "文件路径")
+    @ApiModelProperty(value = "文件地址")
     private String fileUrl;
 
     @ApiModelProperty(value = "上传时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
-    private Date upTime;
+    private Date uploadTime;
 
     @ApiModelProperty(value = "备注")
     private String remark;
 
-    @ManyToOne()
+    @OneToOne
     @JoinColumn(name = "user_id")
     @ApiModelProperty("用户")
     private ParkUser parkUser;

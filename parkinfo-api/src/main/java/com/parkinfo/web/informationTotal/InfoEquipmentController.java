@@ -1,16 +1,18 @@
 package com.parkinfo.web.informationTotal;
 
+import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
-import com.parkinfo.entity.informationTotal.QueryByVersionRequest;
+import com.parkinfo.request.infoTotalRequest.QueryByVersionRequest;
 import com.parkinfo.request.infoTotalRequest.InfoEquipmentRequest;
-import com.parkinfo.request.infoTotalRequest.PolicyTotalRequest;
+import com.parkinfo.request.infoTotalRequest.UploadAndVersionRequest;
 import com.parkinfo.service.informationTotal.IInfoEquipmentService;
 import com.parkinfo.service.informationTotal.IInfoTotalTemplateService;
-import com.parkinfo.service.informationTotal.IPolicyTotalService;
+import com.parkinfo.service.informationTotal.IInfoVersionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,6 +28,8 @@ public class InfoEquipmentController {
     private IInfoEquipmentService infoEquipmentService;
     @Autowired
     private IInfoTotalTemplateService templateService;
+    @Autowired
+    private IInfoVersionService infoVersionService;
 
     @PostMapping("/add")
     @ApiOperation(value = "新增信息化设备")
@@ -48,32 +52,22 @@ public class InfoEquipmentController {
         return infoEquipmentService.delete(id);
     }
 
-    @PostMapping("/all")
-    @ApiOperation(value = "查询所有信息化设备")
-    @RequiresPermissions(value = "infoTotal:info:search")
-    public Result<List<InfoEquipmentRequest>> findAll(){
-        return infoEquipmentService.findAll();
-    }
-
     @PostMapping("/search")
     @ApiOperation(value = "根据版本查询信息化设备")
     @RequiresPermissions(value = "infoTotal:info:search")
-    public Result<List<InfoEquipmentRequest>> findByVersion(@RequestBody QueryByVersionRequest request){
-        return infoEquipmentService.findByVersion(request.getVersion());
+    public Result<Page<InfoEquipmentRequest>> findByVersion(@RequestBody QueryByVersionRequest request){
+        return infoEquipmentService.findByVersion(request);
     }
 
     @PostMapping("/import")
     @ApiOperation(value = "导入信息化设备")
     @RequiresPermissions(value = "infoTotal:info:add")
-    public Result<String> policyTotalImport(@RequestBody MultipartFile multipartFile){
-        return infoEquipmentService.myImport(multipartFile);
+    public Result<String> policyTotalImport(@RequestParam("version") String version , @RequestParam("multipartFile") MultipartFile multipartFile){
+        UploadAndVersionRequest request = new UploadAndVersionRequest();
+        request.setMultipartFile(multipartFile);
+        request.setVersion(version);
+        return infoEquipmentService.myImport(request);
     }
-
-//    @PostMapping("/export")
-//    @ApiOperation(value = "下载信息化设备模板")
-//    public Result<String> policyTotalExport(HttpServletResponse response){
-//        return infoEquipmentService.export(response);
-//    }
 
     @PostMapping("/export")
     @ApiOperation(value = "下载信息化设备模板")
@@ -81,17 +75,17 @@ public class InfoEquipmentController {
         return templateService.getTemplateUrl("信息化设备");
     }
 
-    @PostMapping("/download")
-    @ApiOperation(value = "文件导出")
-    @RequiresPermissions(value = "infoTotal:info:export")
-    public void download(HttpServletResponse response, @RequestBody QueryByVersionRequest request){
-        infoEquipmentService.download(response, request.getVersion());
+    @GetMapping("/download/{id}")
+    @ApiOperation(value = "文件导出", notes = "传用户id")
+    public void download(@PathVariable("id")String id, HttpServletResponse response){
+        infoEquipmentService.download(id, response);
     }
 
     @PostMapping("/find/version")
     @ApiOperation(value = "查询所有文件版本")
     public Result<List<String>> findAllVersion(){
-        return null;
+        List<String> list = infoVersionService.findByGeneral("信息化设备").getData();
+        return Result.<List<String>>builder().success().data(list).build();
     }
 
 }

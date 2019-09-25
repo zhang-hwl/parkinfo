@@ -3,9 +3,12 @@ package com.parkinfo.service.parkService;
 import antlr.collections.impl.LList;
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.parkService.learningData.LearnDataType;
+import com.parkinfo.request.archiveInfo.ArchiveCommentRequest;
+import com.parkinfo.request.archiveInfo.ArchiveReadRecordRequest;
 import com.parkinfo.request.parkService.learningData.AddLearningDataRequest;
 import com.parkinfo.request.parkService.learningData.EditLearningDataRequest;
 import com.parkinfo.request.parkService.learningData.LearnDataTypeRequest;
+import com.parkinfo.response.parkService.LearnDataCommentResponse;
 import com.parkinfo.response.parkService.LearnDataTypeResponse;
 import com.parkinfo.response.parkService.LearningDateResponse;
 import com.parkinfo.request.parkService.learningData.SearchLearningDateRequest;
@@ -42,7 +45,7 @@ public interface ILearningDataService {
      */
     Result<String> deleteLearningData(String id);
 
-    Result<LearningDateResponse> detailLearningData(String id);
+    Result<LearnDataCommentResponse> detailLearningData(String id);
 
     //查询学习资料类型
     Result<List<LearnDataTypeResponse>> findAllType();
@@ -55,5 +58,14 @@ public interface ILearningDataService {
 
 
     Result<String> deleteType(String id);
+
+    //新增评论
+    Result<String> addComment(ArchiveCommentRequest archiveCommentRequest);
+
+    //新增阅读记录
+    Result<String> addReadRecord(String id);
+
+//    //查询阅读记录
+//    Result<Page<LearnReadRecord>> findReadRecord(ArchiveReadRecordRequest request);
 
 }

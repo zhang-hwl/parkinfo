@@ -1,9 +1,13 @@
 package com.parkinfo.web.parkService;
 
 import com.parkinfo.common.Result;
+import com.parkinfo.entity.archiveInfo.ArchiveReadRecord;
+import com.parkinfo.request.archiveInfo.ArchiveCommentRequest;
+import com.parkinfo.request.archiveInfo.ArchiveReadRecordRequest;
 import com.parkinfo.request.parkService.learningData.AddLearningDataRequest;
 import com.parkinfo.request.parkService.learningData.EditLearningDataRequest;
 import com.parkinfo.request.parkService.learningData.LearnDataTypeRequest;
+import com.parkinfo.response.parkService.LearnDataCommentResponse;
 import com.parkinfo.response.parkService.LearnDataTypeResponse;
 import com.parkinfo.response.parkService.LearningDateResponse;
 import com.parkinfo.request.parkService.learningData.SearchLearningDateRequest;
@@ -61,9 +65,9 @@ public class LearningDataController {
     }
 
     @PostMapping("/detail/{id}")
-    @ApiOperation(value = "查看学习资料")
+    @ApiOperation(value = "查看学习资料(带评论)")
     @RequiresPermissions("parkService:serviceFlow:learningData:detail")
-    public Result<LearningDateResponse> detailLearningData(@PathVariable("id") String id){
+    public Result<LearnDataCommentResponse> detailLearningData(@PathVariable("id") String id){
         return learningDataService.detailLearningData(id);
     }
 
@@ -90,5 +94,33 @@ public class LearningDataController {
     public Result<String> deleteType(@PathVariable("id") String id){
         return learningDataService.deleteType(id);
     }
+
+    @PostMapping("/add/comment")
+    @ApiOperation(value = "新增评论")
+    public Result<String> addComment(@Valid @RequestBody ArchiveCommentRequest archiveCommentRequest, BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError allError : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(allError.getDefaultMessage()).build();
+            }
+        }
+        return learningDataService.addComment(archiveCommentRequest);
+    }
+
+//    @PostMapping("/add/record/{id}")
+//    @ApiOperation(value = "新增阅读记录")
+//    public Result<String> addReadRecord(@PathVariable("id") String id){
+//        return learningDataService.addReadRecord(id);
+//    }
+//
+//    @PostMapping("/searchReadRecord")
+//    @ApiOperation(value = "查询阅读记录")
+//    public Result<Page<LearnReadRecord>> findReadRecord(@Valid @RequestBody ArchiveReadRecordRequest request, BindingResult result){
+//        if (result.hasErrors()){
+//            for (ObjectError allError : result.getAllErrors()) {
+//                return Result.<Page<LearnReadRecord>>builder().fail().code(500).message(allError.getDefaultMessage()).build();
+//            }
+//        }
+//        return learningDataService.findReadRecord(request);
+//    }
 
 }

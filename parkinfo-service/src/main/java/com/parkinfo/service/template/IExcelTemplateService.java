@@ -1,11 +1,9 @@
 package com.parkinfo.service.template;
 
 import com.parkinfo.common.Result;
-import com.parkinfo.entity.template.ExcelTemplate;
-import com.parkinfo.request.template.AddExcelTemplateRequest;
-import com.sun.org.apache.regexp.internal.RE;
+import com.parkinfo.request.template.ExcelTemplateRequest;
+import com.parkinfo.response.template.ExcelTemplateTypeResponse;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface IExcelTemplateService {
@@ -14,25 +12,8 @@ public interface IExcelTemplateService {
      * @param request
      * @return
      */
-    Result<String> upload(HttpServletRequest request);
+    Result<String> upload(ExcelTemplateRequest request);
 
-    /**
-     * 添加到数据库
-     * @param request
-     * @return
-     */
-    Result add(AddExcelTemplateRequest request);
+    Result<List<ExcelTemplateTypeResponse>> findAllType();
 
-    /**
-     * 获取所有模板
-     * @return
-     */
-    Result<List<ExcelTemplate>> find();
-
-    /**
-     * 下载模板
-     * @param id
-     * @return
-     */
-    Result<ExcelTemplate> down(String id);
 }

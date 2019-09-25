@@ -7,14 +7,13 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class CompeteGradenInfoRequest extends BaseEntity {
+public class CompeteGradenInfoRequest {
+
+    @ApiModelProperty(value = "id")
+    private String id;
 
     @ApiModelProperty(value = "版本标签")
     private String version;
-
-    @ApiModelProperty(value = "文件类型")
-    private String fileType;
 
     @Excel(name = "类型", width = 15)
     @ApiModelProperty(value = "类型")

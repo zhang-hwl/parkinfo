@@ -4,6 +4,9 @@ import com.parkinfo.common.Result;
 import com.parkinfo.entity.informationTotal.CompeteGradenInfo;
 import com.parkinfo.entity.informationTotal.PolicyTotal;
 import com.parkinfo.request.infoTotalRequest.CompeteGradenInfoRequest;
+import com.parkinfo.request.infoTotalRequest.QueryByVersionRequest;
+import com.parkinfo.request.infoTotalRequest.UploadAndVersionRequest;
+import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -16,16 +19,12 @@ public interface ICompeteGradenInfoService {
 
     Result<String> editCompeteGradenInfo(CompeteGradenInfoRequest competeGradenInfo);
 
-    Result<List<CompeteGradenInfoRequest>> findByVersion(String version);
+    Result<Page<CompeteGradenInfoRequest>> findByVersion(QueryByVersionRequest request);
 
-    Result<String> competeGradenInfoImport(MultipartFile file);
-
-    Result<String> competeGradenInfoExport(HttpServletResponse response);
-
-    Result<List<CompeteGradenInfoRequest>> findAll();
+    Result<String> competeGradenInfoImport(UploadAndVersionRequest request);
 
     Result<String> deleteCompeteGradenInfo(String id);
 
-    void download(HttpServletResponse response, String version);
+    void download(String id, HttpServletResponse response);
 
 }
