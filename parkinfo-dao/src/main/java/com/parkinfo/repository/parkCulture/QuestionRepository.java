@@ -14,7 +14,7 @@ public interface QuestionRepository extends JpaRepository<Question,String> {
 
     Long countByCategory_IdAndQuestionTypeAndAvailableIsTrueAndDeleteIsFalse(String categoryId, QuestionType questionType);
 
-    @Query(nativeQuery = true,value = "select id from c_examination_question where category_id =?1 and question_type=?2 order by random() limit ?3")
+    @Query(nativeQuery = true,value = "select * from c_question where category_id =?1 and question_type=?2 order by rand() limit ?3")
     List<Question> queryIdsByCategory(String categoryId, Integer questionTypeNumber,Integer count);
 
     Page<Question> findAll(Specification<Question> questionSpecification, Pageable pageable);

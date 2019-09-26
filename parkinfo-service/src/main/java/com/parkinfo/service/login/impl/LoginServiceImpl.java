@@ -87,7 +87,7 @@ public class LoginServiceImpl implements ILoginService {
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
         Specification<ParkUser> specification = (Specification<ParkUser>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
-            Join<ParkUser, ParkInfo> join = root.join(root.getModel().getSingularAttribute("parkInfo", ParkInfo.class), JoinType.LEFT);
+            Join<ParkUser, ParkInfo> join = root.join(root.getModel().getSingularAttribute("parks", ParkInfo.class), JoinType.LEFT);
             predicates.add(criteriaBuilder.equal(join.get("id").as(String.class), request.getId()));
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
             predicates.add(criteriaBuilder.equal(root.get("entered").as(Boolean.class), Boolean.FALSE));

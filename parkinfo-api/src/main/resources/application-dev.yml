@@ -14,13 +14,13 @@ spring:
     host: 47.102.207.156
     database: 2
     port: 6379
-    timeout: 1000
+    timeout: 5000
     lettuce:
       pool:
         max-active: 20
         max-idle: 8
         max-wait: -1
-        min-idle: 2
+        min-idle: 10
     password: Lynkbey888
   datasource:
     url: jdbc:mysql://47.102.207.156:3306/parkinfo?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&failOverReadOnly=false&zeroDateTimeBehavior=convertToNull&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true

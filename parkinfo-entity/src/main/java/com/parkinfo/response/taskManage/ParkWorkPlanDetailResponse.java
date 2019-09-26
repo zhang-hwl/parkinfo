@@ -1,6 +1,7 @@
 package com.parkinfo.response.taskManage;
 
 import com.parkinfo.entity.taskManage.WorkPlanDetail;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -17,5 +18,8 @@ import java.util.List;
 @Data
 public class ParkWorkPlanDetailResponse extends ParkWorkPlanListResponse {
 
-    private List<WorkPlanDetail> workPlanDetails;
+    @ApiModelProperty(value = "反馈")
+    private String feedback;
+
+    private List<WorkPlanDetail> workPlanDetailList;
 }

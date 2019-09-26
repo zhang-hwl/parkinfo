@@ -140,6 +140,7 @@ public class ParkWorkPlanServiceImpl implements IParkWorkPlanService {
                 workPlanDetail = new WorkPlanDetail();
             }
             BeanUtils.copyProperties(workPlanDetailRequest, workPlanDetail);
+            workPlanDetail.setParkWorkPlan(parkWorkPlan);
             workPlanDetailRepository.save(workPlanDetail);
         });
         return Result.builder().success().message("任务修改成功").build();
@@ -191,7 +192,7 @@ public class ParkWorkPlanServiceImpl implements IParkWorkPlanService {
             response.setParkName(parkWorkPlan.getPark().getName());
         }
         List<WorkPlanDetail> detailList = workPlanDetailRepository.findByParkWorkPlan_IdAndDeleteIsFalseAndAvailableIsTrue(response.getId());
-        response.setWorkPlanDetails(detailList);
+        response.setWorkPlanDetailList(detailList);
         return response;
     }
 
