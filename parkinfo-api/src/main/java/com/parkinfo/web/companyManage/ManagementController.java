@@ -5,6 +5,7 @@ import com.parkinfo.request.compayManage.*;
 import com.parkinfo.response.companyManage.ManageDetailResponse;
 import com.parkinfo.response.companyManage.ManagementResponse;
 import com.parkinfo.service.companyManage.IManagementService;
+import com.parkinfo.service.informationTotal.IInfoTotalTemplateService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -25,6 +26,8 @@ public class ManagementController {
 
     @Autowired
     private IManagementService managementService;
+    @Autowired
+    private IInfoTotalTemplateService templateService;
 
     @PostMapping("/investImport")
     @ApiOperation("导入招商信息")
@@ -36,7 +39,7 @@ public class ManagementController {
     @GetMapping("/investExport")
     @ApiOperation("下载招商信息模板")
     public Result investExport(HttpServletResponse response) {
-        return managementService.investExport(response);
+        return templateService.getTemplateUrl("招商信息");
     }
 
     @PostMapping("/add")

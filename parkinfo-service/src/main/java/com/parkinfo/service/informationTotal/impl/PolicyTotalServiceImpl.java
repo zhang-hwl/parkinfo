@@ -51,7 +51,7 @@ public class PolicyTotalServiceImpl implements IPolicyTotalService {
     public Result<String> addPolicyTotal(PolicyTotalRequest request) {
         PolicyTotal policyTotal = new PolicyTotal();
         BeanUtils.copyProperties(request, policyTotal);
-        String parkId = tokenUtils.getLoginUserDTO().getCurrentParkId();
+        String parkId = request.getParkInfoResponse().getId();
         Optional<ParkInfo> byIdAndDeleteIsFalse = parkInfoRepository.findByIdAndDeleteIsFalse(parkId);
         if(!byIdAndDeleteIsFalse.isPresent()){
             throw new NormalException("该园区不存在");
@@ -82,16 +82,11 @@ public class PolicyTotalServiceImpl implements IPolicyTotalService {
 
     @Override
     public Result<Page<PolicyTotalRequest>> findByVersion(QueryByVersionRequest request) {
-//        int flag = judgePremission();   //判断查看权限
-//        if(flag == -1){
-//            return Result.<Page<PolicyTotalRequest>>builder().success().data(null).build();
-//        }
-        int flag = 1;
-        ParkUserDTO loginUserDTO = tokenUtils.getLoginUserDTO();
-        if(loginUserDTO == null){
-            throw new NormalException("token不存在或已过期");
+        int flag = judgePremission();   //判断查看权限
+        if(flag == -1){
+            return Result.<Page<PolicyTotalRequest>>builder().success().data(null).build();
         }
-        String parkId = loginUserDTO.getCurrentParkId();
+//        int flag = 1;
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
         Specification<PolicyTotal> specification = (Specification<PolicyTotal>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -99,7 +94,7 @@ public class PolicyTotalServiceImpl implements IPolicyTotalService {
                 predicates.add(criteriaBuilder.equal(root.get("version").as(String.class), request.getVersion()));
             }
             if(flag == 0){
-                predicates.add(criteriaBuilder.equal(root.get("parkInfo").get("id").as(String.class), parkId));
+                predicates.add(criteriaBuilder.equal(root.get("parkInfo").get("id").as(String.class), tokenUtils.getCurrentParkInfo().getId()));
             }
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
             predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
@@ -119,7 +114,7 @@ public class PolicyTotalServiceImpl implements IPolicyTotalService {
     @Override
     @Transactional
     public Result<String> policyTotalImport(UploadAndVersionRequest request){
-        String parkId = tokenUtils.getLoginUserDTO().getCurrentParkId();
+        String parkId = request.getParkId();
         Optional<ParkInfo> byIdAndDeleteIsFalse = parkInfoRepository.findByIdAndDeleteIsFalse(parkId);
         if(!byIdAndDeleteIsFalse.isPresent()){
             throw new NormalException("该园区不存在");

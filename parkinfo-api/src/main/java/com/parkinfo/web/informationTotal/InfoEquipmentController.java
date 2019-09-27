@@ -62,10 +62,11 @@ public class InfoEquipmentController {
     @PostMapping("/import")
     @ApiOperation(value = "导入信息化设备")
     @RequiresPermissions(value = "infoTotal:info:add")
-    public Result<String> policyTotalImport(@RequestParam("version") String version , @RequestParam("multipartFile") MultipartFile multipartFile){
+    public Result<String> policyTotalImport(@RequestParam("version") String version , @RequestParam("multipartFile") MultipartFile multipartFile, @RequestParam("parkId") String parkId){
         UploadAndVersionRequest request = new UploadAndVersionRequest();
         request.setMultipartFile(multipartFile);
         request.setVersion(version);
+        request.setParkId(parkId);
         return infoEquipmentService.myImport(request);
     }
 

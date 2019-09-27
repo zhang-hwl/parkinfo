@@ -1,6 +1,7 @@
 package com.parkinfo.service.parkService;
 
 import com.parkinfo.common.Result;
+import com.parkinfo.request.base.PageRequest;
 import com.parkinfo.request.parkService.projectApply.AddProjectInfoRequest;
 import com.parkinfo.request.parkService.projectApply.ChangeStatusRequest;
 import com.parkinfo.request.parkService.projectApply.EditProjectInfoRequest;
@@ -77,4 +78,6 @@ public interface IProjectApplyService {
     Result<String> deleteType(String id);
 
     Result<String> editType(ProjectApplyRecordTypeResponse recordTypeResponse);
+
+    Result<Page<ProjectApplyRecordTypeResponse>> findAllTypePage(PageRequest request);
 }

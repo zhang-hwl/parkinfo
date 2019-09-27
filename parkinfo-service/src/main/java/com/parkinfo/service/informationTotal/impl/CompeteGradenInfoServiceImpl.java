@@ -46,7 +46,7 @@ public class CompeteGradenInfoServiceImpl implements ICompeteGradenInfoService {
 
     @Override
     public Result<String> addCompeteGradenInfo(CompeteGradenInfoRequest request) {
-        String parkId = tokenUtils.getLoginUserDTO().getCurrentParkId();
+        String parkId = request.getParkInfoResponse().getId();
         Optional<ParkInfo> byIdAndDeleteIsFalse = parkInfoRepository.findByIdAndDeleteIsFalse(parkId);
         if (!byIdAndDeleteIsFalse.isPresent()) {
             throw new NormalException("该园区不存在");
@@ -78,16 +78,11 @@ public class CompeteGradenInfoServiceImpl implements ICompeteGradenInfoService {
 
     @Override
     public Result<Page<CompeteGradenInfoRequest>> findByVersion(QueryByVersionRequest request) {
-//        int flag = judgePremission();   //判断查看权限
-//        if (flag == -1) {
-//            return Result.<Page<CompeteGradenInfoRequest>>builder().success().data(null).build();
-//        }
-        int flag = 1;
-        ParkUserDTO loginUserDTO = tokenUtils.getLoginUserDTO();
-        if (loginUserDTO == null) {
-            throw new NormalException("token不存在或已过期");
+        int flag = judgePremission();   //判断查看权限
+        if (flag == -1) {
+            return Result.<Page<CompeteGradenInfoRequest>>builder().success().data(null).build();
         }
-        String parkId = loginUserDTO.getCurrentParkId();
+//        int flag = 1;
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
         Specification<CompeteGradenInfo> specification = (Specification<CompeteGradenInfo>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -95,7 +90,7 @@ public class CompeteGradenInfoServiceImpl implements ICompeteGradenInfoService {
                 predicates.add(criteriaBuilder.equal(root.get("version").as(String.class), request.getVersion()));
             }
             if (flag == 0) {
-                predicates.add(criteriaBuilder.equal(root.get("parkInfo").get("id").as(String.class), parkId));
+                predicates.add(criteriaBuilder.equal(root.get("parkInfo").get("id").as(String.class), tokenUtils.getCurrentParkInfo().getId()));
             }
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
             predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
@@ -115,7 +110,7 @@ public class CompeteGradenInfoServiceImpl implements ICompeteGradenInfoService {
     @Override
     public Result<String> competeGradenInfoImport(UploadAndVersionRequest request) {
         MultipartFile file = request.getMultipartFile();
-        String parkId = tokenUtils.getLoginUserDTO().getCurrentParkId();
+        String parkId = request.getParkId();
         Optional<ParkInfo> byIdAndDeleteIsFalse = parkInfoRepository.findByIdAndDeleteIsFalse(parkId);
         if (!byIdAndDeleteIsFalse.isPresent()) {
             throw new NormalException("该园区不存在");

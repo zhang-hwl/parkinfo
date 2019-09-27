@@ -52,4 +52,10 @@ public class LoginController {
     public Result<Page<ParkUserResponse>> search(@RequestBody QueryUserByParkRequest request) {
         return loginService.search(request);
     }
+
+    @PostMapping("/findAll")
+    @ApiOperation(value = "根据园区获取用户")
+    public Result<List<ParkUserResponse>> findAll() {
+        return loginService.findAll();
+    }
 }

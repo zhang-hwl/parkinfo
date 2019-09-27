@@ -69,10 +69,11 @@ public class PolicyTotalController {
     @PostMapping("/import")
     @ApiOperation(value = "导入政策统计")
     @RequiresPermissions(value = "infoTotal:policy:add")
-    public Result<String> policyTotalImport(@RequestParam("version") String version , @RequestParam("multipartFile") MultipartFile multipartFile){
+    public Result<String> policyTotalImport(@RequestParam("version") String version , @RequestParam("multipartFile") MultipartFile multipartFile, @RequestParam("parkId") String parkId){
         UploadAndVersionRequest request = new UploadAndVersionRequest();
         request.setMultipartFile(multipartFile);
         request.setVersion(version);
+        request.setParkId(parkId);
         return policyTotalService.policyTotalImport(request);
     }
 

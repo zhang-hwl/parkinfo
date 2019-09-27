@@ -15,4 +15,7 @@ public class UploadAndVersionRequest {
     @ApiModelProperty(value = "文件")
     private MultipartFile multipartFile;
 
+    @ApiModelProperty(value = "园区id")
+    private String parkId;
+
 }

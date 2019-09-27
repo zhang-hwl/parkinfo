@@ -2,6 +2,7 @@ package com.parkinfo.web.parkService;
 
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.parkService.commonServiceWindow.CommonServiceWindowType;
+import com.parkinfo.request.base.PageRequest;
 import com.parkinfo.request.parkService.commonServiceWindow.AddCommonServiceWindowRequest;
 import com.parkinfo.request.parkService.commonServiceWindow.CommonServiceWindowTypeRequest;
 import com.parkinfo.request.parkService.commonServiceWindow.EditCommonServiceWindowRequest;
@@ -76,6 +77,12 @@ public class CommonServiceWindowController {
         return commonServiceWindowService.findAllType();
     }
 
+    @PostMapping("/search/type")
+    @ApiOperation(value = "分页查看公共服务窗口类型")
+    public Result<Page<CommonServiceWindowTypeResponse>> findAllTypePage(@RequestBody PageRequest request){
+        return commonServiceWindowService.findAllTypePage(request);
+    }
+
     @PostMapping("/edit/type")
     @ApiOperation(value = "编辑公共服务窗口类型", notes = "小类名称为空时,新增大类")
     public Result<String> editType(@RequestBody CommonServiceWindowTypeRequest request){
@@ -93,7 +100,5 @@ public class CommonServiceWindowController {
     public Result<String> deleteType(@PathVariable("id") String id){
         return commonServiceWindowService.deleteType(id);
     }
-
-
 
 }

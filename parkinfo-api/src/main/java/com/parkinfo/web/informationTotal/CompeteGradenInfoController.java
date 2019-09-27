@@ -67,10 +67,11 @@ public class CompeteGradenInfoController {
     @PostMapping("/import")
     @ApiOperation(value = "导入竞争园区信息")
     @RequiresPermissions(value = "infoTotal:compete:add")
-    public Result<String> policyTotalImport(@RequestParam("version") String version , @RequestParam("multipartFile") MultipartFile multipartFile){
+    public Result<String> policyTotalImport(@RequestParam("version") String version , @RequestParam("multipartFile") MultipartFile multipartFile, @RequestParam("parkId") String parkId){
         UploadAndVersionRequest request = new UploadAndVersionRequest();
         request.setMultipartFile(multipartFile);
         request.setVersion(version);
+        request.setParkId(parkId);
         return competeGradenInfoService.competeGradenInfoImport(request);
     }
 

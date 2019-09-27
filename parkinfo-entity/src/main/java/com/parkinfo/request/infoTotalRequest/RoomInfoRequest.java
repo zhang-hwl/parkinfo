@@ -1,6 +1,7 @@
 package com.parkinfo.request.infoTotalRequest;
 
 import com.parkinfo.entity.base.BaseEntity;
+import com.parkinfo.response.login.ParkInfoResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -44,5 +45,8 @@ public class RoomInfoRequest{
 
     @ApiModelProperty(value = "备注")
     private String remark;
+
+    @ApiModelProperty(value = "关联园区")
+    private ParkInfoResponse parkInfoResponse;
 
 }

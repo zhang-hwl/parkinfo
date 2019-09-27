@@ -45,7 +45,7 @@ public class InfoEquipmentServiceImpl implements IInfoEquipmentService {
     public Result<String> add(InfoEquipmentRequest request) {
         InfoEquipment infoEquipment = new InfoEquipment();
         BeanUtils.copyProperties(request, infoEquipment);
-        String parkId = tokenUtils.getLoginUserDTO().getCurrentParkId();
+        String parkId = request.getParkInfoResponse().getId();
         Optional<ParkInfo> byIdAndDeleteIsFalse = parkInfoRepository.findByIdAndDeleteIsFalse(parkId);
         if(!byIdAndDeleteIsFalse.isPresent()){
             throw new NormalException("该园区不存在");
@@ -98,7 +98,7 @@ public class InfoEquipmentServiceImpl implements IInfoEquipmentService {
     @Override
     public Result<String> myImport(UploadAndVersionRequest request) {
         MultipartFile file = request.getMultipartFile();
-        String parkId = tokenUtils.getLoginUserDTO().getCurrentParkId();
+        String parkId = request.getParkId();
         Optional<ParkInfo> byIdAndDeleteIsFalse = parkInfoRepository.findByIdAndDeleteIsFalse(parkId);
         if(!byIdAndDeleteIsFalse.isPresent()){
             throw new NormalException("该园区不存在");

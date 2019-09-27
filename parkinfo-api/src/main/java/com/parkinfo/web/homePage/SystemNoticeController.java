@@ -1,8 +1,7 @@
-package com.parkinfo.web.notice;
+package com.parkinfo.web.homePage;
 
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.notice.SystemNotice;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 //@Api(value = "SystemNoticeController", tags = {"公告维护"})
 public class SystemNoticeController {
 
-//    @PostMapping("/update/notice")
+//    @PostMapping("/update/homePage")
     @ApiOperation(value = "更新公告")
     public Result<String> updateNotice(@RequestBody SystemNotice systemNotice){
         return null;

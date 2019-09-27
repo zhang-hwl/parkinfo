@@ -19,4 +19,6 @@ public interface ILoginService {
     Result<String> choosePark(String parkId);
 
     Result<Page<ParkUserResponse>> search(QueryUserByParkRequest request);
+
+    Result<List<ParkUserResponse>> findAll();
 }

@@ -174,6 +174,39 @@ public class LearningDataServiceImpl implements ILearningDataService {
     }
 
     @Override
+    public Result<Page<LearnDataTypeResponse>> searchType(com.parkinfo.request.base.PageRequest request) {
+        Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
+        Specification<LearnDataType> specification = new Specification<LearnDataType>() {
+            @Override
+            public Predicate toPredicate(Root<LearnDataType> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder cb) {
+                List<Predicate> predicates = Lists.newArrayList();
+                predicates.add(cb.isNull(root.get("parent").as(LearnDataType.class)));
+                predicates.add(cb.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
+                predicates.add(cb.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
+                return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+            }
+        };
+        Page<LearnDataType> all = learnDataTypeRepository.findAll(specification, pageable);
+        List<LearnDataTypeResponse> list = Lists.newArrayList();
+        all.getContent().forEach(temp -> {
+            LearnDataTypeResponse response = new LearnDataTypeResponse();
+            BeanUtils.copyProperties(temp, response);
+            List<LearnDataKindResponse> kind = Lists.newArrayList();
+            temp.getChildren().forEach(children -> {
+               if(!children.getDelete()){
+                   LearnDataKindResponse childrenResponse = new LearnDataKindResponse();
+                   BeanUtils.copyProperties(children, childrenResponse);
+                   kind.add(childrenResponse);
+               }
+            });
+            response.setKind(kind);
+            list.add(response);
+        });
+        Page<LearnDataTypeResponse> result = new PageImpl<>(list, all.getPageable(), all.getTotalElements());
+        return Result.<Page<LearnDataTypeResponse>>builder().success().data(result).build();
+    }
+
+    @Override
     public Result<String> addType(LearnDataTypeRequest request) {
         LearnDataType learnDataType = new LearnDataType();
         learnDataType.setDelete(false);
@@ -216,7 +249,8 @@ public class LearningDataServiceImpl implements ILearningDataService {
     @Override
     public Result<String> deleteType(String id) {
         LearnDataType learnDataType = checkLearnDataType(id);
-        learnDataTypeRepository.delete(learnDataType);
+        learnDataType.setDelete(true);
+        learnDataTypeRepository.save(learnDataType);
         return Result.<String>builder().success().data("删除成功").build();
     }
 

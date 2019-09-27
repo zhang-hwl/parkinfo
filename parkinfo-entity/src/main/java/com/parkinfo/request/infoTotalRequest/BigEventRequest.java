@@ -2,6 +2,7 @@ package com.parkinfo.request.infoTotalRequest;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.parkinfo.entity.base.BaseEntity;
+import com.parkinfo.response.login.ParkInfoResponse;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -29,4 +30,7 @@ public class BigEventRequest {
 
     @ApiModelProperty(value = "内容")
     private String content;
+
+    @ApiModelProperty(value = "关联园区")
+    private ParkInfoResponse parkInfoResponse;
 }

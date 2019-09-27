@@ -19,6 +19,7 @@ import com.parkinfo.request.infoTotalRequest.BigEventRequest;
 import com.parkinfo.request.infoTotalRequest.PolicyTotalRequest;
 import com.parkinfo.request.infoTotalRequest.QueryByVersionRequest;
 import com.parkinfo.request.infoTotalRequest.UploadAndVersionRequest;
+import com.parkinfo.response.login.ParkInfoResponse;
 import com.parkinfo.service.informationTotal.IBigEventService;
 import com.parkinfo.token.TokenUtils;
 import com.parkinfo.util.ExcelUtils;
@@ -51,7 +52,7 @@ public class BigEventServiceImpl implements IBigEventService {
     public Result<String> add(BigEventRequest request) {
         BigEvent bigEvent = new BigEvent();
         BeanUtils.copyProperties(request, bigEvent);
-        String parkId = tokenUtils.getLoginUserDTO().getCurrentParkId();
+        String parkId = request.getParkInfoResponse().getId();
         Optional<ParkInfo> byIdAndDeleteIsFalse = parkInfoRepository.findByIdAndDeleteIsFalse(parkId);
         if(!byIdAndDeleteIsFalse.isPresent()){
             throw new NormalException("该园区不存在");
@@ -80,16 +81,10 @@ public class BigEventServiceImpl implements IBigEventService {
 
     @Override
     public Result<Page<BigEventRequest>> findByVersion(QueryByVersionRequest request) {
-//        int flag = judgePremission();   //判断查看权限
-        int flag = 1;
+        int flag = judgePremission();   //判断查看权限
         if(flag == -1){
             return Result.<Page<BigEventRequest>>builder().success().data(null).build();
         }
-        ParkUserDTO parkUserDTO = tokenUtils.getLoginUserDTO();
-        if(parkUserDTO == null){
-            throw new NormalException("token不存在或已过期");
-        }
-        String parkId = parkUserDTO.getCurrentParkId();
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
         Specification<BigEvent> specification = (Specification<BigEvent>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -97,7 +92,7 @@ public class BigEventServiceImpl implements IBigEventService {
                 predicates.add(criteriaBuilder.equal(root.get("version").as(String.class), request.getVersion()));
             }
             if(flag == 0){
-                predicates.add(criteriaBuilder.equal(root.get("parkInfo").get("id").as(String.class), parkId));
+                predicates.add(criteriaBuilder.equal(root.get("parkInfo").get("id").as(String.class), tokenUtils.getCurrentParkInfo().getId()));
             }
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
             predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
@@ -108,6 +103,10 @@ public class BigEventServiceImpl implements IBigEventService {
         all.forEach(temp -> {
             BigEventRequest response = new BigEventRequest();
             BeanUtils.copyProperties(temp, response);
+            ParkInfoResponse parkInfoResponse = new ParkInfoResponse();
+            parkInfoResponse.setId(temp.getParkInfo().getId());
+            parkInfoResponse.setName(temp.getParkInfo().getName());
+            response.setParkInfoResponse(parkInfoResponse);
             list.add(response);
         });
         Page<BigEventRequest> result = new PageImpl<>(list, all.getPageable(), all.getTotalElements());
@@ -117,7 +116,7 @@ public class BigEventServiceImpl implements IBigEventService {
     @Override
     public Result<String> myImport(UploadAndVersionRequest request) {
         MultipartFile file = request.getMultipartFile();
-        String parkId = tokenUtils.getLoginUserDTO().getCurrentParkId();
+        String parkId = request.getParkId();
         Optional<ParkInfo> byIdAndDeleteIsFalse = parkInfoRepository.findByIdAndDeleteIsFalse(parkId);
         if(!byIdAndDeleteIsFalse.isPresent()){
             throw new NormalException("该园区不存在");
@@ -159,13 +158,12 @@ public class BigEventServiceImpl implements IBigEventService {
     @Override
     public void download(String id, HttpServletResponse response) {
         //仅下载权限内的文件
-//        int i = judgePremissionById(id);
+        int i = judgePremissionById(id);
         Optional<ParkUser> byIdAndDeleteIsFalse = parkUserRepository.findByIdAndDeleteIsFalse(id);
         if(!byIdAndDeleteIsFalse.isPresent()){
             throw new NormalException("用户不存在");
         }
         String parkId = byIdAndDeleteIsFalse.get().getId();
-        int i = 1;
         List<BigEvent> list;
         if(i == -1){
             list = Lists.newArrayList();

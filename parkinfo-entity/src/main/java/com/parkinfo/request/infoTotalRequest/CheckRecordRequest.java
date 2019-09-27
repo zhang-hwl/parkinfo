@@ -3,6 +3,7 @@ package com.parkinfo.request.infoTotalRequest;
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.parkinfo.entity.base.BaseEntity;
+import com.parkinfo.response.login.ParkInfoResponse;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -36,5 +37,8 @@ public class CheckRecordRequest {
     @ApiModelProperty(value = "点检时间")
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date checkDate;
+
+    @ApiModelProperty(value = "关联园区")
+    private ParkInfoResponse parkInfoResponse;
 
 }

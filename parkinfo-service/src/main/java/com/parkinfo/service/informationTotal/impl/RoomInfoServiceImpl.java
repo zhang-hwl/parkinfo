@@ -50,7 +50,7 @@ public class RoomInfoServiceImpl implements IRoomInfoService {
     public Result<String> add(RoomInfoRequest request) {
         RoomInfo roomInfo = new RoomInfo();
         BeanUtils.copyProperties(request, roomInfo);
-        String parkId = tokenUtils.getLoginUserDTO().getCurrentParkId();
+        String parkId = request.getParkInfoResponse().getId();
         Optional<ParkInfo> byIdAndDeleteIsFalse = parkInfoRepository.findByIdAndDeleteIsFalse(parkId);
         if(!byIdAndDeleteIsFalse.isPresent()){
             throw new NormalException("该园区不存在");
@@ -79,18 +79,13 @@ public class RoomInfoServiceImpl implements IRoomInfoService {
 
     @Override
     public Result<Page<RoomInfoRequest>> findByVersion(QueryByVersionRequest request) {
-        ParkUserDTO loginUserDTO = tokenUtils.getLoginUserDTO();
-        if(loginUserDTO == null){
-            throw new NormalException("token不存在或已过期");
-        }
-        String parkId = loginUserDTO.getCurrentParkId();
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
         Specification<RoomInfo> specification = (Specification<RoomInfo>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (StringUtils.isNotBlank(request.getVersion())){
                 predicates.add(criteriaBuilder.equal(root.get("version").as(String.class), request.getVersion()));
             }
-            predicates.add(criteriaBuilder.equal(root.get("parkInfo").get("id").as(String.class), parkId));
+            predicates.add(criteriaBuilder.equal(root.get("parkInfo").get("id").as(String.class), tokenUtils.getCurrentParkInfo().getId()));
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
             predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
             return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
@@ -109,7 +104,7 @@ public class RoomInfoServiceImpl implements IRoomInfoService {
     @Override
     public Result<String> myImport(UploadAndVersionRequest request) {
         MultipartFile file = request.getMultipartFile();
-        String parkId = tokenUtils.getLoginUserDTO().getCurrentParkId();
+        String parkId = request.getParkId();
         Optional<ParkInfo> byIdAndDeleteIsFalse = parkInfoRepository.findByIdAndDeleteIsFalse(parkId);
         if(!byIdAndDeleteIsFalse.isPresent()){
             throw new NormalException("该园区不存在");
