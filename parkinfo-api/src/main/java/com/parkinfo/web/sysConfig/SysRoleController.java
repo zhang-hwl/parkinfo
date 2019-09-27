@@ -5,13 +5,17 @@ import com.parkinfo.entity.userConfig.ParkPermission;
 import com.parkinfo.entity.userConfig.ParkRole;
 import com.parkinfo.request.sysConfig.QuerySysRoleRequest;
 import com.parkinfo.request.sysConfig.SetPermissionRequest;
+import com.parkinfo.response.login.LoginResponse;
 import com.parkinfo.service.sysConfig.ISysRoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -36,7 +40,12 @@ public class SysRoleController {
 
     @PostMapping("/set")
     @ApiOperation(value = "设置角色所对应的权限")
-    public Result setPermissions(@RequestBody SetPermissionRequest request) {
+    public Result setPermissions(@Valid @RequestBody SetPermissionRequest request, BindingResult result) {
+        if (result.hasErrors()) {
+            for (ObjectError error : result.getAllErrors()) {
+                return Result.<LoginResponse>builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
         return sysRoleService.setPermissions(request);
     }
 

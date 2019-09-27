@@ -70,7 +70,7 @@ public class SpecialTask extends BaseEntity {
      * 接收人
      */
     @ManyToMany(targetEntity = ParkUser.class, fetch = FetchType.LAZY)
-    @JoinTable(name = "c_task_user", joinColumns = {@JoinColumn(name = "task_id")}, inverseJoinColumns = {@JoinColumn(name = "user_id")})
+    @JoinTable(name = "c_special_task_user", joinColumns = {@JoinColumn(name = "task_id")}, inverseJoinColumns = {@JoinColumn(name = "user_id")})
     private List<ParkUser> receivers;
 
     /**

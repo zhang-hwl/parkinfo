@@ -149,7 +149,7 @@ public class ManagementTaskServiceImpl implements IManagementTaskService {
                 managementTask.getReceivers().forEach(receiver -> {
                     ReceiverListResponse receiverListResponse = new ReceiverListResponse();
                     receiverListResponse.setId(receiver.getId());
-                    receiverListResponse.setNickname(receiver.getNickname());
+                    receiverListResponse.setName(receiver.getNickname());
                     receiverList.add(receiverListResponse);
                 });
                 response.setReceivers(receiverList);
@@ -173,7 +173,7 @@ public class ManagementTaskServiceImpl implements IManagementTaskService {
             managementTask.getReceivers().forEach(receiver -> {
                 ReceiverListResponse receiverListResponse = new ReceiverListResponse();
                 receiverListResponse.setId(receiver.getId());
-                receiverListResponse.setNickname(receiver.getNickname());
+                receiverListResponse.setName(receiver.getNickname());
                 receiverList.add(receiverListResponse);
             });
             response.setReceivers(receiverList);

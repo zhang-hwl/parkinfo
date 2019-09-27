@@ -150,7 +150,7 @@ public class GovernmentReportServiceImpl implements IGovernmentReportService {
                 governmentReport.getReceivers().forEach(receiver -> {
                     ReceiverListResponse receiverListResponse = new ReceiverListResponse();
                     receiverListResponse.setId(receiver.getId());
-                    receiverListResponse.setNickname(receiver.getNickname());
+                    receiverListResponse.setName(receiver.getNickname());
                     receiverList.add(receiverListResponse);
                 });
                 response.setReceivers(receiverList);
@@ -174,7 +174,7 @@ public class GovernmentReportServiceImpl implements IGovernmentReportService {
             governmentReport.getReceivers().forEach(receiver -> {
                 ReceiverListResponse receiverListResponse = new ReceiverListResponse();
                 receiverListResponse.setId(receiver.getId());
-                receiverListResponse.setNickname(receiver.getNickname());
+                receiverListResponse.setName(receiver.getNickname());
                 receiverList.add(receiverListResponse);
             });
             response.setReceivers(receiverList);

@@ -67,7 +67,7 @@ public class SysRoleServiceImpl implements ISysRoleService {
         });
         parkRole.setPermissions(permissionSet);
         parkRoleRepository.save(parkRole);
-        return Result.builder().success().message("添加权限成功").build();
+        return Result.builder().success().message("设置权限成功").build();
     }
 
     @Override
