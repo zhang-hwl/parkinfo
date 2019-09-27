@@ -1,27 +1,21 @@
 package com.parkinfo.response.parkCulture;
 
-import com.parkinfo.enums.AnswerType;
 import com.parkinfo.enums.QuestionType;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 /**
  * When I wrote this, only God and I understood what I was doing
  * Now, God only knows
  *
  * @author cnyuchu@gmail.com
- * @create 2019-09-11 14:45
+ * @create 2019-09-26 16:04
  **/
-@EqualsAndHashCode(callSuper = true)
 @Data
-public class QuestionDetailResponse extends QuestionListResponse{
+public class QuestionDetailListResponse {
 
     @ApiModelProperty(value = "试题id")
     private String id;
-
-    @ApiModelProperty(value = "试题分类id")
-    private String categoryId;
 
     @ApiModelProperty(value = "问题")
     private String question;
@@ -64,9 +58,4 @@ public class QuestionDetailResponse extends QuestionListResponse{
     @ApiModelProperty(value = "F选项")
     private String optionF;
 
-    /**
-     * 正确答案
-     */
-    @ApiModelProperty(value = "正确答案")
-    private AnswerType answer;
 }

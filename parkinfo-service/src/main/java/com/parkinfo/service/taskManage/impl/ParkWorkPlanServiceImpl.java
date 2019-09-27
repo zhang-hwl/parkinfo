@@ -96,6 +96,7 @@ public class ParkWorkPlanServiceImpl implements IParkWorkPlanService {
     @Override
     @Transactional
     public Result addTask(AddParkWorkPlanRequest request) {
+//        ParkUserDTO currentUser = tokenUtils.getLoginUserDTO();
         ParkWorkPlan parkWorkPlan = new ParkWorkPlan();
         BeanUtils.copyProperties(request, parkWorkPlan);
         parkWorkPlan.setAuthor(tokenUtils.getLoginUser());
@@ -104,6 +105,8 @@ public class ParkWorkPlanServiceImpl implements IParkWorkPlanService {
         parkWorkPlan.setStep(2);  //流转下一级
         parkWorkPlan.setAvailable(true);
         parkWorkPlan.setDelete(false);
+        parkWorkPlan.setFinished(false);
+        parkWorkPlan.setPark(parkInfo);
         parkWorkPlanRepository.save(parkWorkPlan);
         request.getWorkPlanDetailRequestList().forEach(workPlanDetailRequest -> {
             WorkPlanDetail workPlanDetail = new WorkPlanDetail();
@@ -137,6 +140,7 @@ public class ParkWorkPlanServiceImpl implements IParkWorkPlanService {
                 workPlanDetail = new WorkPlanDetail();
             }
             BeanUtils.copyProperties(workPlanDetailRequest, workPlanDetail);
+            workPlanDetail.setParkWorkPlan(parkWorkPlan);
             workPlanDetailRepository.save(workPlanDetail);
         });
         return Result.builder().success().message("任务修改成功").build();
@@ -188,7 +192,7 @@ public class ParkWorkPlanServiceImpl implements IParkWorkPlanService {
             response.setParkName(parkWorkPlan.getPark().getName());
         }
         List<WorkPlanDetail> detailList = workPlanDetailRepository.findByParkWorkPlan_IdAndDeleteIsFalseAndAvailableIsTrue(response.getId());
-        response.setWorkPlanDetails(detailList);
+        response.setWorkPlanDetailList(detailList);
         return response;
     }
 

@@ -63,6 +63,11 @@ public class Book extends BaseEntity {
     private String source;
 
     /**
+     * 文件名称
+     */
+    private String fileName;
+
+    /**
      * 已看人数
      */
     private Integer readNum;

@@ -7,6 +7,8 @@ import com.parkinfo.entity.parkCulture.Examination;
 import com.parkinfo.entity.parkCulture.Question;
 import com.parkinfo.entity.parkCulture.QuestionCategory;
 import com.parkinfo.entity.userConfig.ParkUser;
+import com.parkinfo.enums.AnswerSheetType;
+import com.parkinfo.enums.QuestionType;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.parkCulture.AnswerSheetRepository;
 import com.parkinfo.repository.parkCulture.ExaminationRepository;
@@ -14,9 +16,7 @@ import com.parkinfo.repository.parkCulture.QuestionCategoryRepository;
 import com.parkinfo.repository.parkCulture.QuestionRepository;
 import com.parkinfo.repository.userConfig.ParkUserRepository;
 import com.parkinfo.request.parkCulture.*;
-import com.parkinfo.response.parkCulture.AnswerSheetListResponse;
-import com.parkinfo.response.parkCulture.QuestionDetailResponse;
-import com.parkinfo.response.parkCulture.QuestionListResponse;
+import com.parkinfo.response.parkCulture.*;
 import com.parkinfo.service.parkCulture.IExaminationService;
 import com.parkinfo.token.TokenUtils;
 import com.parkinfo.util.ExcelUtils;
@@ -71,6 +71,12 @@ public class ExaminationServiceImpl implements IExaminationService {
             if (StringUtils.isNotBlank(request.getCategoryId())) {
                 predicates.add(criteriaBuilder.equal(root.get("category").get("id").as(String.class), request.getCategoryId()));
             }
+            if (request.getQuestionType()!=null){
+                predicates.add(criteriaBuilder.equal(root.get("questionType"), request.getQuestionType()));
+            }
+            if (StringUtils.isNotBlank(request.getQuestion())){
+                predicates.add(criteriaBuilder.like(root.get("question").as(String.class), "%"+request.getQuestion()+"%"));
+            }
             predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
@@ -103,6 +109,14 @@ public class ExaminationServiceImpl implements IExaminationService {
         question.setAvailable(true);
         questionRepository.save(question);
         return Result.builder().success().message("添加问题成功").build();
+    }
+
+    @Override
+    public Result deleteQuestion(String id) {
+        Question question = this.checkQuestion(id);
+        question.setDelete(true);
+        questionRepository.save(question);
+        return Result.builder().success().message("删除试题成功").build();
     }
 
     @Override
@@ -142,9 +156,12 @@ public class ExaminationServiceImpl implements IExaminationService {
     @Override
     @Transactional
     public Result generateExamination(GenerateExaminationRequest request) {
+        ParkUser currentUser = tokenUtils.getLoginUser();
         Examination examination = new Examination();
         examination.setQuestionList(new HashSet<>());
         BeanUtils.copyProperties(request, examination);
+        examination.setAvailable(true);
+        examination.setDelete(false);
         request.getQuestions().forEach(generateQuestionRequest -> {
             Long total = questionRepository.countByCategory_IdAndQuestionTypeAndAvailableIsTrueAndDeleteIsFalse(generateQuestionRequest.getCategoryId(), generateQuestionRequest.getQuestionType());
             if (generateQuestionRequest.getCount() < total) {
@@ -160,6 +177,7 @@ public class ExaminationServiceImpl implements IExaminationService {
             if (parkUserOptional.isPresent()) {
                 AnswerSheet answerSheet = new AnswerSheet();
                 answerSheet.setStart(false);
+                answerSheet.setTime(request.getTime());
                 answerSheet.setAnswers(null);
                 answerSheet.setCorrectNum(0);
                 answerSheet.setWrongNum(0);
@@ -167,6 +185,7 @@ public class ExaminationServiceImpl implements IExaminationService {
                 answerSheet.setParkUser(parkUserOptional.get());
                 answerSheet.setAvailable(true);
                 answerSheet.setDelete(false);
+                answerSheet.setCreator(currentUser);
                 answerSheetRepository.save(answerSheet);
             }
 
@@ -180,7 +199,14 @@ public class ExaminationServiceImpl implements IExaminationService {
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "start", "createTime");
         Specification<AnswerSheet> answerSheetSpecification = (Specification<AnswerSheet>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
-            predicates.add(criteriaBuilder.equal(root.get("parkUser").get("id").as(String.class), parkUser.getId()));
+            if (request.getStart()!=null){
+                predicates.add(criteriaBuilder.equal(root.get("start").as(Boolean.class), request.getStart()));
+            }
+            if (request.getAnswerSheetType()== AnswerSheetType.MY){
+                predicates.add(criteriaBuilder.equal(root.get("parkUser").get("id").as(String.class), parkUser.getId()));
+            }else {
+                predicates.add(criteriaBuilder.equal(root.get("creator").get("id").as(String.class), parkUser.getId()));
+            }
             predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
@@ -215,6 +241,28 @@ public class ExaminationServiceImpl implements IExaminationService {
     }
 
     @Override
+    public Result<AnswerSheetDetailResponse> sheetDetail(String sheetId) {
+        AnswerSheet answerSheet = this.checkAnswerSheet(sheetId);
+        AnswerSheetDetailResponse response=this.convertAnswerSheet(answerSheet);
+        List<QuestionDetailListResponse> radioQuestionList = Lists.newArrayList();
+        List<QuestionDetailListResponse> judgeQuestionList = Lists.newArrayList();
+        answerSheet.getExamination().getQuestionList().forEach(question -> {
+            QuestionDetailListResponse questionResponse = new QuestionDetailListResponse();
+            BeanUtils.copyProperties(question,questionResponse);
+            if (questionResponse.getQuestionType()== QuestionType.Radio) {
+                radioQuestionList.add(questionResponse);
+            }
+            if (questionResponse.getQuestionType()== QuestionType.JUDGE) {
+                judgeQuestionList.add(questionResponse);
+            }
+        });
+        response.setRadioQuestionList(radioQuestionList);
+        response.setJudgeQuestionList(judgeQuestionList);
+        return Result.<AnswerSheetDetailResponse>builder().success().data(response).build();
+    }
+
+
+    @Override
     @Transactional
     public Result commitExamination(CommitAnswerRequest request) {
         AnswerSheet answerSheet = this.checkAnswerSheet(request.getAnswerSheetId());
@@ -241,6 +289,60 @@ public class ExaminationServiceImpl implements IExaminationService {
         return Result.builder().success().message("提交答卷成功").build();
     }
 
+    @Override
+    public Result<Page<QuestionCategoryListResponse>> search(QueryCategoryPageRequest request) {
+        Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
+        Specification<QuestionCategory> questionCategorySpecification = (Specification<QuestionCategory>) (root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
+            predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+        Page<QuestionCategory> bookCategoryPage = questionCategoryRepository.findAll(questionCategorySpecification, pageable);
+        Page<QuestionCategoryListResponse> responsePage = this.convertQuestionCategoryPage(bookCategoryPage);
+        return Result.<Page<QuestionCategoryListResponse>>builder().success().data(responsePage).build();
+    }
+
+
+    @Override
+    public Result<List<QuestionCategoryListResponse>> search(QueryCategoryListRequest request) {
+        Specification<QuestionCategory> queryCategorySpecification = (Specification<QuestionCategory>) (root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
+            predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+        List<QuestionCategory> questionCategoryList = questionCategoryRepository.findAll(queryCategorySpecification);
+        List<QuestionCategoryListResponse> responseList = this.convertQuestionCategoryList(questionCategoryList);
+        return Result.<List<QuestionCategoryListResponse>>builder().success().data(responseList).build();
+    }
+
+    @Override
+    public Result addQuestionCategory(AddQuestionCategoryRequest request) {
+        QuestionCategory questionCategory = new QuestionCategory();
+        BeanUtils.copyProperties(request, questionCategory);
+        questionCategory.setDelete(false);
+        questionCategory.setAvailable(true);
+        questionCategoryRepository.save(questionCategory);
+        return Result.builder().success().message("添加试题分类成功").build();
+    }
+
+    @Override
+    public Result setQuestionCategory(SetQuestionCategoryRequest request) {
+        QuestionCategory questionCategory = this.checkQuestionCategory(request.getId());
+        BeanUtils.copyProperties(request, questionCategory);
+        questionCategoryRepository.save(questionCategory);
+        return Result.builder().success().message("修改试题分类成功").build();
+    }
+
+    @Override
+    public Result deleteQuestionCategory(String id) {
+        QuestionCategory questionCategory = this.checkQuestionCategory(id);
+        questionCategory.setDelete(true);
+        questionCategoryRepository.save(questionCategory);
+        return Result.builder().success().message("删除图书分类成功").build();
+    }
+
     private Page<QuestionListResponse> convertQuestionPage(Page<Question> questionPage) {
         List<QuestionListResponse> content = Lists.newArrayList();
         questionPage.forEach(question -> {
@@ -249,9 +351,24 @@ public class ExaminationServiceImpl implements IExaminationService {
             if (question.getUploader() != null) {
                 response.setUploader(question.getUploader().getNickname());
             }
+            if (question.getCategory()!=null){
+                response.setCategoryId(question.getCategory().getId());
+            }
             content.add(response);
         });
         return new PageImpl<>(content, questionPage.getPageable(), questionPage.getTotalElements());
+    }
+
+
+    private Page<QuestionCategoryListResponse> convertQuestionCategoryPage(Page<QuestionCategory> questionCategoryPage) {
+        List<QuestionCategoryListResponse> content = Lists.newArrayList();
+        questionCategoryPage.forEach(questionCategory -> {
+            QuestionCategoryListResponse response = new QuestionCategoryListResponse();
+            BeanUtils.copyProperties(questionCategory, response);
+            content.add(response);
+        });
+        return new PageImpl<>(content, questionCategoryPage.getPageable(), questionCategoryPage.getTotalElements());
+
     }
 
     private Page<AnswerSheetListResponse> convertAnswerSheetPage(Page<AnswerSheet> answerSheetPage) {
@@ -266,9 +383,39 @@ public class ExaminationServiceImpl implements IExaminationService {
                 response.setWrongNum(null);
                 response.setCorrectNum(null);
             }
+            if (answerSheet.getParkUser()!=null){
+                response.setNickname(answerSheet.getParkUser().getNickname() );
+            }
             content.add(response);
         });
         return new PageImpl<>(content, answerSheetPage.getPageable(), answerSheetPage.getTotalElements());
+    }
+
+
+    private AnswerSheetDetailResponse convertAnswerSheet(AnswerSheet answerSheet) {
+        AnswerSheetDetailResponse response = new AnswerSheetDetailResponse();
+        BeanUtils.copyProperties(answerSheet, response);
+        if (answerSheet.getExamination() != null) {
+            response.setName(answerSheet.getExamination().getName());
+        }
+        if (answerSheet.getEndTime() == null || new Date().compareTo(answerSheet.getEndTime()) < 0) {
+            response.setWrongNum(null);
+            response.setCorrectNum(null);
+        }
+        if (answerSheet.getParkUser()!=null){
+            response.setNickname(answerSheet.getParkUser().getNickname() );
+        }
+        return response;
+    }
+
+    private List<QuestionCategoryListResponse> convertQuestionCategoryList(List<QuestionCategory> questionCategoryList) {
+        List<QuestionCategoryListResponse> content = Lists.newArrayList();
+        questionCategoryList.forEach(questionCategory -> {
+            QuestionCategoryListResponse response = new QuestionCategoryListResponse();
+            BeanUtils.copyProperties(questionCategory, response);
+            content.add(response);
+        });
+        return content;
     }
 
 

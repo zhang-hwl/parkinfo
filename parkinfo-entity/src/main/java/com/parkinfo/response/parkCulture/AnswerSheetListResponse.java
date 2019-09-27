@@ -21,7 +21,10 @@ public class AnswerSheetListResponse {
     @ApiModelProperty(value = "试卷名称")
     private String name;
 
-    @ApiModelProperty(value = "是否结束")
+    @ApiModelProperty(value = "考生昵称")
+    private String nickname;
+
+    @ApiModelProperty(value = "是否开始")
     private Boolean start;
 
     @ApiModelProperty(value = "答题时间（分钟）")

@@ -17,6 +17,7 @@ import java.util.Map;
  **/
 @Data
 public class CommitAnswerRequest {
+    @ApiModelProperty(hidden = true)
     ObjectMapper objectMapper = new ObjectMapper();
 
     @ApiModelProperty(value = "答卷id")
@@ -25,6 +26,7 @@ public class CommitAnswerRequest {
     @ApiModelProperty(value = "k为题目id,v为答案（判断为T/F）")
     private Map<String,String> answers;
 
+    @ApiModelProperty(hidden = true)
     public String getAnswersJsonString() {
         if (answers.size() > 0) {
             try {

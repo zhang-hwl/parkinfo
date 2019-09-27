@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,4 +27,6 @@ public interface ParkUserRepository extends JpaRepository<ParkUser,String> {
     @Query(nativeQuery = true, value = "select user_id from c_user_park where park_id=?1")
     List<String> fingAllByParkInfoId(String id);
 
+
+    Optional<ParkUser> findByIdAndAvailableIsTrueAndDeleteIsFalse(String id);
 }

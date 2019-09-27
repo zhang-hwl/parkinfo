@@ -2,11 +2,11 @@ package com.parkinfo.web.parkCulture;
 
 import com.parkinfo.common.Result;
 import com.parkinfo.request.parkCulture.*;
-import com.parkinfo.response.parkCulture.AnswerSheetListResponse;
-import com.parkinfo.response.parkCulture.BookListResponse;
-import com.parkinfo.response.parkCulture.QuestionDetailResponse;
-import com.parkinfo.response.parkCulture.QuestionListResponse;
+import com.parkinfo.response.login.ParkInfoListResponse;
+import com.parkinfo.response.login.ParkUserListResponse;
+import com.parkinfo.response.parkCulture.*;
 import com.parkinfo.service.parkCulture.IExaminationService;
+import com.parkinfo.service.parkCulture.ILibraryService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * When I wrote this, only God and I understood what I was doing
@@ -33,6 +34,9 @@ public class ExaminationController {
 
     @Autowired
     private IExaminationService examinationService;
+
+    @Autowired
+    private ILibraryService libraryService;
 
     @PostMapping("/question/search")
     @ApiOperation(value = "搜索题库列表")
@@ -63,6 +67,13 @@ public class ExaminationController {
             }
         }
         return examinationService.addQuestion(request);
+    }
+
+    @PostMapping("/question/delete/{id}")
+    @ApiOperation(value = "手动删除试题库")
+    @RequiresPermissions("parkCulture:examination:question_delete")
+    public Result deleteQuestion(@PathVariable("id")String id) {
+        return examinationService.deleteQuestion(id);
     }
 
     @PostMapping("/question/import")
@@ -97,7 +108,7 @@ public class ExaminationController {
     }
 
     @PostMapping("/answerSheet/search")
-    @ApiOperation(value = "生成试卷")
+    @ApiOperation(value = "查找答卷")
     @RequiresPermissions("parkCulture:examination:answerSheet_search")
     public Result<Page<AnswerSheetListResponse>> search(@Valid @RequestBody QueryAnswerSheetListRequest request, BindingResult result) {
         if (result.hasErrors()) {
@@ -115,6 +126,13 @@ public class ExaminationController {
         return examinationService.startExamination(answerSheetId);
     }
 
+    @PostMapping("/answerSheet/detail/{sheetId}")
+    @ApiOperation(value = "获取试卷详情")
+    @RequiresPermissions("parkCulture:examination:answerSheet_start")
+    public Result<AnswerSheetDetailResponse> sheetDetail(@PathVariable("sheetId") String sheetId) {
+        return examinationService.sheetDetail(sheetId);
+    }
+
     @PostMapping("/answerSheet/commit")
     @ApiOperation(value = "提交答案")
     @RequiresPermissions("parkCulture:examination:answerSheet_commit")
@@ -125,5 +143,71 @@ public class ExaminationController {
             }
         }
         return examinationService.commitExamination(request);
+    }
+
+
+    @PostMapping("/category/list")
+    @ApiOperation(value = "不分页查看试题的分类")
+//    @RequiresPermissions("parkCulture:library:category_search")
+    public Result<List<QuestionCategoryListResponse>> search(@RequestBody QueryCategoryListRequest request){
+        return examinationService.search(request);
+    }
+
+    @PostMapping("/category/search")
+    @ApiOperation(value = "管理员分页查看试题的分类")
+    @RequiresPermissions("parkCulture:examination:category_search")
+    public Result<Page<QuestionCategoryListResponse>> search(@Valid @RequestBody QueryCategoryPageRequest request, BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError error:result.getAllErrors()) {
+                return Result.<Page<QuestionCategoryListResponse>>builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
+        return examinationService.search(request);
+    }
+
+
+    @PostMapping("/category/add")
+    @ApiOperation(value = "管理员添加试题分类")
+    @RequiresPermissions("parkCulture:examination:category_add")
+    public Result addQuestionCategory(@Valid @RequestBody AddQuestionCategoryRequest request,BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError error:result.getAllErrors()) {
+                return Result.builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
+        return examinationService.addQuestionCategory(request);
+    }
+
+    @PostMapping("/category/set")
+    @ApiOperation(value = "管理员修改试题分类")
+    @RequiresPermissions("parkCulture:examination:category_set")
+    public Result setQuestionCategory(@Valid @RequestBody SetQuestionCategoryRequest request,BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError error:result.getAllErrors()) {
+                return Result.builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
+        return examinationService.setQuestionCategory(request);
+    }
+
+    @PostMapping("/category/delete/{id}")
+    @ApiOperation(value = "管理员删除试题分类")
+    @RequiresPermissions("parkCulture:examination:category_delete")
+    public Result deleteQuestionCategory(@PathVariable("id")String id){
+        return examinationService.deleteQuestionCategory(id);
+    }
+
+    @PostMapping("/park/list")
+    @ApiOperation(value = "管理员获取园区列表")
+    @RequiresPermissions("parkCulture:examination:examination_generate")
+    public Result<List<ParkInfoListResponse>> getParkList(){
+        return libraryService.getParkList();
+    }
+
+    @PostMapping("/user/list/{parkId}")
+    @ApiOperation(value = "管理员获取某个园区的人员列表")
+    @RequiresPermissions("parkCulture:examination:examination_generate")
+    public Result<List<ParkUserListResponse>> getUserList(@PathVariable("parkId") String parkId){
+        return libraryService.getUserList(parkId);
     }
 }
