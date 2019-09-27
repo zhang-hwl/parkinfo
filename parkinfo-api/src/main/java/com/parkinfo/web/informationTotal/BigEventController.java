@@ -62,10 +62,11 @@ public class BigEventController {
     @PostMapping("/import")
     @ApiOperation(value = "导入园区大事件")
     @RequiresPermissions(value = "infoTotal:bigEvent:add")
-    public Result<String> myImport(@RequestParam("version") String version , @RequestParam("multipartFile") MultipartFile multipartFile){
+    public Result<String> myImport(@RequestParam("version") String version , @RequestParam("multipartFile") MultipartFile multipartFile, @RequestParam("parkId") String parkId){
         UploadAndVersionRequest request = new UploadAndVersionRequest();
         request.setMultipartFile(multipartFile);
         request.setVersion(version);
+        request.setParkId(parkId);
         return bigEventService.myImport(request);
     }
 

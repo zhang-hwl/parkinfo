@@ -10,6 +10,7 @@ import com.parkinfo.service.informationTotal.ICheckRecordService;
 import com.parkinfo.service.informationTotal.IInfoTotalTemplateService;
 import com.parkinfo.service.informationTotal.IInfoVersionService;
 import com.parkinfo.service.informationTotal.ITemplateFieldService;
+import io.lettuce.core.dynamic.annotation.Param;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
@@ -67,10 +68,11 @@ public class CheckRecordController {
     @PostMapping("/import")
     @ApiOperation(value = "导入点检记录表")
     @RequiresPermissions(value = "infoTotal:checkRecord:add")
-    public Result<String> myImport(@RequestParam("version") String version , @RequestParam("multipartFile") MultipartFile multipartFile){
+    public Result<String> myImport(@RequestParam("version") String version , @RequestParam("multipartFile") MultipartFile multipartFile, @Param("parkId") String parkId){
         UploadAndVersionRequest request = new UploadAndVersionRequest();
         request.setMultipartFile(multipartFile);
         request.setVersion(version);
+        request.setParkId(parkId);
         return checkRecordService.checkRecordImport(request);
     }
 

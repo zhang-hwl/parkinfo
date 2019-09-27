@@ -13,6 +13,7 @@ import com.parkinfo.request.infoTotalRequest.InfoEquipmentRequest;
 import com.parkinfo.request.infoTotalRequest.PolicyTotalRequest;
 import com.parkinfo.request.infoTotalRequest.QueryByVersionRequest;
 import com.parkinfo.request.infoTotalRequest.UploadAndVersionRequest;
+import com.parkinfo.response.login.ParkInfoResponse;
 import com.parkinfo.service.informationTotal.IInfoEquipmentService;
 import com.parkinfo.token.TokenUtils;
 import com.parkinfo.util.ExcelUtils;
@@ -45,7 +46,7 @@ public class InfoEquipmentServiceImpl implements IInfoEquipmentService {
     public Result<String> add(InfoEquipmentRequest request) {
         InfoEquipment infoEquipment = new InfoEquipment();
         BeanUtils.copyProperties(request, infoEquipment);
-        String parkId = tokenUtils.getLoginUserDTO().getCurrentParkId();
+        String parkId = request.getParkInfoResponse().getId();
         Optional<ParkInfo> byIdAndDeleteIsFalse = parkInfoRepository.findByIdAndDeleteIsFalse(parkId);
         if(!byIdAndDeleteIsFalse.isPresent()){
             throw new NormalException("该园区不存在");
@@ -89,6 +90,10 @@ public class InfoEquipmentServiceImpl implements IInfoEquipmentService {
         all.forEach(temp -> {
             InfoEquipmentRequest response = new InfoEquipmentRequest();
             BeanUtils.copyProperties(temp, response);
+            ParkInfoResponse parkInfoResponse = new ParkInfoResponse();
+            parkInfoResponse.setId(temp.getParkInfo().getId());
+            parkInfoResponse.setName(temp.getParkInfo().getName());
+            response.setParkInfoResponse(parkInfoResponse);
             list.add(response);
         });
         Page<InfoEquipmentRequest> result = new PageImpl<>(list, all.getPageable(), all.getTotalElements());
@@ -98,7 +103,7 @@ public class InfoEquipmentServiceImpl implements IInfoEquipmentService {
     @Override
     public Result<String> myImport(UploadAndVersionRequest request) {
         MultipartFile file = request.getMultipartFile();
-        String parkId = tokenUtils.getLoginUserDTO().getCurrentParkId();
+        String parkId = request.getParkId();
         Optional<ParkInfo> byIdAndDeleteIsFalse = parkInfoRepository.findByIdAndDeleteIsFalse(parkId);
         if(!byIdAndDeleteIsFalse.isPresent()){
             throw new NormalException("该园区不存在");

@@ -50,7 +50,9 @@ public class FeedbackServiceImpl implements IFeedbackService {
         if(!byId.isPresent()){
             throw new NormalException("意见不存在");
         }
-        feedbackRepository.delete(byId.get());
+        Feedback feedback = byId.get();
+        feedback.setDelete(true);
+        feedbackRepository.save(feedback);
         return Result.<String>builder().success().message("删除成功").build();
     }
 

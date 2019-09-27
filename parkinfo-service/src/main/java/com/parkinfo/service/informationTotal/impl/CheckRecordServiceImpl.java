@@ -15,6 +15,7 @@ import com.parkinfo.repository.informationTotal.CheckRecordRepository;
 import com.parkinfo.repository.userConfig.ParkInfoRepository;
 import com.parkinfo.repository.userConfig.ParkUserRepository;
 import com.parkinfo.request.infoTotalRequest.*;
+import com.parkinfo.response.login.ParkInfoResponse;
 import com.parkinfo.service.informationTotal.ICheckRecordService;
 import com.parkinfo.token.TokenUtils;
 import com.parkinfo.util.ExcelUtils;
@@ -49,7 +50,7 @@ public class CheckRecordServiceImpl implements ICheckRecordService {
     public Result<String> addCheckRecord(CheckRecordRequest request) {
         CheckRecord checkRecord = new CheckRecord();
         BeanUtils.copyProperties(request, checkRecord);
-        String parkId = tokenUtils.getLoginUserDTO().getCurrentParkId();
+        String parkId = request.getParkInfoResponse().getId();
         Optional<ParkInfo> byIdAndDeleteIsFalse = parkInfoRepository.findByIdAndDeleteIsFalse(parkId);
         if(!byIdAndDeleteIsFalse.isPresent()){
             throw new NormalException("该园区不存在");
@@ -78,16 +79,10 @@ public class CheckRecordServiceImpl implements ICheckRecordService {
 
     @Override
     public Result<Page<CheckRecordRequest>> findByVersion(QueryByVersionRequest request) {
-//        int flag = judgePremission();   //判断查看权限
-//        if(flag == -1){
-//            return Result.<Page<CheckRecordRequest>>builder().success().data(null).build();
-//        }
-        int flag = 1;
-        ParkUserDTO loginUserDTO = tokenUtils.getLoginUserDTO();
-        if(loginUserDTO == null){
-            throw new NormalException("token不存在或已过期");
+        int flag = judgePremission();   //判断查看权限
+        if(flag == -1){
+            return Result.<Page<CheckRecordRequest>>builder().success().data(null).build();
         }
-        String parkId = loginUserDTO.getCurrentParkId();
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
         Specification<CheckRecord> specification = (Specification<CheckRecord>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -95,7 +90,7 @@ public class CheckRecordServiceImpl implements ICheckRecordService {
                 predicates.add(criteriaBuilder.equal(root.get("version").as(String.class), request.getVersion()));
             }
             if(flag == 0){
-                predicates.add(criteriaBuilder.equal(root.get("parkInfo").get("id").as(String.class), parkId));
+                predicates.add(criteriaBuilder.equal(root.get("parkInfo").get("id").as(String.class), tokenUtils.getCurrentParkInfo().getId()));
             }
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
             predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
@@ -106,6 +101,10 @@ public class CheckRecordServiceImpl implements ICheckRecordService {
         all.forEach(temp -> {
             CheckRecordRequest response = new CheckRecordRequest();
             BeanUtils.copyProperties(temp, response);
+            ParkInfoResponse parkInfoResponse = new ParkInfoResponse();
+            parkInfoResponse.setName(temp.getParkInfo().getName());
+            parkInfoResponse.setId(temp.getParkInfo().getId());
+            response.setParkInfoResponse(parkInfoResponse);
             list.add(response);
         });
         Page<CheckRecordRequest> result = new PageImpl<>(list, all.getPageable(), all.getTotalElements());
@@ -115,7 +114,7 @@ public class CheckRecordServiceImpl implements ICheckRecordService {
     @Override
     public Result<String> checkRecordImport(UploadAndVersionRequest request) {
         MultipartFile file = request.getMultipartFile();
-        String parkId = tokenUtils.getLoginUserDTO().getCurrentParkId();
+        String parkId = request.getParkId();
         Optional<ParkInfo> byIdAndDeleteIsFalse = parkInfoRepository.findByIdAndDeleteIsFalse(parkId);
         if(!byIdAndDeleteIsFalse.isPresent()){
             throw new NormalException("该园区不存在");

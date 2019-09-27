@@ -4,6 +4,7 @@ import com.parkinfo.common.Result;
 import com.parkinfo.entity.archiveInfo.ArchiveReadRecord;
 import com.parkinfo.request.archiveInfo.ArchiveCommentRequest;
 import com.parkinfo.request.archiveInfo.ArchiveReadRecordRequest;
+import com.parkinfo.request.base.PageRequest;
 import com.parkinfo.request.parkService.learningData.AddLearningDataRequest;
 import com.parkinfo.request.parkService.learningData.EditLearningDataRequest;
 import com.parkinfo.request.parkService.learningData.LearnDataTypeRequest;
@@ -75,6 +76,12 @@ public class LearningDataController {
     @ApiOperation(value = "查看学习资料类型")
     public Result<List<LearnDataTypeResponse>> findLearnDataType(){
         return learningDataService.findAllType();
+    }
+
+    @PostMapping("/search/type")
+    @ApiOperation(value = "查看学习资料类型")
+    public Result<Page<LearnDataTypeResponse>> findLearnDataType(@RequestBody PageRequest request){
+        return learningDataService.searchType(request);
     }
 
     @PostMapping("/add/type")

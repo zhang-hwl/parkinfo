@@ -2,6 +2,7 @@ package com.parkinfo.service.parkService;
 
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.parkService.commonServiceWindow.CommonServiceWindowType;
+import com.parkinfo.request.base.PageRequest;
 import com.parkinfo.request.parkService.commonServiceWindow.AddCommonServiceWindowRequest;
 import com.parkinfo.request.parkService.commonServiceWindow.CommonServiceWindowTypeRequest;
 import com.parkinfo.request.parkService.commonServiceWindow.EditCommonServiceWindowRequest;
@@ -50,4 +51,7 @@ public interface ICommonServiceWindowService {
     Result<String> editType(CommonServiceWindowTypeRequest type);
 
     Result<String> deleteType(String id);
+
+    //分页查询类型
+    Result<Page<CommonServiceWindowTypeResponse>> findAllTypePage(PageRequest request);
 }

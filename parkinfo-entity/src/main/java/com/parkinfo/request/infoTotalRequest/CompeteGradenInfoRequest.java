@@ -2,6 +2,7 @@ package com.parkinfo.request.infoTotalRequest;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.parkinfo.entity.base.BaseEntity;
+import com.parkinfo.response.login.ParkInfoResponse;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -51,5 +52,8 @@ public class CompeteGradenInfoRequest {
     @Excel(name = "说明", width = 30)
     @ApiModelProperty(value = "说明")
     private String remark;
+
+    @ApiModelProperty(value = "关联园区")
+    private ParkInfoResponse parkInfoResponse;
 
 }

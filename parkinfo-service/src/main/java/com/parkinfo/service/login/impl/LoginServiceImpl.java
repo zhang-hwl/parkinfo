@@ -84,6 +84,7 @@ public class LoginServiceImpl implements ILoginService {
 
     @Override
     public Result<Page<ParkUserResponse>> search(QueryUserByParkRequest request) {
+        request.setId(tokenUtils.getCurrentParkInfo().getId());
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
         Specification<ParkUser> specification = (Specification<ParkUser>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -96,6 +97,28 @@ public class LoginServiceImpl implements ILoginService {
         Page<ParkUser> parkUsers = parkUserRepository.findAll(specification, pageable);
         Page<ParkUserResponse> userResponses = this.convertUserPage(parkUsers);
         return Result.<Page<ParkUserResponse>>builder().success().data(userResponses).build();
+    }
+
+    @Override
+    public Result<List<ParkUserResponse>> findAll() {
+        String id = tokenUtils.getCurrentParkInfo().getId();
+        List<String> userIds = parkUserRepository.fingAllByParkInfoId(id);
+        List<ParkUserResponse> result = Lists.newArrayList();
+        userIds.forEach(temp -> {
+            ParkUser parkUser = checkParkUser(temp);
+            ParkUserResponse response = new ParkUserResponse();
+            BeanUtils.copyProperties(parkUser, response);
+            result.add(response);
+        });
+        return Result.<List<ParkUserResponse>>builder().success().data(result).build();
+    }
+
+    private ParkUser checkParkUser(String id){
+        Optional<ParkUser> byIdAndDeleteIsFalse = parkUserRepository.findByIdAndDeleteIsFalse(id);
+        if(!byIdAndDeleteIsFalse.isPresent()){
+            throw new NormalException("用户不存在");
+        }
+        return byIdAndDeleteIsFalse.get();
     }
 
     private ParkInfo checkPark(String id) {

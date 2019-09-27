@@ -5,6 +5,7 @@ import com.parkinfo.common.Result;
 import com.parkinfo.entity.parkService.learningData.LearnDataType;
 import com.parkinfo.request.archiveInfo.ArchiveCommentRequest;
 import com.parkinfo.request.archiveInfo.ArchiveReadRecordRequest;
+import com.parkinfo.request.base.PageRequest;
 import com.parkinfo.request.parkService.learningData.AddLearningDataRequest;
 import com.parkinfo.request.parkService.learningData.EditLearningDataRequest;
 import com.parkinfo.request.parkService.learningData.LearnDataTypeRequest;
@@ -49,6 +50,9 @@ public interface ILearningDataService {
 
     //查询学习资料类型
     Result<List<LearnDataTypeResponse>> findAllType();
+
+    //查询学习资料类型
+    Result<Page<LearnDataTypeResponse>> searchType(PageRequest request);
 
     //新增学习资料类型
     Result<String> addType(LearnDataTypeRequest request);

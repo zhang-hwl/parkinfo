@@ -36,7 +36,10 @@ import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -109,7 +112,8 @@ public class ProjectApplyServiceImpl implements IProjectApplyService {
     @Override
     public Result<String> deleteType(String id) {
         ProjectType projectType = checkProjectType(id);
-        projectTypeRepository.delete(projectType);
+        projectType.setDelete(true);
+        projectTypeRepository.save(projectType);
         return Result.<String>builder().success().data("删除成功").build();
     }
 
@@ -119,6 +123,30 @@ public class ProjectApplyServiceImpl implements IProjectApplyService {
         projectType.setValue(recordTypeResponse.getType());
         projectTypeRepository.save(projectType);
         return Result.<String>builder().success().data("编辑成功").build();
+    }
+
+    @Override
+    public Result<Page<ProjectApplyRecordTypeResponse>> findAllTypePage(com.parkinfo.request.base.PageRequest request) {
+        Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
+        Specification<ProjectType> specification  = new Specification<ProjectType>() {
+            @Override
+            public Predicate toPredicate(Root<ProjectType> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> predicates = Lists.newArrayList();
+                predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class),Boolean.FALSE));
+                predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class),Boolean.TRUE));
+                return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+            }
+        };
+        Page<ProjectType> all = projectTypeRepository.findAll(specification, pageable);
+        List<ProjectApplyRecordTypeResponse> list = Lists.newArrayList();
+        all.forEach(temp -> {
+            ProjectApplyRecordTypeResponse response = new ProjectApplyRecordTypeResponse();
+            BeanUtils.copyProperties(temp, response);
+            response.setType(temp.getValue());
+            list.add(response);
+        });
+        Page<ProjectApplyRecordTypeResponse> result = new PageImpl<>(list, all.getPageable(), all.getTotalElements());
+        return Result.<Page<ProjectApplyRecordTypeResponse>>builder().success().data(result).build();
     }
 
     @Override

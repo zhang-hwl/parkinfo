@@ -2,15 +2,15 @@ package com.parkinfo.web.informationTotal;
 
 import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
+import com.parkinfo.request.base.PageRequest;
+import com.parkinfo.request.infoTotalRequest.InfoVersionRequest;
 import com.parkinfo.request.infoTotalRequest.InfoVersionResponse;
 import com.parkinfo.service.informationTotal.IInfoVersionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -38,6 +38,18 @@ public class InfoVersionController {
         list.add("信息化设备");
         list.add("本园区房间统计");
         return Result.<List<String>>builder().success().data(list).build();
+    }
+
+    @PostMapping("/delete/{id}")
+    @ApiOperation(value = "删除信息统计版本")
+    public Result<String> delete(@PathVariable("id") String id){
+        return infoVersionService.delete(id);
+    }
+
+    @PostMapping("/findAll")
+    @ApiOperation(value = "查询信息统计版本")
+    public Result<Page<InfoVersionResponse>> findAll(@RequestBody InfoVersionRequest request){
+        return infoVersionService.findAll(request);
     }
 
 }
