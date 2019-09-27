@@ -115,7 +115,7 @@ public class PolicyTotalController {
         List<String> list = Lists.newArrayList();
         List<TemplateField> byGeneral = templateFieldService.findByGeneral("政策统计");
         byGeneral.forEach(temp -> {
-            if(StringUtils.isNotBlank(temp.getType())){
+            if(StringUtils.isNotBlank(temp.getProject())){
                 list.add(temp.getProject());
             }
         });

@@ -16,6 +16,7 @@ import com.parkinfo.request.infoTotalRequest.PolicyTotalRequest;
 import com.parkinfo.request.infoTotalRequest.QueryByVersionRequest;
 import com.parkinfo.request.infoTotalRequest.RoomInfoRequest;
 import com.parkinfo.request.infoTotalRequest.UploadAndVersionRequest;
+import com.parkinfo.response.login.ParkInfoResponse;
 import com.parkinfo.service.informationTotal.IRoomInfoService;
 import com.parkinfo.token.TokenUtils;
 import com.parkinfo.util.ExcelUtils;
@@ -95,6 +96,10 @@ public class RoomInfoServiceImpl implements IRoomInfoService {
         all.forEach(temp -> {
             RoomInfoRequest response = new RoomInfoRequest();
             BeanUtils.copyProperties(temp, response);
+            ParkInfoResponse parkInfoResponse = new ParkInfoResponse();
+            parkInfoResponse.setId(temp.getParkInfo().getId());
+            parkInfoResponse.setName(temp.getParkInfo().getName());
+            response.setParkInfoResponse(parkInfoResponse);
             list.add(response);
         });
         Page<RoomInfoRequest> result = new PageImpl<>(list, all.getPageable(), all.getTotalElements());

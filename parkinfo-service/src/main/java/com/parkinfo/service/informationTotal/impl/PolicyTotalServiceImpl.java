@@ -18,6 +18,7 @@ import com.parkinfo.request.infoTotalRequest.CompeteGradenInfoRequest;
 import com.parkinfo.request.infoTotalRequest.PolicyTotalRequest;
 import com.parkinfo.request.infoTotalRequest.QueryByVersionRequest;
 import com.parkinfo.request.infoTotalRequest.UploadAndVersionRequest;
+import com.parkinfo.response.login.ParkInfoResponse;
 import com.parkinfo.service.informationTotal.IPolicyTotalService;
 import com.parkinfo.token.TokenUtils;
 import com.parkinfo.util.ExcelUtils;
@@ -105,6 +106,10 @@ public class PolicyTotalServiceImpl implements IPolicyTotalService {
         all.forEach(temp -> {
             PolicyTotalRequest response = new PolicyTotalRequest();
             BeanUtils.copyProperties(temp, response);
+            ParkInfoResponse parkInfoResponse = new ParkInfoResponse();
+            parkInfoResponse.setId(temp.getParkInfo().getId());
+            parkInfoResponse.setName(temp.getParkInfo().getName());
+            response.setParkInfoResponse(parkInfoResponse);
             list.add(response);
         });
         Page<PolicyTotalRequest> result = new PageImpl<>(list, all.getPageable(), all.getTotalElements());

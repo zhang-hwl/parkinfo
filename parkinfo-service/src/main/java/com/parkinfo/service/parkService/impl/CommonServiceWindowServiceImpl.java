@@ -218,7 +218,7 @@ public class CommonServiceWindowServiceImpl implements ICommonServiceWindowServi
             @Override
             public Predicate toPredicate(Root<CommonServiceWindowType> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder cb) {
                 List<Predicate> predicates = Lists.newArrayList();
-                predicates.add(cb.isNull(root.get("parent").as(LearnDataType.class)));
+                predicates.add(cb.isNull(root.get("parent").as(CommonServiceWindowType.class)));
                 predicates.add(cb.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
                 predicates.add(cb.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
                 return cb.and(predicates.toArray(new Predicate[predicates.size()]));

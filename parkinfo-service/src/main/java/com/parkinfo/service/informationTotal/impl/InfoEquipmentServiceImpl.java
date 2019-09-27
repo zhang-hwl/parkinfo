@@ -13,6 +13,7 @@ import com.parkinfo.request.infoTotalRequest.InfoEquipmentRequest;
 import com.parkinfo.request.infoTotalRequest.PolicyTotalRequest;
 import com.parkinfo.request.infoTotalRequest.QueryByVersionRequest;
 import com.parkinfo.request.infoTotalRequest.UploadAndVersionRequest;
+import com.parkinfo.response.login.ParkInfoResponse;
 import com.parkinfo.service.informationTotal.IInfoEquipmentService;
 import com.parkinfo.token.TokenUtils;
 import com.parkinfo.util.ExcelUtils;
@@ -89,6 +90,10 @@ public class InfoEquipmentServiceImpl implements IInfoEquipmentService {
         all.forEach(temp -> {
             InfoEquipmentRequest response = new InfoEquipmentRequest();
             BeanUtils.copyProperties(temp, response);
+            ParkInfoResponse parkInfoResponse = new ParkInfoResponse();
+            parkInfoResponse.setId(temp.getParkInfo().getId());
+            parkInfoResponse.setName(temp.getParkInfo().getName());
+            response.setParkInfoResponse(parkInfoResponse);
             list.add(response);
         });
         Page<InfoEquipmentRequest> result = new PageImpl<>(list, all.getPageable(), all.getTotalElements());

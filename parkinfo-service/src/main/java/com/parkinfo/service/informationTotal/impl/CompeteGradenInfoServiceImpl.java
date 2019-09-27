@@ -16,6 +16,7 @@ import com.parkinfo.repository.informationTotal.CompeteGradenInfoRepository;
 import com.parkinfo.repository.userConfig.ParkInfoRepository;
 import com.parkinfo.repository.userConfig.ParkUserRepository;
 import com.parkinfo.request.infoTotalRequest.*;
+import com.parkinfo.response.login.ParkInfoResponse;
 import com.parkinfo.service.informationTotal.ICompeteGradenInfoService;
 import com.parkinfo.token.TokenUtils;
 import com.parkinfo.util.ExcelUtils;
@@ -101,6 +102,10 @@ public class CompeteGradenInfoServiceImpl implements ICompeteGradenInfoService {
         all.forEach(temp -> {
             CompeteGradenInfoRequest response = new CompeteGradenInfoRequest();
             BeanUtils.copyProperties(temp, response);
+            ParkInfoResponse parkInfoResponse = new ParkInfoResponse();
+            parkInfoResponse.setId(temp.getParkInfo().getId());
+            parkInfoResponse.setName(temp.getParkInfo().getName());
+            response.setParkInfoResponse(parkInfoResponse);
             list.add(response);
         });
         Page<CompeteGradenInfoRequest> result = new PageImpl<>(list, all.getPageable(), all.getTotalElements());

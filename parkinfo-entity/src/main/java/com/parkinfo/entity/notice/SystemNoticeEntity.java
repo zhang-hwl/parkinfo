@@ -1,21 +1,18 @@
 package com.parkinfo.entity.notice;
 
 import com.parkinfo.entity.base.BaseEntity;
-import com.parkinfo.entity.userConfig.ParkInfo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.OneToOne;
-import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Data
-public class SystemNotice {
-
-    @ApiModelProperty(value = "id")
-    private String id;
+@Entity
+@Table(name = "c_system_notice")
+@ApiModel(value = "SystemNoticeEntity", description = "公告")
+public class SystemNoticeEntity extends BaseEntity {
 
     @ApiModelProperty(value = "封面图")
     private String cover;
