@@ -66,7 +66,7 @@ public class VideoServiceImpl implements IVideoService {
     @Override
     public Result<Page<VideoListResponse>> search(QueryVideoListRequest request) {
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
-        Specification<Book> bookSpecification = (Specification<Book>) (root, criteriaQuery, criteriaBuilder) -> {
+        Specification<Video> videoSpecification = (Specification<Video>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (StringUtils.isNotBlank(request.getName())) {
                 predicates.add(criteriaBuilder.like(root.get("name").as(String.class), "%" + request.getName() + "%"));
@@ -80,7 +80,7 @@ public class VideoServiceImpl implements IVideoService {
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
-        Page<Video> videoPage = videoRepository.findAll(bookSpecification, pageable);
+        Page<Video> videoPage = videoRepository.findAll(videoSpecification, pageable);
         Page<VideoListResponse> responsePage = this.convertVideoPage(videoPage);
         return Result.<Page<VideoListResponse>>builder().success().data(responsePage).build();
     }
@@ -90,6 +90,14 @@ public class VideoServiceImpl implements IVideoService {
         Video video = this.checkVideo(id);
         VideoDetailResponse response = new VideoDetailResponse();
         BeanUtils.copyProperties(video, response);
+        VideoCategory secondCategory = video.getCategory();
+        if (secondCategory!=null){
+            response.setSecondCategoryId(secondCategory.getId());
+            VideoCategory firstCategory = secondCategory.getParent();
+            if (firstCategory!=null){
+                response.setFirstCategoryId(firstCategory.getId());
+            }
+        }
         //添加观看记录
         VideoRecord videoRecord = new VideoRecord();
         ParkUser parkUser = tokenUtils.getLoginUser();
@@ -146,7 +154,7 @@ public class VideoServiceImpl implements IVideoService {
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
         Specification<VideoRecord> videoRecordSpecification = (Specification<VideoRecord>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
-            predicates.add(criteriaBuilder.equal(root.get("video").get("id").as(String.class),request.getVideoId()));
+            predicates.add(criteriaBuilder.equal(root.get("video").get("id").as(String.class), request.getVideoId()));
             predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
@@ -160,7 +168,14 @@ public class VideoServiceImpl implements IVideoService {
     @Override
     public Result addVideo(AddVideoRequest request) {
         Video video = new Video();
-        BeanUtils.copyProperties(request,video);
+        ParkUser currentUser = tokenUtils.getLoginUser();
+        BeanUtils.copyProperties(request, video);
+        VideoCategory videoCategory = this.checkVideoCategory(request.getCategoryId());
+        video.setCategory(videoCategory);
+        video.setAvailable(true);
+        video.setDelete(false);
+        video.setReadNum(0);
+        video.setUploader(currentUser);
         videoRepository.save(video);
         return Result.builder().success().message("保存视频成功").build();
     }
@@ -177,35 +192,39 @@ public class VideoServiceImpl implements IVideoService {
     public Result<Page<VideoManageListResponse>> manageVideo(QueryVideoManageRequest request) {
         ParkUserDTO currentUser = tokenUtils.getLoginUserDTO();
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
-        Specification<Book> bookSpecification = (Specification<Book>) (root, criteriaQuery, criteriaBuilder) -> {
+        Specification<Video> videoSpecification = (Specification<Video>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (StringUtils.isNotBlank(request.getName())) {
                 predicates.add(criteriaBuilder.like(root.get("name").as(String.class), "%" + request.getName() + "%"));
             }
-           if (request.getCreateTimeFrom()!=null&&request.getCreateTimeTo()!=null){
-               predicates.add(criteriaBuilder.between(root.get("createTime"), request.getCreateTimeFrom(),request.getCreateTimeTo()));
-           }
+            if (request.getCreateTimeFrom() != null && request.getCreateTimeTo() != null) {
+                predicates.add(criteriaBuilder.between(root.get("createTime"), request.getCreateTimeFrom(), request.getCreateTimeTo()));
+            }
+            if (StringUtils.isNotBlank(request.getSecondCategoryId())) {
+                predicates.add(criteriaBuilder.equal(root.get("category").get("id").as(String.class), request.getSecondCategoryId()));
+            } else if (StringUtils.isNotBlank(request.getFirstCategoryId())) {
+                predicates.add(criteriaBuilder.equal(root.get("category").get("parent").get("id").as(String.class), request.getSecondCategoryId()));
+            }
             predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
-        Page<Video> videoPage = videoRepository.findAll(bookSpecification, pageable);
+        Page<Video> videoPage = videoRepository.findAll(videoSpecification, pageable);
         Page<VideoManageListResponse> responsePage = this.convertVideoManagePage(videoPage);
         return Result.<Page<VideoManageListResponse>>builder().success().data(responsePage).build();
     }
 
 
-
     @Override
     public Result setVideo(SetVideoRequest request) {
         Video video = this.checkVideo(request.getVideoId());
-        BeanUtils.copyProperties(request,video);
+        BeanUtils.copyProperties(request, video);
         videoRepository.save(video);
         return Result.builder().success().message("保存视频成功").build();
     }
 
     @Override
-    public Result<CreateUploadVideoResponse> createUploadVideo(CreateUploadVideoRequest request)  {
+    public Result<CreateUploadVideoResponse> createUploadVideo(CreateUploadVideoRequest request) {
         CreateUploadVideoResponse response = null;
         try {
             response = vodService.createUploadVideo(request.getTitle(), request.getFileName());
@@ -222,11 +241,11 @@ public class VideoServiceImpl implements IVideoService {
     }
 
     @Override
-    public Result<Page<VideoCategoryListResponse>> search(QueryVideoCategoryListRequest request) {
+    public Result<Page<VideoCategoryListResponse>> search(QueryVideoCategoryPageRequest request) {
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
         Specification<VideoCategory> videoCategorySpecification = (Specification<VideoCategory>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
-            predicates.add(criteriaBuilder.equal(root.get("parent"), null));
+            predicates.add(criteriaBuilder.isNull(root.get("parent")));
             predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
@@ -237,10 +256,30 @@ public class VideoServiceImpl implements IVideoService {
     }
 
     @Override
+    public Result<List<VideoCategoryListResponse>> search(QueryVideoCategoryListRequest request) {
+        Specification<VideoCategory> videoCategorySpecification = (Specification<VideoCategory>) (root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if (StringUtils.isNotBlank(request.getParentId())){
+                predicates.add(criteriaBuilder.equal(root.get("parent").get("id"),request.getParentId()));
+            }else {
+                predicates.add(criteriaBuilder.isNull(root.get("parent")));
+            }
+            predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
+            predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+        List<VideoCategory> videoCategoryList = videoCategoryRepository.findAll(videoCategorySpecification);
+        List<VideoCategoryListResponse> responseList = this.convertVideoCategoryList(videoCategoryList);
+        return Result.<List<VideoCategoryListResponse>>builder().success().data(responseList).build();
+    }
+
+
+
+    @Override
     public Result addVideoCategory(AddVideoCategoryRequest request) {
         VideoCategory videoCategory = new VideoCategory();
-        BeanUtils.copyProperties(request,videoCategory);
-        if (StringUtils.isNotBlank(request.getParentId())){
+        BeanUtils.copyProperties(request, videoCategory);
+        if (StringUtils.isNotBlank(request.getParentId())) {
             VideoCategory parent = this.checkVideoCategory(request.getParentId());
             videoCategory.setParent(parent);
         }
@@ -251,8 +290,8 @@ public class VideoServiceImpl implements IVideoService {
     @Override
     public Result setVideoCategory(SetVideoCategoryRequest request) {
         VideoCategory videoCategory = this.checkVideoCategory(request.getId());
-        BeanUtils.copyProperties(request,videoCategory);
-        if (StringUtils.isNotBlank(request.getParentId())){
+        BeanUtils.copyProperties(request, videoCategory);
+        if (StringUtils.isNotBlank(request.getParentId())) {
             VideoCategory parent = this.checkVideoCategory(request.getParentId());
             videoCategory.setParent(parent);
         }
@@ -312,14 +351,14 @@ public class VideoServiceImpl implements IVideoService {
         List<VideoRecordListResponse> content = Lists.newArrayList();
         videoRecordPage.forEach(videoRecord -> {
             VideoRecordListResponse response = new VideoRecordListResponse();
-            BeanUtils.copyProperties(videoRecord,response);
-            if (videoRecord.getWatcher()!=null){
+            BeanUtils.copyProperties(videoRecord, response);
+            if (videoRecord.getWatcher() != null) {
                 response.setAvatar(videoRecord.getWatcher().getAvatar());
                 response.setNickname(videoRecord.getWatcher().getNickname());
             }
             content.add(response);
         });
-        return new PageImpl<>(content,videoRecordPage.getPageable(),videoRecordPage.getTotalElements());
+        return new PageImpl<>(content, videoRecordPage.getPageable(), videoRecordPage.getTotalElements());
     }
 
     private Page<VideoCategoryListResponse> convertVideoCategoryPage(Page<VideoCategory> videoCategoryPage) {
@@ -328,8 +367,8 @@ public class VideoServiceImpl implements IVideoService {
             VideoCategoryListResponse response = new VideoCategoryListResponse();
             BeanUtils.copyProperties(videoCategory, response);
             List<VideoCategoryListResponse> children = Lists.newArrayList();
-            videoCategory.getChildren().forEach(childrenCategory->{
-                if (childrenCategory.getAvailable()&&!childrenCategory.getDelete()) {
+            videoCategory.getChildren().forEach(childrenCategory -> {
+                if (childrenCategory.getAvailable() && !childrenCategory.getDelete()) {
                     VideoCategoryListResponse childrenResponse = new VideoCategoryListResponse();
                     BeanUtils.copyProperties(childrenCategory, childrenResponse);
                     children.add(childrenResponse);
@@ -339,6 +378,25 @@ public class VideoServiceImpl implements IVideoService {
             content.add(response);
         });
         return new PageImpl<>(content, videoCategoryPage.getPageable(), videoCategoryPage.getTotalElements());
+    }
+
+    private List<VideoCategoryListResponse> convertVideoCategoryList(List<VideoCategory> videoCategoryList) {
+        List<VideoCategoryListResponse> content = Lists.newArrayList();
+        videoCategoryList.forEach(videoCategory -> {
+            VideoCategoryListResponse response = new VideoCategoryListResponse();
+            BeanUtils.copyProperties(videoCategory, response);
+//            List<VideoCategoryListResponse> children = Lists.newArrayList();
+//            videoCategory.getChildren().forEach(childrenCategory -> {
+//                if (childrenCategory.getAvailable() && !childrenCategory.getDelete()) {
+//                    VideoCategoryListResponse childrenResponse = new VideoCategoryListResponse();
+//                    BeanUtils.copyProperties(childrenCategory, childrenResponse);
+//                    children.add(childrenResponse);
+//                }
+//            });
+//            response.setChildren(children);
+            content.add(response);
+        });
+        return content;
     }
 
     private Video checkVideo(String videoId) {

@@ -2,19 +2,19 @@ package com.parkinfo.request.infoTotalRequest;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.parkinfo.entity.base.BaseEntity;
+import com.parkinfo.response.login.ParkInfoResponse;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class BigEventRequest extends BaseEntity {
+public class BigEventRequest {
+
+    @ApiModelProperty(value = "id")
+    private String id;
 
     @ApiModelProperty(value = "版本标签")
     private String version;
-
-    @ApiModelProperty(value = "文件类型")
-    private String fileType;
 
     @ApiModelProperty(value = "类型")
     private String type;
@@ -30,4 +30,7 @@ public class BigEventRequest extends BaseEntity {
 
     @ApiModelProperty(value = "内容")
     private String content;
+
+    @ApiModelProperty(value = "关联园区")
+    private ParkInfoResponse parkInfoResponse;
 }

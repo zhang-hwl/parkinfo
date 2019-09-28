@@ -1,5 +1,6 @@
 package com.parkinfo.entity.parkService.feedback;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.parkinfo.entity.base.BaseEntity;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import io.swagger.annotations.ApiModel;
@@ -16,6 +17,7 @@ import javax.persistence.*;
 @Table(name = "c_feedback")
 @EntityListeners(AuditingEntityListener.class)
 @ApiModel(value = "Feedback", description = "意见反馈")
+@JsonIgnoreProperties(value={"hibernateLazyInitializer","handler"})
 public class Feedback extends BaseEntity {
     @ApiModelProperty("运营方名称")
     private String operatorName;

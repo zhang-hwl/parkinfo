@@ -11,6 +11,7 @@ import com.parkinfo.entity.parkService.learningData.LearningData;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.entity.userConfig.ParkRole;
 import com.parkinfo.entity.userConfig.ParkUser;
+import com.parkinfo.enums.ConvertStatus;
 import com.parkinfo.enums.ParkRoleEnum;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.archiveInfo.ArchiveCommentRepository;
@@ -99,8 +100,13 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
         }
         ParkUser parkUser = parkUserRepository.findByIdAndDeleteIsFalse(loginUserDTO.getId()).get();
         String parkId = loginUserDTO.getCurrentParkId();
+        String fileAddress = request.getFileAddress();
         ArchiveInfo archiveInfo = new ArchiveInfo();
         BeanUtils.copyProperties(request, archiveInfo);
+        if(!fileAddress.endsWith("docx") && !fileAddress.endsWith("doc") && !fileAddress.endsWith("ppt") && !fileAddress.endsWith("pptx") && !fileAddress.endsWith("xlsx") && !fileAddress.endsWith("xls")){
+            archiveInfo.setConvertStatus(ConvertStatus.SUCCESS);
+            archiveInfo.setPdfAddress(request.getFileAddress());
+        }
         Optional<ParkInfo> byIdAndDeleteIsFalse = parkInfoRepository.findByIdAndDeleteIsFalse(parkId);
         if(!byIdAndDeleteIsFalse.isPresent()){
             throw new NormalException("园区不存在");
@@ -118,9 +124,17 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
         archiveInfo.setUploadTime(new Date());
         archiveInfo.setDelete(false);
         archiveInfo.setAvailable(true);
+        archiveInfo.setConvertStatus(ConvertStatus.WAITING);
         ArchiveInfo save = archiveInfoRepository.save(archiveInfo);
-        if(StringUtils.isNotBlank(save.getFileAddress())){
-
+        if(fileAddress.endsWith("docx") || fileAddress.endsWith("doc") || fileAddress.endsWith("ppt") || fileAddress.endsWith("pptx") || fileAddress.endsWith("xlsx") || fileAddress.endsWith("xls")){
+            sender.send(save.getId());
+        }
+        if(request.getExternal()){
+            LearningData learningData = new LearningData();
+            BeanUtils.copyProperties(save, learningData);
+            learningData.setFilePath(save.getFileAddress());
+            learningData.setDescription(save.getRemark());
+            learningDataRepository.save(learningData);
         }
         return Result.<String>builder().success().data("新增成功").build();
     }
@@ -142,6 +156,9 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
             archiveInfo.setKind(archiveInfoType);
         }
         archiveInfoRepository.save(archiveInfo);
+        if(!archiveInfo.getFileAddress().equals(request.getFileAddress())){
+            sender.send(archiveInfo.getId());
+        }
         return Result.<String>builder().success().data("编辑成功").build();
     }
 
@@ -235,9 +252,11 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
         List<ParkInfo> byAll = parkInfoRepository.findAllByDeleteIsFalseAndAvailableIsTrue();
         List<ParkInfoResponse> result = Lists.newArrayList();
         byAll.forEach(temp -> {
-            ParkInfoResponse response = new ParkInfoResponse();
-            BeanUtils.copyProperties(temp, response);
-            result.add(response);
+            if(!temp.getName().equals("总裁园区")){
+                ParkInfoResponse response = new ParkInfoResponse();
+                BeanUtils.copyProperties(temp, response);
+                result.add(response);
+            }
         });
         return Result.<List<ParkInfoResponse>>builder().success().data(result).build();
     }

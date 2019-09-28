@@ -1,5 +1,6 @@
 package com.parkinfo.entity.archiveInfo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.parkinfo.entity.base.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -13,7 +14,8 @@ import javax.persistence.Table;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "c_archive_comment")
-@ApiModel(value = "ArchiveComment", description = "存档资料-用户评论")
+@ApiModel(value = "LearnDataComment", description = "存档资料-用户评论")
+@JsonIgnoreProperties(value={"hibernateLazyInitializer","handler"})
 public class ArchiveComment extends BaseEntity {
 
     @ApiModelProperty(value = "评论内容")

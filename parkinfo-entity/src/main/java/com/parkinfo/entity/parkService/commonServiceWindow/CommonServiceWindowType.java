@@ -13,12 +13,13 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true,exclude = {"parkInfo","children"})
 @Data
 @Entity
 @Table(name = "c_common_service_window_type")
 @EntityListeners(AuditingEntityListener.class)
 @ApiModel(value = "CommonServiceWindowType",description =  "公共服务窗口类型")
+@JsonIgnoreProperties(value = { "hibernateLazyInitializer", "handler" })
 public class CommonServiceWindowType extends BaseEntity {
     //类型
     private String type;
@@ -30,7 +31,7 @@ public class CommonServiceWindowType extends BaseEntity {
     private ParkInfo parkInfo;
 
     //上一级分类类型
-    @ManyToOne(fetch= FetchType.LAZY)
+    @ManyToOne(fetch= FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name="parent_id")
     private CommonServiceWindowType parent;
 

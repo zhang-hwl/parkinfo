@@ -27,4 +27,7 @@ public class AddCommonServiceWindowRequest {
 
     @ApiModelProperty("小类 id")
     private String typeId;
+
+    @ApiModelProperty("备注")
+    private String remark;
 }

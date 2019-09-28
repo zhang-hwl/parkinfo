@@ -1,6 +1,7 @@
 package com.parkinfo.web.parkService;
 
 import com.parkinfo.common.Result;
+import com.parkinfo.request.base.PageRequest;
 import com.parkinfo.request.parkService.businessAmuse.*;
 import com.parkinfo.response.parkService.BusinessAmuseResponse;
 import com.parkinfo.response.parkService.BusinessAmuseTypeResponse;
@@ -82,6 +83,13 @@ public class BusinessAmuseController {
         return businessAmuseService.findAllBusinessAmuseTypeByServe();
     }
 
+    @PostMapping("/type/search/serve/page")
+    @ApiOperation(value = "分页查看周边服务商分类")
+    @RequiresPermissions("parkService:serviceFlow:businessAmuse:type:search")
+    public Result<Page<BusinessAmuseTypeResponse>> searchBusinessAmuseServeTypePage(@RequestBody PageRequest request){
+        return businessAmuseService.findAllBusinessAmuseTypeByServePage(request);
+    }
+
     @PostMapping("/type/search/happy")
     @ApiOperation(value = "查看周边配套娱乐分类")
     @RequiresPermissions("parkService:serviceFlow:businessAmuse:type:search")
@@ -89,15 +97,22 @@ public class BusinessAmuseController {
         return businessAmuseService.findAllBusinessAmuseTypeByHappy();
     }
 
+    @PostMapping("/type/search/happy/page")
+    @ApiOperation(value = "分页查看周边配套娱乐分类")
+    @RequiresPermissions("parkService:serviceFlow:businessAmuse:type:search")
+    public Result<Page<BusinessAmuseTypeResponse>> searchBusinessAmuseHappyTypePage(@RequestBody PageRequest request){
+        return businessAmuseService.findAllBusinessAmuseTypeByHappyPage(request);
+    }
+
     @PostMapping("/type/add/serve")
-    @ApiOperation(value = "新增分类")
+    @ApiOperation(value = "新增园区服务分类")
     @RequiresPermissions("parkService:serviceFlow:businessAmuse:type:add")
     public Result<String> addBusinessAmuseServeType(@RequestBody AddBusinessAmuseTypeRequest request){
         return businessAmuseService.addBusinessAmuseServeType(request);
     }
 
     @PostMapping("/type/add/happy")
-    @ApiOperation(value = "新增分类")
+    @ApiOperation(value = "新增园区配套娱乐分类")
     @RequiresPermissions("parkService:serviceFlow:businessAmuse:type:add")
     public Result<String> addBusinessAmuseHappyType(@RequestBody AddBusinessAmuseTypeRequest request){
         return businessAmuseService.addBusinessAmuseHappyType(request);
@@ -110,7 +125,7 @@ public class BusinessAmuseController {
         return businessAmuseService.editBusinessAmuseType(request);
     }
 
-    @PostMapping("/type/delete")
+    @PostMapping("/type/delete/{id}")
     @ApiOperation(value = "删除分类")
     @RequiresPermissions("parkService:serviceFlow:businessAmuse:type:delete")
     public Result<String> deleteBusinessAmuseType(@PathVariable("id") String id){

@@ -3,8 +3,11 @@ package com.parkinfo.web.taskManage;
 import com.parkinfo.common.Result;
 import com.parkinfo.request.taskManage.AddGovernmentReportRequest;
 import com.parkinfo.request.taskManage.QueryGovernmentReportRequest;
+import com.parkinfo.response.login.ParkInfoListResponse;
+import com.parkinfo.response.login.ParkUserListResponse;
 import com.parkinfo.response.taskManage.GovernmentReportDetailResponse;
 import com.parkinfo.response.taskManage.GovernmentReportListResponse;
+import com.parkinfo.service.parkCulture.ILibraryService;
 import com.parkinfo.service.taskManage.IGovernmentReportService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -16,6 +19,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * When I wrote this, only God and I understood what I was doing
@@ -31,6 +35,9 @@ public class GovernmentReportController {
 
     @Autowired
     private IGovernmentReportService governmentReportService;
+
+    @Autowired
+    private ILibraryService libraryService;
 
     @PostMapping("/search")
     @ApiOperation(value = "查询政府工作汇报任务")
@@ -84,5 +91,20 @@ public class GovernmentReportController {
     @RequiresPermissions("taskManage:governmentReport:governmentReport_delete")
     public Result deleteTask(@PathVariable("id") String id){
         return governmentReportService.deleteTask(id);
+    }
+
+
+    @PostMapping("/park/list")
+    @ApiOperation(value = "管理员获取园区列表")
+    @RequiresPermissions("taskManage:governmentReport:governmentReport_add")
+    public Result<List<ParkInfoListResponse>> getParkList(){
+        return libraryService.getParkList();
+    }
+
+    @PostMapping("/user/list/{parkId}")
+    @ApiOperation(value = "管理员获取某个园区的人员列表")
+    @RequiresPermissions("taskManage:governmentReport:governmentReport_add")
+    public Result<List<ParkUserListResponse>> getUserList(@PathVariable("parkId") String parkId){
+        return libraryService.getUserList(parkId);
     }
 }

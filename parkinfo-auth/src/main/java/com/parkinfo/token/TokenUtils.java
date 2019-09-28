@@ -1,13 +1,16 @@
 package com.parkinfo.token;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.parkinfo.dto.ParkUserDTO;
 import com.parkinfo.dto.ParkUserPermissionDTO;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.entity.userConfig.ParkPermission;
+import com.parkinfo.entity.userConfig.ParkRole;
 import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.userConfig.ParkInfoRepository;
+import com.parkinfo.repository.userConfig.ParkRoleRepository;
 import com.parkinfo.repository.userConfig.ParkUserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
@@ -45,6 +48,9 @@ public class TokenUtils {
 
     @Autowired
     private ParkInfoRepository parkInfoRepository;
+
+    @Autowired
+    private ParkRoleRepository parkRoleRepository;
 
 
     /**
@@ -218,6 +224,15 @@ public class TokenUtils {
     private ParkUser convertParkUserDTO(ParkUserDTO parkUserDTO){
         ParkUser parkUser = new ParkUser();
         BeanUtils.copyProperties(parkUserDTO,parkUser);
+        List<String> roleNames = parkUserDTO.getRole();
+        Set<ParkRole> parkRoles = Sets.newHashSet();
+        roleNames.forEach(temp -> {
+            Optional<ParkRole> byName = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(temp);
+            if(byName.isPresent()){
+                parkRoles.add(byName.get());
+            }
+        });
+        parkUser.setRoles(parkRoles);
         return parkUser;
     }
 

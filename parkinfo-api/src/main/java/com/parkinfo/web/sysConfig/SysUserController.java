@@ -5,6 +5,7 @@ import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.request.sysConfig.AddUserRequest;
 import com.parkinfo.request.sysConfig.QuerySysUserRequest;
 import com.parkinfo.request.sysConfig.SetUserRequest;
+import com.parkinfo.response.sysConfig.SysUserResponse;
 import com.parkinfo.service.sysConfig.ISysUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -26,7 +27,7 @@ public class SysUserController {
 
     @PostMapping("/search")
     @ApiOperation(value = "分页查询用户列表",notes = "起始页为0")
-    public Result<Page<ParkUser>> searchUser(@RequestBody QuerySysUserRequest request) {
+    public Result<Page<SysUserResponse>> searchUser(@RequestBody QuerySysUserRequest request) {
         return sysUserService.searchUser(request);
     }
 

@@ -5,6 +5,10 @@ import lombok.Data;
 
 @Data
 public class ProjectInfoResponse {
+
+    @ApiModelProperty("id")
+    private String id;
+
     @ApiModelProperty("项目名称")
     private String projectName;
 
@@ -16,4 +20,7 @@ public class ProjectInfoResponse {
 
     @ApiModelProperty("分类名称")
     private String typeName;
+
+    @ApiModelProperty("分类id")
+    private String typeId;
 }

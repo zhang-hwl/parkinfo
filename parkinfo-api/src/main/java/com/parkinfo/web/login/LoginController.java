@@ -1,6 +1,7 @@
 package com.parkinfo.web.login;
 
 import com.parkinfo.common.Result;
+import com.parkinfo.dto.ParkUserDTO;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.request.login.LoginRequest;
@@ -51,5 +52,17 @@ public class LoginController {
     @ApiOperation(value = "根据园区分页获取用户")
     public Result<Page<ParkUserResponse>> search(@RequestBody QueryUserByParkRequest request) {
         return loginService.search(request);
+    }
+
+    @PostMapping("/findAll")
+    @ApiOperation(value = "根据园区获取用户")
+    public Result<List<ParkUserResponse>> findAll() {
+        return loginService.findAll();
+    }
+
+    @PostMapping("/userInfo")
+    @ApiOperation(value = "获取用户信息")
+    public Result<ParkUserDTO> getUserInfo(){
+        return loginService.getUserInfo();
     }
 }

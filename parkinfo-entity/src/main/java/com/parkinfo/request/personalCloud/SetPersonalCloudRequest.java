@@ -12,6 +12,4 @@ public class SetPersonalCloudRequest {
     @ApiModelProperty(value = "文件名")
     private String fileName;
 
-    @ApiModelProperty(value = "备注")
-    private String remark;
 }

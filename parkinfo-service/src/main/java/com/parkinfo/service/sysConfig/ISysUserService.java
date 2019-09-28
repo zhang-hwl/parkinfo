@@ -5,6 +5,7 @@ import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.request.sysConfig.AddUserRequest;
 import com.parkinfo.request.sysConfig.QuerySysUserRequest;
 import com.parkinfo.request.sysConfig.SetUserRequest;
+import com.parkinfo.response.sysConfig.SysUserResponse;
 import org.springframework.data.domain.Page;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +16,7 @@ public interface ISysUserService {
      * @param request 查询条件
      * @return
      */
-    Result<Page<ParkUser>> searchUser(QuerySysUserRequest request);
+    Result<Page<SysUserResponse>> searchUser(QuerySysUserRequest request);
 
     /**
      * 用户头像上传

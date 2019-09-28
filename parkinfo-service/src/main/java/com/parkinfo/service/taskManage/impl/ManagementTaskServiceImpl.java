@@ -5,6 +5,7 @@ import com.parkinfo.common.Result;
 import com.parkinfo.dto.ParkUserDTO;
 import com.parkinfo.entity.taskManage.ManagementTask;
 import com.parkinfo.entity.taskManage.ManagementTask;
+import com.parkinfo.entity.taskManage.SpecialTask;
 import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.enums.ParkRoleEnum;
 import com.parkinfo.enums.TaskType;
@@ -25,9 +26,7 @@ import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -58,11 +57,8 @@ public class ManagementTaskServiceImpl implements IManagementTaskService {
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
         Specification<ManagementTask> managementTaskSpecification = (Specification<ManagementTask>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
-            if (request.getStartTimeFrom() != null && request.getStartTimeTo() != null) {
-                predicates.add(criteriaBuilder.between(root.get("startTime"), request.getStartTimeFrom(), request.getStartTimeTo()));
-            }
-            if (request.getEndTimeFrom() != null && request.getEndTimeTo() != null) {
-                predicates.add(criteriaBuilder.between(root.get("endTime"), request.getEndTimeFrom(), request.getEndTimeTo()));
+            if (request.getCreateTimeFrom() != null && request.getCreateTimeTo() != null) {
+                predicates.add(criteriaBuilder.between(root.get("createTime"), request.getCreateTimeFrom(), request.getCreateTimeTo()));
             }
             if (StringUtils.isNotBlank(request.getName())) {
                 predicates.add(criteriaBuilder.like(root.get("name").as(String.class), "%" + request.getName() + "%"));
@@ -76,10 +72,10 @@ public class ManagementTaskServiceImpl implements IManagementTaskService {
                     }
                 }
             } else {
-                Path<Object> path = root.get("receiver");  //接收的
-                CriteriaBuilder.In<Object> in = criteriaBuilder.in(path);
-                in.value(tokenUtils.getLoginUser());
-                predicates.add(criteriaBuilder.and(in));
+                ListJoin<ManagementTask,ParkUser> join= root.join(root.getModel().getList("receivers",ParkUser.class), JoinType.LEFT);
+                Predicate p2 = criteriaBuilder.equal(join.get("id").as(String.class),tokenUtils.getLoginUserDTO().getId());
+                //这里面的join代表的是parkUser，属于加入进来的部分，而不是链接表的全部结果；
+                predicates.add(p2);
             }
 
             predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
@@ -149,7 +145,7 @@ public class ManagementTaskServiceImpl implements IManagementTaskService {
                 managementTask.getReceivers().forEach(receiver -> {
                     ReceiverListResponse receiverListResponse = new ReceiverListResponse();
                     receiverListResponse.setId(receiver.getId());
-                    receiverListResponse.setNickname(receiver.getNickname());
+                    receiverListResponse.setName(receiver.getNickname());
                     receiverList.add(receiverListResponse);
                 });
                 response.setReceivers(receiverList);
@@ -173,7 +169,7 @@ public class ManagementTaskServiceImpl implements IManagementTaskService {
             managementTask.getReceivers().forEach(receiver -> {
                 ReceiverListResponse receiverListResponse = new ReceiverListResponse();
                 receiverListResponse.setId(receiver.getId());
-                receiverListResponse.setNickname(receiver.getNickname());
+                receiverListResponse.setName(receiver.getNickname());
                 receiverList.add(receiverListResponse);
             });
             response.setReceivers(receiverList);

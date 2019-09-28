@@ -6,15 +6,16 @@ import com.parkinfo.entity.parkService.businessAmuse.BusinessAmuse;
 import com.parkinfo.entity.parkService.businessAmuse.BusinessAmuseType;
 import com.parkinfo.entity.parkService.commonServiceWindow.CommonServiceWindow;
 import com.parkinfo.entity.parkService.commonServiceWindow.CommonServiceWindowType;
+import com.parkinfo.entity.parkService.learningData.LearnDataType;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.parkService.CommonServiceWindowRepository;
 import com.parkinfo.repository.parkService.CommonServiceWindowTypeRepository;
 import com.parkinfo.request.parkService.commonServiceWindow.AddCommonServiceWindowRequest;
+import com.parkinfo.request.parkService.commonServiceWindow.CommonServiceWindowTypeRequest;
 import com.parkinfo.request.parkService.commonServiceWindow.EditCommonServiceWindowRequest;
 import com.parkinfo.request.parkService.commonServiceWindow.SearchCommonServiceWindowRequest;
-import com.parkinfo.response.parkService.BusinessAmuseResponse;
-import com.parkinfo.response.parkService.CommonServiceWindowResponse;
+import com.parkinfo.response.parkService.*;
 import com.parkinfo.service.parkService.ICommonServiceWindowService;
 import com.parkinfo.token.TokenUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -30,6 +31,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class CommonServiceWindowServiceImpl implements ICommonServiceWindowService {
@@ -112,6 +114,7 @@ public class CommonServiceWindowServiceImpl implements ICommonServiceWindowServi
         commonServiceWindow.setContactNumber(request.getContactNumber());
         commonServiceWindow.setBusinessDetails(request.getServiceName());
         commonServiceWindow.setLogo(request.getLogo());
+        commonServiceWindow.setRemark(request.getRemark());
         commonServiceWindowRepository.save(commonServiceWindow);
         return Result.<String>builder().success().message("编辑成功").build();
     }
@@ -138,5 +141,106 @@ public class CommonServiceWindowServiceImpl implements ICommonServiceWindowServi
         CommonServiceWindowResponse response = new CommonServiceWindowResponse();
         BeanUtils.copyProperties(commonServiceWindow, response);
         return Result.<CommonServiceWindowResponse>builder().success().data(response).build();
+    }
+
+    @Override
+    public Result<List<CommonServiceWindowTypeResponse>> findAllType() {
+        List<CommonServiceWindowType> list = commonServiceWindowTypeRepository.findAllByParentIsNullAndDeleteIsFalseAndAvailableIsTrue();
+        List<CommonServiceWindowTypeResponse> result = Lists.newArrayList();
+        list.forEach(temp -> {
+            CommonServiceWindowTypeResponse response = new CommonServiceWindowTypeResponse();   //大类
+            List<CommonServiceWindowTypeResponse> kindResponse = Lists.newArrayList();
+            Set<CommonServiceWindowType> children = temp.getChildren();
+            children.forEach(kind -> {
+                CommonServiceWindowTypeResponse kindType = new CommonServiceWindowTypeResponse();
+                BeanUtils.copyProperties(kind, kindType);
+                kindResponse.add(kindType);
+            });
+            BeanUtils.copyProperties(temp, response);
+            response.setKind(kindResponse);
+            result.add(response);
+        });
+        return Result.<List<CommonServiceWindowTypeResponse>>builder().success().data(result).build();
+    }
+
+    @Override
+    public Result<String> addType(CommonServiceWindowTypeRequest request) {
+        CommonServiceWindowType commonServiceWindowType = new CommonServiceWindowType();
+        commonServiceWindowType.setDelete(false);
+        commonServiceWindowType.setAvailable(true);
+        if(StringUtils.isBlank(request.getGeneralId())){
+            //新增大类
+            commonServiceWindowType.setType(request.getGeneralName());
+        }
+        else{
+            CommonServiceWindowType general = checkCommonServiceWindowType(request.getGeneralId());
+            commonServiceWindowType.setParent(general);
+            commonServiceWindowType.setType(request.getKindName());
+        }
+        commonServiceWindowTypeRepository.save(commonServiceWindowType);
+        return Result.<String>builder().success().data("新增成功").build();
+    }
+
+    @Override
+    public Result<String> editType(CommonServiceWindowTypeRequest request) {
+        CommonServiceWindowType commonServiceWindowType = new CommonServiceWindowType();
+        commonServiceWindowType.setDelete(false);
+        commonServiceWindowType.setAvailable(true);
+        if(StringUtils.isBlank(request.getKindId())){
+            //编辑大类
+            CommonServiceWindowType general = checkCommonServiceWindowType(request.getGeneralId());
+            BeanUtils.copyProperties(general, commonServiceWindowType);
+            commonServiceWindowType.setType(request.getGeneralName());
+        }
+        else{
+            CommonServiceWindowType general = checkCommonServiceWindowType(request.getGeneralId());
+            CommonServiceWindowType kind = checkCommonServiceWindowType(request.getKindId());
+            BeanUtils.copyProperties(kind, commonServiceWindowType);
+            commonServiceWindowType.setParent(general);
+            commonServiceWindowType.setType(request.getKindName());
+        }
+        commonServiceWindowTypeRepository.save(commonServiceWindowType);
+        return Result.<String>builder().success().data("编辑成功").build();
+    }
+
+    @Override
+    public Result<String> deleteType(String id) {
+        CommonServiceWindowType commonServiceWindowType = checkCommonServiceWindowType(id);
+        commonServiceWindowType.setDelete(true);
+        commonServiceWindowTypeRepository.save(commonServiceWindowType);
+        return Result.<String>builder().success().data("删除成功").build();
+    }
+
+    @Override
+    public Result<Page<CommonServiceWindowTypeResponse>> findAllTypePage(com.parkinfo.request.base.PageRequest request) {
+        Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
+        Specification<CommonServiceWindowType> specification = new Specification<CommonServiceWindowType>() {
+            @Override
+            public Predicate toPredicate(Root<CommonServiceWindowType> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder cb) {
+                List<Predicate> predicates = Lists.newArrayList();
+                predicates.add(cb.isNull(root.get("parent").as(CommonServiceWindowType.class)));
+                predicates.add(cb.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
+                predicates.add(cb.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
+                return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+            }
+        };
+        Page<CommonServiceWindowType> all = commonServiceWindowTypeRepository.findAll(specification, pageable);
+        List<CommonServiceWindowTypeResponse> list = Lists.newArrayList();
+        all.getContent().forEach(temp -> {
+            CommonServiceWindowTypeResponse response = new CommonServiceWindowTypeResponse();
+            BeanUtils.copyProperties(temp, response);
+            List<CommonServiceWindowTypeResponse> kind = Lists.newArrayList();
+            temp.getChildren().forEach(children -> {
+               if(!children.getDelete()){
+                   CommonServiceWindowTypeResponse childrenResponse = new CommonServiceWindowTypeResponse();
+                   BeanUtils.copyProperties(children, childrenResponse);
+                   kind.add(childrenResponse);
+               }
+            });
+            response.setKind(kind);
+            list.add(response);
+        });
+        Page<CommonServiceWindowTypeResponse> result = new PageImpl<>(list, all.getPageable(), all.getTotalElements());
+        return Result.<Page<CommonServiceWindowTypeResponse>>builder().success().data(result).build();
     }
 }

@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
@@ -20,8 +21,29 @@ public class AddUserRequest {
     private String avatar;
 
     @ApiModelProperty(value = "绑定园区id")
-    private List<String> parkId;
+    private String parkId;
 
     @ApiModelProperty(value = "绑定角色id")
-    private List<String> roleId;
+    @NotNull
+    private String roleId;
+
+    //身份证
+    @ApiModelProperty("身份证")
+    private String idCard;
+
+    //学位证书
+    @ApiModelProperty("学位证书")
+    private String diploma;
+
+    //资格证书
+    @ApiModelProperty("资格证书")
+    private String credentials;
+
+    //紧急联系人
+    @ApiModelProperty("紧急联系人")
+    private String urgencyContent;
+
+    //紧急联系电话
+    @ApiModelProperty("紧急联系电话")
+    private String urgencyPhone;
 }

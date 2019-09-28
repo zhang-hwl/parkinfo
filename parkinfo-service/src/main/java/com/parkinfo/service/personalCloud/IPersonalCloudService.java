@@ -1,10 +1,7 @@
 package com.parkinfo.service.personalCloud;
 
 import com.parkinfo.common.Result;
-import com.parkinfo.request.personalCloud.AddPersonalCloudRequest;
-import com.parkinfo.request.personalCloud.DeletePersonalCloudRequest;
-import com.parkinfo.request.personalCloud.QueryPersonalCloudRequest;
-import com.parkinfo.request.personalCloud.SetPersonalCloudRequest;
+import com.parkinfo.request.personalCloud.*;
 import com.parkinfo.response.personalCloud.DownloadResponse;
 import com.parkinfo.response.personalCloud.PersonalCloudResponse;
 import com.parkinfo.response.personalCloud.UploadFileResponse;
@@ -22,40 +19,16 @@ public interface IPersonalCloudService {
      */
     Result<Page<PersonalCloudResponse>> findAll(QueryPersonalCloudRequest request);
 
-    /**
-     * 上传文件
-     * @param request
-     * @return
-     */
-    Result<List<UploadFileResponse>> uploadFile(HttpServletRequest request);
+    Result<String> uploadFile(HttpServletRequest request, UploadFileRequest fileRequest);
 
-    /**
-     * 向数据库添加上传数据
-     * @param request
-     * @return
-     */
-    Result add(AddPersonalCloudRequest request);
-
-    /**
-     * 逻辑删除文件
-     * @param id
-     * @return
-     */
-    Result delete(String id);
+    Result<String> delete(String id);
 
     /**
      * 文件重命名
      * @param request
      * @return
      */
-    Result set(SetPersonalCloudRequest request);
-
-    /**
-     * 下载文件
-     * @param id
-     * @return
-     */
-    Result<DownloadResponse> download(String id);
+    Result<String> set(SetPersonalCloudRequest request);
 
     /**
      * 批量删除

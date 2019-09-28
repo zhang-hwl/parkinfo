@@ -2,9 +2,13 @@ package com.parkinfo.service.parkCulture;
 
 import com.parkinfo.common.Result;
 import com.parkinfo.request.parkCulture.*;
+import com.parkinfo.response.login.ParkInfoListResponse;
+import com.parkinfo.response.login.ParkUserListResponse;
 import com.parkinfo.response.parkCulture.*;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.List;
 
 /**
  * When I wrote this, only God and I understood what I was doing
@@ -66,7 +70,12 @@ public interface ILibraryService {
     /**
      * 分页查询图书分类
      */
-    Result<Page<BookCategoryListResponse>> search(QueryCategoryListRequest request);
+    Result<Page<BookCategoryListResponse>> search(QueryCategoryPageRequest request);
+
+    /**
+     * 不分页查询图书分类
+     */
+    Result<List<BookCategoryListResponse>> search(QueryCategoryListRequest request);
 
     /**
      * 添加图书分类
@@ -88,4 +97,64 @@ public interface ILibraryService {
      * @return
      */
     Result deleteBookCategory(String id);
+
+    /**
+     * 管理员管理图书列表
+     * @param request
+     * @return
+     */
+    Result<Page<BookManageListResponse>> manageBook(QueryBookListRequest request);
+    /**
+     * 管理员添加图书
+     * @param request
+     * @return
+     */
+    Result addBook(AddBookRequest request);
+
+
+    /**
+     * 管理员分页查看某本书的阅读进度
+     * @param request
+     * @return
+     */
+    Result<Page<ReadProcessListResponse>> searchProcess(QueryReadProcessListRequest request);
+    /**
+     * 设置图书状态
+     * @param bookId
+     * @return
+     */
+    Result setBookStatus(String bookId);
+
+    /**
+     * 删除图书
+     * @param bookId
+     * @return
+     */
+    Result deleteBook(String bookId);
+
+    /**
+     * 管理员编辑图书
+     * @param request
+     * @return
+     */
+    Result setBook(SetBookRequest request);
+
+    /**
+     * 管理员获取园区列表
+     * @return
+     */
+    Result<List<ParkInfoListResponse>> getParkList();
+
+    /**
+     * 管理员获取人员列表
+     * @return
+     */
+    Result<List<ParkUserListResponse>> getUserList(String parkId);
+
+    /**
+     * 管理员设置员工必读
+     * @param request
+     * @return
+     */
+    Result addReadProcess(AddReadProcessRequest request);
 }

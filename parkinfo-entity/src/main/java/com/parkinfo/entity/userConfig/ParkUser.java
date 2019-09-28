@@ -59,6 +59,21 @@ public class ParkUser extends BaseEntity {
     @JsonIgnore
     private String password;
 
+    //身份证
+    private String idCard;
+
+    //学位证书
+    private String diploma;
+
+    //资格证书
+    private String credentials;
+
+    //紧急联系人
+    private String urgencyContent;
+
+    //紧急联系电话
+    private String urgencyPhone;
+
     @ManyToMany(targetEntity = ParkRole.class, fetch = FetchType.LAZY)
     @JoinTable(name = "c_user_role", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "role_id")})
     @JsonIgnoreProperties(value = "permissions")

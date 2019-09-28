@@ -2,6 +2,7 @@ package com.parkinfo.response.parkService;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.parkinfo.entity.archiveInfo.ArchiveInfoType;
+import com.parkinfo.entity.parkService.learningData.LearnDataType;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -32,5 +33,5 @@ public class LearningDateResponse {
     private Date updateTime;
 
     @ApiModelProperty("书籍分类")
-    private ArchiveInfoType archiveInfoType;
+    private LearnDataType learnDataType;
 }

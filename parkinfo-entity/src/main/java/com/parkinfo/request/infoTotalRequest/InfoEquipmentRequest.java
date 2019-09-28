@@ -3,19 +3,21 @@ package com.parkinfo.request.infoTotalRequest;
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.parkinfo.entity.base.BaseEntity;
+import com.parkinfo.response.login.ParkInfoResponse;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Date;
+
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class InfoEquipmentRequest extends BaseEntity {
+public class InfoEquipmentRequest {
+
+    @ApiModelProperty(value = "id")
+    private String id;
 
     @ApiModelProperty(value = "版本标签")
     private String version;
-
-    @ApiModelProperty(value = "文件类型")
-    private String fileType;
 
     @ApiModelProperty(value = "编号")
     private String serialNumber;
@@ -31,7 +33,7 @@ public class InfoEquipmentRequest extends BaseEntity {
 
     @ApiModelProperty(value = "购买时间")
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
-    private String buyTime;
+    private Date buyTime;
 
     @ApiModelProperty(value = "目前状态")
     private String status;
@@ -47,5 +49,8 @@ public class InfoEquipmentRequest extends BaseEntity {
 
     @ApiModelProperty(value = "备注")
     private String remark;
+
+    @ApiModelProperty(value = "关联园区")
+    private ParkInfoResponse parkInfoResponse;
 
 }

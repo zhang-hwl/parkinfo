@@ -19,6 +19,7 @@ import java.util.Set;
 @Table(name = "c_business_amuse_type")
 @EntityListeners(AuditingEntityListener.class)
 @ApiModel(value = "BusinessAmuseType",description =  "商务与周边娱乐类型")
+@JsonIgnoreProperties(value={"hibernateLazyInitializer","handler"})
 public class BusinessAmuseType extends BaseEntity {
     //类型
     private String type;
@@ -30,7 +31,7 @@ public class BusinessAmuseType extends BaseEntity {
     private ParkInfo parkInfo;
 
     //上一级分类类型
-    @ManyToOne(fetch= FetchType.LAZY)
+    @ManyToOne(fetch= FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name="parent_id")
     private BusinessAmuseType parent;
 

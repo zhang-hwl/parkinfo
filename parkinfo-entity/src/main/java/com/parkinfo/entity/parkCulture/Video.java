@@ -21,8 +21,8 @@ import javax.persistence.ManyToOne;
  **/
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Entity(name = "c_park_book")
-@Table(appliesTo = "c_park_book",comment = "园区视频表")
+@Entity(name = "c_park_video")
+@Table(appliesTo = "c_park_video",comment = "园区视频表")
 public class Video extends BaseEntity {
 
     /**
@@ -57,4 +57,8 @@ public class Video extends BaseEntity {
      */
     private String remark;
 
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private VideoCategory category;
 }

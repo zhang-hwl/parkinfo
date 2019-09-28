@@ -12,9 +12,8 @@ public interface EnteredInfoRepository extends JpaRepository<EnteredInfo,String>
 
     Optional<EnteredInfo> findByIdAndDeleteIsFalse(String id);
 
-    @Query(nativeQuery = true,value = "delete from c_entered_info where company_detail_id = ?1")
-    int deleteEnteredInfoBy(String id);
-
     void deleteByCompanyDetail_Id(String id);
+
+    List<EnteredInfo> findAllByCompanyDetail_Id(String id);
 
 }

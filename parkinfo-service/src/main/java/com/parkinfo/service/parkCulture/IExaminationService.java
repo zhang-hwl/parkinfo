@@ -3,11 +3,11 @@ package com.parkinfo.service.parkCulture;
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.parkCulture.Question;
 import com.parkinfo.request.parkCulture.*;
-import com.parkinfo.response.parkCulture.AnswerSheetListResponse;
-import com.parkinfo.response.parkCulture.QuestionDetailResponse;
-import com.parkinfo.response.parkCulture.QuestionListResponse;
+import com.parkinfo.response.parkCulture.*;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 public interface IExaminationService {
 
@@ -30,6 +30,13 @@ public interface IExaminationService {
      * @return
      */
     Result addQuestion(AddQuestionRequest request);
+
+    /**
+     * 手动删除试题库
+     * @param id
+     * @return
+     */
+    Result deleteQuestion(String id);
 
     /**
      * 导入试题库
@@ -67,10 +74,50 @@ public interface IExaminationService {
     Result startExamination(String answerSheetId);
 
     /**
+     * 获取试卷详情
+     * @param sheetId
+     * @return
+     */
+    Result<AnswerSheetDetailResponse> sheetDetail(String sheetId);
+
+    /**
      * 提交试卷
      * @param request
      * @return
      */
     Result commitExamination(CommitAnswerRequest request);
+
+
+    /**
+     * 分页查询试题分类
+     */
+    Result<Page<QuestionCategoryListResponse>> search(QueryCategoryPageRequest request);
+
+    /**
+     * 不分页查询试题分类
+     */
+    Result<List<QuestionCategoryListResponse>> search(QueryCategoryListRequest request);
+
+    /**
+     * 添加试题分类
+     * @param request
+     * @return
+     */
+    Result addQuestionCategory(AddQuestionCategoryRequest request);
+
+    /**
+     * 修改试题分类
+     * @param request
+     * @return
+     */
+    Result setQuestionCategory(SetQuestionCategoryRequest request);
+
+    /**
+     * 删除试题分类
+     * @param id
+     * @return
+     */
+    Result deleteQuestionCategory(String id);
+
 
 }

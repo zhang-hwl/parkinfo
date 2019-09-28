@@ -20,7 +20,7 @@ public class SetPersonalWorkPlanRequest {
     @ApiModelProperty(value = "园区工作计划及小节id")
     private String id;
 
-    @ApiModelProperty(value = "结果反馈")
+    @ApiModelProperty(value = "意见反馈")
     private String feedback;
 
     @ApiModelProperty(value = "是否同意")
@@ -33,4 +33,7 @@ public class SetPersonalWorkPlanRequest {
     private PlanType planType;
 
     private List<WorkPlanDetail> workPlanDetailList;
+
+    @ApiModelProperty(value = "结果反馈")
+    private String resultFeedback;
 }

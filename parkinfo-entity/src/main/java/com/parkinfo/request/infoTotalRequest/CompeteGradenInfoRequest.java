@@ -2,19 +2,19 @@ package com.parkinfo.request.infoTotalRequest;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.parkinfo.entity.base.BaseEntity;
+import com.parkinfo.response.login.ParkInfoResponse;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class CompeteGradenInfoRequest extends BaseEntity {
+public class CompeteGradenInfoRequest {
+
+    @ApiModelProperty(value = "id")
+    private String id;
 
     @ApiModelProperty(value = "版本标签")
     private String version;
-
-    @ApiModelProperty(value = "文件类型")
-    private String fileType;
 
     @Excel(name = "类型", width = 15)
     @ApiModelProperty(value = "类型")
@@ -52,5 +52,8 @@ public class CompeteGradenInfoRequest extends BaseEntity {
     @Excel(name = "说明", width = 30)
     @ApiModelProperty(value = "说明")
     private String remark;
+
+    @ApiModelProperty(value = "关联园区")
+    private ParkInfoResponse parkInfoResponse;
 
 }

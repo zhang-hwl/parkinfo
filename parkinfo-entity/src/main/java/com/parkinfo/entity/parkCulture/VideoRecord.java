@@ -20,8 +20,8 @@ import javax.persistence.ManyToOne;
  **/
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Entity(name = "c_video_comment")
-@Table(appliesTo = "c_video_comment",comment = "视频评论表")
+@Entity(name = "c_video_record")
+@Table(appliesTo = "c_video_record",comment = "视频观看记录表")
 public class VideoRecord extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)

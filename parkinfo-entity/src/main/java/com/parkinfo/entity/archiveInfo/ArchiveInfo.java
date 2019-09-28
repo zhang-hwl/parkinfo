@@ -1,6 +1,7 @@
 package com.parkinfo.entity.archiveInfo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.parkinfo.entity.base.BaseEntity;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.enums.ConvertStatus;
@@ -20,6 +21,7 @@ import java.util.List;
 @Table(name = "c_archive_info", indexes = {@Index(columnList = "general_id")})
 @EntityListeners(AuditingEntityListener.class)
 @ApiModel(value = "ArchiveInfo", description = "存档资料")
+@JsonIgnoreProperties(value={"hibernateLazyInitializer","handler"})
 public class ArchiveInfo extends BaseEntity {
 
     @ApiModelProperty(value = "文件类型")

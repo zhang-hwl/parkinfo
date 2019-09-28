@@ -2,10 +2,12 @@ package com.parkinfo.service.parkService;
 
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.parkService.businessAmuse.BusinessAmuse;
+import com.parkinfo.request.base.PageRequest;
 import com.parkinfo.request.parkService.businessAmuse.*;
 import com.parkinfo.response.parkService.BusinessAmuseResponse;
 import com.parkinfo.response.parkService.BusinessAmuseTypeResponse;
 import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -43,6 +45,10 @@ public interface IBusinessAmuseService {
     Result<List<BusinessAmuseTypeResponse>> findAllBusinessAmuseTypeByServe();
 
     Result<List<BusinessAmuseTypeResponse>> findAllBusinessAmuseTypeByHappy();
+
+    Result<Page<BusinessAmuseTypeResponse>> findAllBusinessAmuseTypeByServePage(PageRequest request);
+
+    Result<Page<BusinessAmuseTypeResponse>> findAllBusinessAmuseTypeByHappyPage(PageRequest request);
 
     Result<String> deleteBusinessAmuseType(String id);
 

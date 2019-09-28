@@ -27,4 +27,7 @@ public class ParkUserPermissionDTO {
      */
     @ApiModelProperty(value = "权限描述")
     private String remark;
+
+    @ApiModelProperty(value = "路由")
+    private String path;
 }

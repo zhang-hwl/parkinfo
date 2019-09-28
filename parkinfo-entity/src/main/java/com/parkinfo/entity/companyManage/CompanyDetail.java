@@ -35,7 +35,7 @@ public class CompanyDetail extends BaseEntity{
     private String companyAddress;
 
     @ApiModelProperty(value = "公司注册资金")
-    @Excel(name = "公司地址", width = 15)
+    @Excel(name = "公司注册资金", width = 15)
     private String registerMoney;
 
     @Excel(name = "联系人", width = 15)

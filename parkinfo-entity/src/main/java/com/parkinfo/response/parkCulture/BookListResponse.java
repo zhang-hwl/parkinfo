@@ -1,7 +1,10 @@
 package com.parkinfo.response.parkCulture;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.Date;
 
 /**
  * When I wrote this, only God and I understood what I was doing

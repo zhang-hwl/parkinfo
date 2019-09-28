@@ -2,10 +2,13 @@ package com.parkinfo.service.sysConfig;
 
 
 import com.parkinfo.common.Result;
+import com.parkinfo.dto.ParkUserPermissionDTO;
 import com.parkinfo.entity.userConfig.ParkPermission;
 import com.parkinfo.entity.userConfig.ParkRole;
 import com.parkinfo.request.sysConfig.QuerySysRoleRequest;
 import com.parkinfo.request.sysConfig.SetPermissionRequest;
+import com.parkinfo.response.sysConfig.RolePermissionListResponse;
+import com.parkinfo.response.sysConfig.SysRoleResponse;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -33,8 +36,15 @@ public interface ISysRoleService {
     Result setPermissions(SetPermissionRequest request);
 
     /**
+     * 根据角色获取权限
+     * @param roleId
+     * @return
+     */
+    Result<RolePermissionListResponse> getUserPermissions(String roleId);
+
+    /**
      * 查询所有角色
      * @return
      */
-    Result<List<ParkRole>> getAllRole();
+    Result<List<SysRoleResponse>> getAllRole();
 }

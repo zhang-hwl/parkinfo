@@ -7,6 +7,8 @@ import com.parkinfo.request.compayManage.SetCompanyInfoRequest;
 import com.parkinfo.response.companyManage.CompanyDemandResponse;
 import com.parkinfo.response.companyManage.CompanyResponse;
 import com.parkinfo.service.companyManage.ICompanyDemandService;
+import com.parkinfo.service.informationTotal.IInfoTotalTemplateService;
+import com.parkinfo.service.informationTotal.ITemplateFieldService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -27,6 +29,8 @@ public class CompanyDemandController {
 
     @Autowired
     private ICompanyDemandService companyDemandService;
+    @Autowired
+    private IInfoTotalTemplateService templateService;
 
     @PostMapping("/companyImport")
     @ApiOperation("导入需求信息")
@@ -37,8 +41,8 @@ public class CompanyDemandController {
 
     @GetMapping("/companyExport")
     @ApiOperation("下载需求信息模板")
-    public Result companyExport(HttpServletResponse response) {
-        return companyDemandService.companyExport(response);
+    public Result<String> companyExport(HttpServletResponse response) {
+        return templateService.getTemplateUrl("需求信息");
     }
 
     @PostMapping("/findAll")

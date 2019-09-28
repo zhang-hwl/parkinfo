@@ -2,7 +2,9 @@ package com.parkinfo.service.parkService;
 
 import com.parkinfo.common.Result;
 import com.parkinfo.request.parkService.feedback.AddFeedbackRequest;
+import com.parkinfo.request.parkService.feedback.QueryFeedBackRequest;
 import com.parkinfo.response.parkService.FeedbackResponse;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -18,5 +20,5 @@ public interface IFeedbackService {
 
     Result<FeedbackResponse> detailFeedback(String id);
 
-    Result<List<FeedbackResponse>> findAll();
+    Result<Page<FeedbackResponse>> findAll(QueryFeedBackRequest request);
 }

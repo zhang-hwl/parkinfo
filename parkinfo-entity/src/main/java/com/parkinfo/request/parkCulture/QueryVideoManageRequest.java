@@ -23,6 +23,12 @@ public class QueryVideoManageRequest extends PageRequest {
     @ApiModelProperty(value = "视频名称")
     private String name;
 
+    @ApiModelProperty(value = "大类id")
+    private String firstCategoryId;
+
+    @ApiModelProperty(value = "小类id")
+    private String secondCategoryId;
+
     @ApiModelProperty(value = "创建时间起")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTimeFrom;

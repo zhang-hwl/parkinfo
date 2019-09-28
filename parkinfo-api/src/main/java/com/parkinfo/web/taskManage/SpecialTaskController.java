@@ -3,9 +3,12 @@ package com.parkinfo.web.taskManage;
 import com.parkinfo.common.Result;
 import com.parkinfo.request.taskManage.AddSpecialTaskRequest;
 import com.parkinfo.request.taskManage.QuerySpecialTaskRequest;
+import com.parkinfo.response.login.ParkInfoListResponse;
+import com.parkinfo.response.login.ParkUserListResponse;
 import com.parkinfo.response.taskManage.PersonalWorkPlanListResponse;
 import com.parkinfo.response.taskManage.SpecialTaskDetailResponse;
 import com.parkinfo.response.taskManage.SpecialTaskListResponse;
+import com.parkinfo.service.parkCulture.ILibraryService;
 import com.parkinfo.service.taskManage.ISpecialTaskService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -17,6 +20,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * When I wrote this, only God and I understood what I was doing
@@ -32,6 +36,9 @@ public class SpecialTaskController {
 
     @Autowired
     private ISpecialTaskService specialTaskService;
+
+    @Autowired
+    private ILibraryService libraryService;
 
     @PostMapping("/search")
     @ApiOperation(value = "查询专项任务")
@@ -85,5 +92,19 @@ public class SpecialTaskController {
     @RequiresPermissions("taskManage:specialTask:specialTask_delete")
     public Result deleteTask(@PathVariable("id") String id){
         return specialTaskService.deleteTask(id);
+    }
+
+    @PostMapping("/park/list")
+    @ApiOperation(value = "管理员获取园区列表")
+    @RequiresPermissions("taskManage:specialTask:specialTask_add")
+    public Result<List<ParkInfoListResponse>> getParkList(){
+        return libraryService.getParkList();
+    }
+
+    @PostMapping("/user/list/{parkId}")
+    @ApiOperation(value = "管理员获取某个园区的人员列表")
+    @RequiresPermissions("taskManage:specialTask:specialTask_add")
+    public Result<List<ParkUserListResponse>> getUserList(@PathVariable("parkId") String parkId){
+        return libraryService.getUserList(parkId);
     }
 }

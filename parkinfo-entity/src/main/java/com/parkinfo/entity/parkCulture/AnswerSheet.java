@@ -3,6 +3,7 @@ package com.parkinfo.entity.parkCulture;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.parkinfo.entity.base.BaseEntity;
 import com.parkinfo.entity.userConfig.ParkUser;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
@@ -66,6 +67,16 @@ public class AnswerSheet extends BaseEntity {
      * 答案
      */
     private String answers;
+
+    /**
+     * 考官
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "creator_id")
+    private ParkUser creator;
+
+    @ApiModelProperty(value = "答题时间（分钟）")
+    private Integer time;
 //     @Transient
 //    private Map<String, Object> answers = new HashMap<>();
 

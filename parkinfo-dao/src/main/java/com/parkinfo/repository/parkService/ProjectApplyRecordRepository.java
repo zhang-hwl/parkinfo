@@ -11,5 +11,7 @@ public interface ProjectApplyRecordRepository extends JpaRepository<ProjectApply
 
     List<ProjectApplyRecord> findByDeleteIsFalseAndCompanyDetail_ParkUser_Id(String userId);
 
+    Optional<ProjectApplyRecord> findByDeleteIsFalseAndCompanyDetail_ParkUser_IdAndProjectInfo_Id(String userId, String projectId);
+
     Optional<ProjectApplyRecord> findByDeleteIsFalseAndId(String id);
 }

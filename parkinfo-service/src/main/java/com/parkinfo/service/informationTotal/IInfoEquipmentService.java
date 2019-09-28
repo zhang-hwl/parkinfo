@@ -2,7 +2,10 @@ package com.parkinfo.service.informationTotal;
 
 import com.parkinfo.common.Result;
 import com.parkinfo.request.infoTotalRequest.InfoEquipmentRequest;
+import com.parkinfo.request.infoTotalRequest.QueryByVersionRequest;
 import com.parkinfo.request.infoTotalRequest.RoomInfoRequest;
+import com.parkinfo.request.infoTotalRequest.UploadAndVersionRequest;
+import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -15,16 +18,12 @@ public interface IInfoEquipmentService {
 
     Result<String> edit(InfoEquipmentRequest roomInfo);
 
-    Result<List<InfoEquipmentRequest>> findByVersion(String version);
+    Result<Page<InfoEquipmentRequest>> findByVersion(QueryByVersionRequest request);
 
-    Result<String> myImport(MultipartFile file);
-
-    Result<String> export(HttpServletResponse response);
-
-    Result<List<InfoEquipmentRequest>> findAll();
+    Result<String> myImport(UploadAndVersionRequest request);
 
     Result<String> delete(String id);
 
-    void download(HttpServletResponse response, String version);
+    void download(String id, HttpServletResponse response);
 
 }

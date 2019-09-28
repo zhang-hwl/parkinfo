@@ -24,4 +24,7 @@ public class ReverseMeetingRoomRequest {
     @NotNull(message = "结束时间不能为空")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date endTime;
+
+    @ApiModelProperty("会议室预约时间区间")
+    private String meetingRoomSections;
 }

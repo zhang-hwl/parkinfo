@@ -1,5 +1,6 @@
 package com.parkinfo.entity.parkService.businessAmuse;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.parkinfo.entity.base.BaseEntity;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import io.swagger.annotations.ApiModel;
@@ -16,6 +17,7 @@ import javax.persistence.*;
 @Table(name = "c_business_amuse")
 @EntityListeners(AuditingEntityListener.class)
 @ApiModel(value = "BusinessAmuse",description =  "商务与周边娱乐")
+@JsonIgnoreProperties(value={"hibernateLazyInitializer","handler"})
 public class BusinessAmuse extends BaseEntity {
     @ManyToOne()
     @JoinColumn(name = "type")
@@ -43,4 +45,7 @@ public class BusinessAmuse extends BaseEntity {
 
     @ApiModelProperty("营业时间")
     private String businessHours;
+
+    @ApiModelProperty("备注")
+    private String remark;
 }

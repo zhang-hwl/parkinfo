@@ -2,14 +2,12 @@ package com.parkinfo.response.archiveInfo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.parkinfo.entity.archiveInfo.ArchiveInfoType;
+import com.parkinfo.enums.ConvertStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.util.Date;
 
 @Data
@@ -33,6 +31,9 @@ public class ArchiveInfoResponse {
 
     @ApiModelProperty(value = "PDF文件地址")
     private String pdfAddress;
+
+    @ApiModelProperty(value = "转换状态，枚举", notes = " SUCCESS,WAITING,FAILED")
+    private ConvertStatus convertStatus;
 
     @ApiModelProperty(value = "园区名称")
     private String parkName;

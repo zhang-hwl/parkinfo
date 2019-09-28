@@ -1,16 +1,18 @@
 package com.parkinfo.web.informationTotal;
 
+import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
-import com.parkinfo.entity.informationTotal.QueryByVersionRequest;
+import com.parkinfo.request.infoTotalRequest.QueryByVersionRequest;
 import com.parkinfo.request.infoTotalRequest.BigEventRequest;
-import com.parkinfo.request.infoTotalRequest.RoomInfoRequest;
+import com.parkinfo.request.infoTotalRequest.UploadAndVersionRequest;
 import com.parkinfo.service.informationTotal.IBigEventService;
 import com.parkinfo.service.informationTotal.IInfoTotalTemplateService;
+import com.parkinfo.service.informationTotal.IInfoVersionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,6 +28,8 @@ public class BigEventController {
     private IBigEventService bigEventService;
     @Autowired
     private IInfoTotalTemplateService templateService;
+    @Autowired
+    private IInfoVersionService infoVersionService;
 
     @PostMapping("/add")
     @ApiOperation(value = "新增园区大事件")
@@ -48,32 +52,23 @@ public class BigEventController {
         return bigEventService.delete(id);
     }
 
-    @PostMapping("/all")
-    @ApiOperation(value = "查询园区大事件")
-    @RequiresPermissions(value = "infoTotal:bigEvent:search")
-    public Result<List<BigEventRequest>> findAll(){
-        return bigEventService.findAll();
-    }
-
     @PostMapping("/search")
     @ApiOperation(value = "根据版本查询园区大事件")
     @RequiresPermissions(value = "infoTotal:bigEvent:search")
-    public Result<List<BigEventRequest>> findByVersion(@RequestBody QueryByVersionRequest request){
-        return bigEventService.findByVersion(request.getVersion());
+    public Result<Page<BigEventRequest>> findByVersion(@RequestBody QueryByVersionRequest request){
+        return bigEventService.findByVersion(request);
     }
 
     @PostMapping("/import")
     @ApiOperation(value = "导入园区大事件")
     @RequiresPermissions(value = "infoTotal:bigEvent:add")
-    public Result<String> myImport(@RequestBody MultipartFile multipartFile){
-        return bigEventService.myImport(multipartFile);
+    public Result<String> myImport(@RequestParam("version") String version , @RequestParam("multipartFile") MultipartFile multipartFile, @RequestParam("parkId") String parkId){
+        UploadAndVersionRequest request = new UploadAndVersionRequest();
+        request.setMultipartFile(multipartFile);
+        request.setVersion(version);
+        request.setParkId(parkId);
+        return bigEventService.myImport(request);
     }
-
-//    @PostMapping("/export")
-//    @ApiOperation(value = "下载园区大事件模板")
-//    public Result<String> export(HttpServletResponse response){
-//        return bigEventService.export(response);
-//    }
 
     @PostMapping("/export")
     @ApiOperation(value = "下载园区大事件模板")
@@ -81,17 +76,17 @@ public class BigEventController {
         return templateService.getTemplateUrl("园区大事记");
     }
 
-    @PostMapping("/download")
+    @GetMapping("/download/{id}")
     @ApiOperation(value = "文件导出")
-    @RequiresPermissions(value = "infoTotal:bigEvent:export")
-    public void download(HttpServletResponse response, @RequestBody QueryByVersionRequest request){
-        bigEventService.download(response, request.getVersion());
+    public void download(@PathVariable("id")String id, HttpServletResponse response){
+        bigEventService.download(id, response);
     }
 
     @PostMapping("/find/version")
     @ApiOperation(value = "查询所有文件版本")
     public Result<List<String>> findAllVersion(){
-        return null;
+        List<String> list = infoVersionService.findByGeneral("园区大事记").getData();
+        return Result.<List<String>>builder().success().data(list).build();
     }
 
 }

@@ -2,6 +2,7 @@ package com.parkinfo.web.parkService;
 
 import com.parkinfo.common.Result;
 import com.parkinfo.request.parkService.feedback.AddFeedbackRequest;
+import com.parkinfo.request.parkService.feedback.QueryFeedBackRequest;
 import com.parkinfo.request.parkService.learningData.EditLearningDataRequest;
 import com.parkinfo.response.parkService.FeedbackResponse;
 import com.parkinfo.service.parkService.IFeedbackService;
@@ -9,6 +10,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
@@ -47,8 +49,8 @@ public class FeedbackController {
     @PostMapping("/list")
     @ApiOperation(value = "查询所有运营方意见反馈")
     @RequiresPermissions("parkService:serviceDemandInfo:feedback:list")
-    public Result<List<FeedbackResponse>> list(){
-        return feedbackService.findAll();
+    public Result<Page<FeedbackResponse>> list(@RequestBody QueryFeedBackRequest request){
+        return feedbackService.findAll(request);
     }
 
 }

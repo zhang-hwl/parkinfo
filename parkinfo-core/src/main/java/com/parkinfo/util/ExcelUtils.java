@@ -155,7 +155,7 @@ public class ExcelUtils {
      * @return
      */
     public static <T> List<T> importExcel(MultipartFile file, Class<T> pojoClass) throws IOException {
-        return importExcel(file, 1, 1, pojoClass);
+        return importExcel(file, 0, 1, pojoClass);
     }
 
     /**

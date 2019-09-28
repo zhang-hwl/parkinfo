@@ -3,6 +3,9 @@ package com.parkinfo.service.informationTotal;
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.informationTotal.PolicyTotal;
 import com.parkinfo.request.infoTotalRequest.PolicyTotalRequest;
+import com.parkinfo.request.infoTotalRequest.QueryByVersionRequest;
+import com.parkinfo.request.infoTotalRequest.UploadAndVersionRequest;
+import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -15,16 +18,12 @@ public interface IPolicyTotalService {
 
     Result<String> editPolicyTotal(PolicyTotalRequest request);
 
-    Result<List<PolicyTotalRequest>> findByVersion(String version);
+    Result<Page<PolicyTotalRequest>> findByVersion(QueryByVersionRequest request);
 
-    Result<String> policyTotalImport(MultipartFile file);
-
-    Result<String> policyTotalExport(HttpServletResponse response);
-
-    Result<List<PolicyTotalRequest>> findAll();
+    Result<String> policyTotalImport(UploadAndVersionRequest request);
 
     Result<String> deletePolicyTotal(String id);
 
-    void download(HttpServletResponse response, String version);
+    void download(String id, HttpServletResponse response);
 
 }
