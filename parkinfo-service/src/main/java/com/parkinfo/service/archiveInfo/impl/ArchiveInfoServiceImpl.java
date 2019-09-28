@@ -252,9 +252,11 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
         List<ParkInfo> byAll = parkInfoRepository.findAllByDeleteIsFalseAndAvailableIsTrue();
         List<ParkInfoResponse> result = Lists.newArrayList();
         byAll.forEach(temp -> {
-            ParkInfoResponse response = new ParkInfoResponse();
-            BeanUtils.copyProperties(temp, response);
-            result.add(response);
+            if(!temp.getName().equals("总裁园区")){
+                ParkInfoResponse response = new ParkInfoResponse();
+                BeanUtils.copyProperties(temp, response);
+                result.add(response);
+            }
         });
         return Result.<List<ParkInfoResponse>>builder().success().data(result).build();
     }
