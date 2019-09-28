@@ -113,6 +113,12 @@ public class LoginServiceImpl implements ILoginService {
         return Result.<List<ParkUserResponse>>builder().success().data(result).build();
     }
 
+    @Override
+    public Result<ParkUserDTO> getUserInfo() {
+        ParkUserDTO parkUserDTO = tokenUtils.getLoginUserDTO();
+        return Result.<ParkUserDTO>builder().success().data(parkUserDTO).build();
+    }
+
     private ParkUser checkParkUser(String id){
         Optional<ParkUser> byIdAndDeleteIsFalse = parkUserRepository.findByIdAndDeleteIsFalse(id);
         if(!byIdAndDeleteIsFalse.isPresent()){

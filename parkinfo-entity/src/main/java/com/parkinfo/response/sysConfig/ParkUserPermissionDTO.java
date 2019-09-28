@@ -1,4 +1,4 @@
-package com.parkinfo.dto;
+package com.parkinfo.response.sysConfig;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

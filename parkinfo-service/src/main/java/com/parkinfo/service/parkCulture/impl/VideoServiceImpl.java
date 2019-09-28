@@ -168,11 +168,14 @@ public class VideoServiceImpl implements IVideoService {
     @Override
     public Result addVideo(AddVideoRequest request) {
         Video video = new Video();
+        ParkUser currentUser = tokenUtils.getLoginUser();
         BeanUtils.copyProperties(request, video);
         VideoCategory videoCategory = this.checkVideoCategory(request.getCategoryId());
         video.setCategory(videoCategory);
         video.setAvailable(true);
         video.setDelete(false);
+        video.setReadNum(0);
+        video.setUploader(currentUser);
         videoRepository.save(video);
         return Result.builder().success().message("保存视频成功").build();
     }

@@ -2,6 +2,7 @@ package com.parkinfo.entity.userConfig;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.parkinfo.entity.base.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -36,6 +37,11 @@ public class ParkPermission extends BaseEntity {
     private String remark;
 
     /**
+     * 路由
+     */
+    private String path;
+
+    /**
      * 上级权限
      */
     @ManyToOne(fetch= FetchType.LAZY)
@@ -47,7 +53,8 @@ public class ParkPermission extends BaseEntity {
      * 下级权限
      */
     @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="parent")
-    //@JsonIgnoreProperties("parent")
+    @JsonIgnoreProperties("parent")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private Set<ParkPermission> children = new HashSet<>(0);
 
 }
