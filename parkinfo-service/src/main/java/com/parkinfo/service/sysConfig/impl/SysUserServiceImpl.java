@@ -14,16 +14,16 @@ import com.parkinfo.repository.userConfig.ParkUserRepository;
 import com.parkinfo.request.sysConfig.AddUserRequest;
 import com.parkinfo.request.sysConfig.QuerySysUserRequest;
 import com.parkinfo.request.sysConfig.SetUserRequest;
+import com.parkinfo.response.sysConfig.SysRoleResponse;
+import com.parkinfo.response.sysConfig.SysUserResponse;
 import com.parkinfo.service.sysConfig.ISysUserService;
 import com.parkinfo.tools.oss.IOssService;
 import net.bytebuddy.implementation.bytecode.Throw;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.crypto.hash.SimpleHash;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -51,11 +51,11 @@ public class SysUserServiceImpl implements ISysUserService {
     private IOssService ossService;
 
     @Override
-    public Result<Page<ParkUser>> searchUser(QuerySysUserRequest request) {
+    public Result<Page<SysUserResponse>> searchUser(QuerySysUserRequest request) {
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
         Specification<ParkUser> specification = (Specification<ParkUser>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = Lists.newArrayList();
-            if (request.getRoleId()!=null){
+            if (StringUtils.isNotBlank(request.getRoleId())){
                 SetJoin<ParkUser, ParkRole> setJoin = root.join(root.getModel().getSet("roles",ParkRole.class), JoinType.LEFT);
                 predicates.add(criteriaBuilder.equal(setJoin.get("id").as(String.class),request.getRoleId()));
             }
@@ -72,7 +72,21 @@ public class SysUserServiceImpl implements ISysUserService {
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
         Page<ParkUser> parkUserPage = parkUserRepository.findAll(specification, pageable);
-        return Result.<Page<ParkUser>>builder().success().data(parkUserPage).build();
+        List<SysUserResponse> list = Lists.newArrayList();
+        parkUserPage.getContent().forEach(temp -> {
+            SysUserResponse sysUserResponse = new SysUserResponse();
+            BeanUtils.copyProperties(temp, sysUserResponse);
+            List<SysRoleResponse> roleResponses = Lists.newArrayList();
+            temp.getRoles().forEach(tempRole -> {
+                SysRoleResponse sysRoleResponse = new SysRoleResponse();
+                BeanUtils.copyProperties(tempRole, sysRoleResponse);
+                roleResponses.add(sysRoleResponse);
+            });
+            sysUserResponse.setRoleResponses(roleResponses);
+            list.add(sysUserResponse);
+        });
+        Page<SysUserResponse> result = new PageImpl<>(list, parkUserPage.getPageable(), parkUserPage.getTotalElements());
+        return Result.<Page<SysUserResponse>>builder().success().data(result).build();
     }
 
     @Override
@@ -93,13 +107,19 @@ public class SysUserServiceImpl implements ISysUserService {
         String initPassword = (SettingType.INIT_PASSWORD.getDefaultValue());
         String password = new SimpleHash("MD5", initPassword, newData.getSalt(), 1024).toHex();
         newData.setPassword(password);
-        if (request.getRoleId()!=null&&!request.getRoleId().isEmpty()) {
-            List<ParkRole> sysRoleList = parkRoleRepository.findAllById(request.getRoleId());
-            newData.setRoles(new HashSet<>(sysRoleList));
+//        if (request.getRoleId()!=null&&!request.getRoleId().isEmpty()) {
+//            List<ParkRole> sysRoleList = parkRoleRepository.findAllById(request.getRoleId());
+//            newData.setRoles(new HashSet<>(sysRoleList));
+//        }
+//        if (request.getParkId()!=null&&!request.getParkId().isEmpty()) {
+//            List<ParkInfo> parkInfoList = parkInfoRepository.findAllById(request.getParkId());
+//            newData.setParks(new HashSet<>(parkInfoList));
+//        }
+        if(StringUtils.isNotBlank(request.getParkId())){
+
         }
-        if (request.getParkId()!=null&&!request.getParkId().isEmpty()) {
-            List<ParkInfo> parkInfoList = parkInfoRepository.findAllById(request.getParkId());
-            newData.setParks(new HashSet<>(parkInfoList));
+        if(StringUtils.isNotBlank(request.getRoleId())){
+
         }
         parkUserRepository.save(newData);
         return Result.builder().success().message("添加用户成功").build();
@@ -111,14 +131,14 @@ public class SysUserServiceImpl implements ISysUserService {
         parkUser.setAvatar(request.getAvatar());
         parkUser.setAccount(request.getAccount());
         parkUser.setNickname(request.getNickname());
-        if (request.getRoleId()!=null&&!request.getRoleId().isEmpty()) {
-            List<ParkRole> sysRoleList = parkRoleRepository.findAllById(request.getRoleId());
-            parkUser.setRoles(new HashSet<>(sysRoleList));
-        }
-        if (request.getParkId()!=null&&!request.getParkId().isEmpty()) {
-            List<ParkInfo> parkInfoList = parkInfoRepository.findAllById(request.getParkId());
-            parkUser.setParks(new HashSet<>(parkInfoList));
-        }
+//        if (request.getRoleId()!=null&&!request.getRoleId().isEmpty()) {
+//            List<ParkRole> sysRoleList = parkRoleRepository.findAllById(request.getRoleId());
+//            parkUser.setRoles(new HashSet<>(sysRoleList));
+//        }
+//        if (request.getParkId()!=null&&!request.getParkId().isEmpty()) {
+//            List<ParkInfo> parkInfoList = parkInfoRepository.findAllById(request.getParkId());
+//            parkUser.setParks(new HashSet<>(parkInfoList));
+//        }
         parkUserRepository.save(parkUser);
         return Result.builder().success().message("修改用户成功").build();
     }

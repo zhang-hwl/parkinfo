@@ -5,7 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface CompanyDetailRepository extends JpaRepository<CompanyDetail,String> {
@@ -21,4 +23,12 @@ public interface CompanyDetailRepository extends JpaRepository<CompanyDetail,Str
     Optional<CompanyDetail> findByIdAndDeleteIsFalseAndAvailableIsTrue(String id);
 
     Optional<CompanyDetail> findByIdAndDeleteEnterIsFalse(String id);
+
+//    @Query(nativeQuery = true, value = "select count(id) from c_company_detail where park_id=?1 and entered=?2")
+//    Integer findByParkInfo_IdAndEnteredIsTrue(String id, String entered);
+
+    List<CompanyDetail> findByParkInfo_IdAndEnteredIsTrue(String id);
+
+    Optional<CompanyDetail> findByParkUser_Id(String id);
+
 }

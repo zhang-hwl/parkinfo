@@ -11,4 +11,9 @@ public interface ParkRoleRepository extends JpaRepository<ParkRole,String> {
 
     List<ParkRole> findAllByDeleteIsFalseAndAvailableIsTrue(Sort sort);
 
+    Optional<ParkRole> findByNameAndDeleteIsFalseAndAvailableIsTrue(String name);
+
+    List<ParkRole> findAllByDeleteIsFalseAndAvailableIsTrue();
+
+
 }

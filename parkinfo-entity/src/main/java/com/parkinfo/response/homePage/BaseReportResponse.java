@@ -6,10 +6,10 @@ import lombok.Data;
 @Data
 public class BaseReportResponse {
 
-    @ApiModelProperty("key")
+    @ApiModelProperty("横坐标")
     private String key;
 
-    @ApiModelProperty("value")
+    @ApiModelProperty("纵坐标")
     private String value;
 
 

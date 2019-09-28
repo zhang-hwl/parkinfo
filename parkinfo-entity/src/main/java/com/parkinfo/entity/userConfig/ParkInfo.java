@@ -36,6 +36,18 @@ public class ParkInfo extends BaseEntity {
      */
     private String name;
 
+    //开户账号
+    private String openId;
+
+    //开户行
+    private String openBank;
+
+    //营业执照
+    private String permit;
+
+    //开户许可证
+    private String license;
+
     /**
      * 园区负责人
      */

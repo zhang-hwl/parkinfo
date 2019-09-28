@@ -30,14 +30,14 @@ public class HomeReportController {
 
     @PostMapping("/tax/find/year")
     @ApiOperation(value = "总裁-获取园区当年税收累计")
-    public Result<List<TaxReportResponse>> findAllYearTaxReport(){
+    public Result<TaxReportResponse> findAllYearTaxReport(){
         return iHomeRepostService.findAllYearTaxReport();
     }
 
-    @PostMapping("/tax/find/month")
-    @ApiOperation(value = "总裁-获取园区当月税收累计")
-    public Result<List<TaxReportResponse>> findAllMonthTaxReport(){
-        return iHomeRepostService.findAllMonthTaxReport();
+    @PostMapping("/tax/find/quarter")
+    @ApiOperation(value = "总裁-获取园区当季度税收累计")
+    public Result<TaxReportResponse> findAllQuarterTaxReport(){
+        return iHomeRepostService.findAllQuarterTaxReport();
     }
 
     @PostMapping("/info/findAll")

@@ -20,8 +20,8 @@ public class AddUserRequest {
     private String avatar;
 
     @ApiModelProperty(value = "绑定园区id")
-    private List<String> parkId;
+    private String parkId;
 
     @ApiModelProperty(value = "绑定角色id")
-    private List<String> roleId;
+    private String roleId;
 }

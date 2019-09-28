@@ -11,9 +11,9 @@ public interface IHomeRepostService {
 
     Result<List<EnterReportResponse>> findAllEnterReport();
 
-    Result<List<TaxReportResponse>> findAllYearTaxReport();
+    Result<TaxReportResponse> findAllYearTaxReport();
 
-    Result<List<TaxReportResponse>> findAllMonthTaxReport();
+    Result<TaxReportResponse> findAllQuarterTaxReport();
 
     Result<List<InfoTotalReportResponse>> findAllInfoReport();
 
