@@ -122,10 +122,10 @@ public class SysUserServiceImpl implements ISysUserService {
             throw new NormalException("角色不存在");
         }
         ParkRole parkRole = byId.get();
-        //园区管理员，新增本园区员工
         //超管，新增园管(id必传)，选园区，总裁总裁办默认园区
         Set<ParkInfo> parkInfos = Sets.newHashSet();
         Set<ParkRole> parkRoles = Sets.newHashSet();
+        parkRoles.add(parkRole);
         if(roles.contains(admin)){
             if(parkRole.getName().equals(ParkRoleEnum.PARK_MANAGER.name())){
                 if(StringUtils.isBlank(request.getParkId())){
@@ -145,10 +145,13 @@ public class SysUserServiceImpl implements ISysUserService {
                 }
             }
         }
+        //园区管理员，新增本园区员工
         else{
-
+            ParkInfo parkInfo = tokenUtils.getCurrentParkInfo();
+            parkInfos.add(parkInfo);
         }
         newData.setParks(parkInfos);
+        newData.setRoles(parkRoles);
         parkUserRepository.save(newData);
         return Result.builder().success().message("添加用户成功").build();
     }
@@ -157,12 +160,6 @@ public class SysUserServiceImpl implements ISysUserService {
     public Result setUser(SetUserRequest request) {
         ParkUser parkUser = this.checkUser(request.getId());
         BeanUtils.copyProperties(request, parkUser);
-        if(StringUtils.isNotBlank(request.getParkId())){
-
-        }
-        if(StringUtils.isNotBlank(request.getRoleId())){
-
-        }
         parkUserRepository.save(parkUser);
         return Result.builder().success().message("修改用户成功").build();
     }

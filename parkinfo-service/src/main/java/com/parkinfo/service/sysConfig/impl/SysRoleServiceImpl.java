@@ -10,10 +10,12 @@ import com.parkinfo.repository.userConfig.ParkPermissionRepository;
 import com.parkinfo.repository.userConfig.ParkRoleRepository;
 import com.parkinfo.request.sysConfig.QuerySysRoleRequest;
 import com.parkinfo.request.sysConfig.SetPermissionRequest;
+import com.parkinfo.response.sysConfig.SysRoleResponse;
 import com.parkinfo.service.sysConfig.ISysRoleService;
 import com.parkinfo.token.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -75,14 +77,14 @@ public class SysRoleServiceImpl implements ISysRoleService {
     }
 
     @Override
-    public Result<List<ParkRole>> getAllRole() {
+    public Result<List<SysRoleResponse>> getAllRole() {
         Set<ParkRole> roles = tokenUtils.getLoginUser().getRoles();
-        List<ParkRole> parkRoleList = Lists.newArrayList();
+        List<SysRoleResponse> parkRoleList = Lists.newArrayList();
         Optional<ParkRole> admin = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.ADMIN.name());
         if(admin.isPresent() && roles.contains(admin.get())){
-            ParkRole park1 = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PRESIDENT.name()).get();
-            ParkRole park2 = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.GENERAL_MANAGER.name()).get();
-            ParkRole park3 = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PARK_MANAGER.name()).get();
+            SysRoleResponse park1 = convertRoleResponse(parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PRESIDENT.name()).get());
+            SysRoleResponse park2 = convertRoleResponse(parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.GENERAL_MANAGER.name()).get());
+            SysRoleResponse park3 = convertRoleResponse(parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PARK_MANAGER.name()).get());
             parkRoleList.add(park1);
             parkRoleList.add(park2);
             parkRoleList.add(park3);
@@ -91,14 +93,14 @@ public class SysRoleServiceImpl implements ISysRoleService {
         //超管->总裁，总裁办，园管
         Optional<ParkRole> manager = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PARK_MANAGER.name());
         if(manager.isPresent() && roles.contains(manager.get())){
-            ParkRole park1 = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.HR_USER.name()).get();
-            ParkRole park2 = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.OFFICER.name()).get();
-            ParkRole park3 = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PARK_USER.name()).get();
+            SysRoleResponse park1 = convertRoleResponse(parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.HR_USER.name()).get());
+            SysRoleResponse park2 = convertRoleResponse(parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.OFFICER.name()).get());
+            SysRoleResponse park3 = convertRoleResponse(parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PARK_USER.name()).get());
             parkRoleList.add(park1);
             parkRoleList.add(park2);
             parkRoleList.add(park3);
         }
-        return Result.<List<ParkRole>>builder().success().data(parkRoleList).build();
+        return Result.<List<SysRoleResponse>>builder().success().data(parkRoleList).build();
     }
 
     private ParkRole checkRole(String roleId) {
@@ -107,6 +109,12 @@ public class SysRoleServiceImpl implements ISysRoleService {
             throw new NormalException("角色信息不存在");
         }
         return sysRoleOptional.get();
+    }
+
+    private SysRoleResponse convertRoleResponse(ParkRole parkRole){
+        SysRoleResponse response = new SysRoleResponse();
+        BeanUtils.copyProperties(parkRole, response);
+        return response;
     }
 
 }

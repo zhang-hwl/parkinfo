@@ -6,6 +6,7 @@ import com.parkinfo.entity.userConfig.ParkPermission;
 import com.parkinfo.entity.userConfig.ParkRole;
 import com.parkinfo.request.sysConfig.QuerySysRoleRequest;
 import com.parkinfo.request.sysConfig.SetPermissionRequest;
+import com.parkinfo.response.sysConfig.SysRoleResponse;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -36,5 +37,5 @@ public interface ISysRoleService {
      * 查询所有角色
      * @return
      */
-    Result<List<ParkRole>> getAllRole();
+    Result<List<SysRoleResponse>> getAllRole();
 }

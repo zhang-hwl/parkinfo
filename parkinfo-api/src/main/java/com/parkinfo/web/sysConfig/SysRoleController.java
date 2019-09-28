@@ -6,6 +6,7 @@ import com.parkinfo.entity.userConfig.ParkRole;
 import com.parkinfo.request.sysConfig.QuerySysRoleRequest;
 import com.parkinfo.request.sysConfig.SetPermissionRequest;
 import com.parkinfo.response.login.LoginResponse;
+import com.parkinfo.response.sysConfig.SysRoleResponse;
 import com.parkinfo.service.sysConfig.ISysRoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -51,7 +52,7 @@ public class SysRoleController {
 
     @PostMapping("/query")
     @ApiOperation(value = "获取所有角色不分页")
-    public Result<List<ParkRole>> getAllRole() {
+    public Result<List<SysRoleResponse>> getAllRole() {
         return sysRoleService.getAllRole();
     }
 }

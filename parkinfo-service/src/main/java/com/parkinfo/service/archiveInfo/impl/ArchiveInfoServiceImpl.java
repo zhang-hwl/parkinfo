@@ -100,8 +100,13 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
         }
         ParkUser parkUser = parkUserRepository.findByIdAndDeleteIsFalse(loginUserDTO.getId()).get();
         String parkId = loginUserDTO.getCurrentParkId();
+        String fileAddress = request.getFileAddress();
         ArchiveInfo archiveInfo = new ArchiveInfo();
         BeanUtils.copyProperties(request, archiveInfo);
+        if(!fileAddress.endsWith("docx") && !fileAddress.endsWith("doc") && !fileAddress.endsWith("ppt") && !fileAddress.endsWith("pptx") && !fileAddress.endsWith("xlsx") && !fileAddress.endsWith("xls")){
+            archiveInfo.setConvertStatus(ConvertStatus.SUCCESS);
+            archiveInfo.setPdfAddress(request.getFileAddress());
+        }
         Optional<ParkInfo> byIdAndDeleteIsFalse = parkInfoRepository.findByIdAndDeleteIsFalse(parkId);
         if(!byIdAndDeleteIsFalse.isPresent()){
             throw new NormalException("园区不存在");
@@ -121,7 +126,9 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
         archiveInfo.setAvailable(true);
         archiveInfo.setConvertStatus(ConvertStatus.WAITING);
         ArchiveInfo save = archiveInfoRepository.save(archiveInfo);
-        sender.send(save.getId());
+        if(fileAddress.endsWith("docx") || fileAddress.endsWith("doc") || fileAddress.endsWith("ppt") || fileAddress.endsWith("pptx") || fileAddress.endsWith("xlsx") || fileAddress.endsWith("xls")){
+            sender.send(save.getId());
+        }
         if(request.getExternal()){
             LearningData learningData = new LearningData();
             BeanUtils.copyProperties(save, learningData);
