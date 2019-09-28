@@ -1,11 +1,13 @@
 package com.parkinfo.web.sysConfig;
 
 import com.parkinfo.common.Result;
+import com.parkinfo.dto.ParkUserPermissionDTO;
 import com.parkinfo.entity.userConfig.ParkPermission;
 import com.parkinfo.entity.userConfig.ParkRole;
 import com.parkinfo.request.sysConfig.QuerySysRoleRequest;
 import com.parkinfo.request.sysConfig.SetPermissionRequest;
 import com.parkinfo.response.login.LoginResponse;
+import com.parkinfo.response.sysConfig.RolePermissionListResponse;
 import com.parkinfo.response.sysConfig.SysRoleResponse;
 import com.parkinfo.service.sysConfig.ISysRoleService;
 import io.swagger.annotations.Api;
@@ -48,6 +50,12 @@ public class SysRoleController {
             }
         }
         return sysRoleService.setPermissions(request);
+    }
+
+    @PostMapping("/list/{roleId}")
+    @ApiOperation(value = "根据角色获取权限")
+    public  Result<RolePermissionListResponse> getUserPermissions(@PathVariable("roleId") String roleId){
+        return sysRoleService.getUserPermissions(roleId);
     }
 
     @PostMapping("/query")

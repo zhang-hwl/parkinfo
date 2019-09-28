@@ -10,6 +10,8 @@ import com.parkinfo.repository.userConfig.ParkPermissionRepository;
 import com.parkinfo.repository.userConfig.ParkRoleRepository;
 import com.parkinfo.request.sysConfig.QuerySysRoleRequest;
 import com.parkinfo.request.sysConfig.SetPermissionRequest;
+import com.parkinfo.response.sysConfig.ParkUserPermissionDTO;
+import com.parkinfo.response.sysConfig.RolePermissionListResponse;
 import com.parkinfo.response.sysConfig.SysRoleResponse;
 import com.parkinfo.service.sysConfig.ISysRoleService;
 import com.parkinfo.token.TokenUtils;
@@ -19,11 +21,13 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toCollection;
 
 
 @Service
@@ -32,8 +36,10 @@ public class SysRoleServiceImpl implements ISysRoleService {
 
     @Autowired
     private ParkRoleRepository parkRoleRepository;
+
     @Autowired
     private ParkPermissionRepository parkPermissionRepository;
+
     @Autowired
     private TokenUtils tokenUtils;
 
@@ -60,20 +66,44 @@ public class SysRoleServiceImpl implements ISysRoleService {
     }
 
     @Override
+    @Transactional
     public Result setPermissions(SetPermissionRequest request) {
-        Set<ParkPermission> permissionSet = new HashSet<>();
+//        Set<ParkPermission> permissionSet = new HashSet<>();
         List<String> permissionIds = request.getPermissionIds();
         ParkRole parkRole = this.checkRole(request.getRoleId());
-        permissionIds.forEach(permissionId ->{
-            Optional<ParkPermission> permissionOptional = parkPermissionRepository.findById(permissionId);
-            if (permissionOptional.isPresent()) {
-                ParkPermission parkPermission = permissionOptional.get();
-                permissionSet.add(parkPermission);
-            }
-        });
-        parkRole.setPermissions(permissionSet);
+//        permissionIds.forEach(permissionId ->{
+//            Optional<ParkPermission> permissionOptional = parkPermissionRepository.findById(permissionId);
+//            if (permissionOptional.isPresent()) {
+//                ParkPermission parkPermission = permissionOptional.get();
+//                permissionSet.add(parkPermission);
+//            }
+//        });
+        List<ParkPermission> parkPermissionList = parkPermissionRepository.findAllById(permissionIds);
+        parkRole.setPermissions(new HashSet<>(parkPermissionList));
         parkRoleRepository.save(parkRole);
         return Result.builder().success().message("设置权限成功").build();
+    }
+
+    @Override
+    public Result<RolePermissionListResponse> getUserPermissions(String roleId) {
+        RolePermissionListResponse response = new RolePermissionListResponse();
+        Optional<ParkRole> sysRoleOptional = parkRoleRepository.findById(roleId);
+        if (!sysRoleOptional.isPresent()) {
+            throw new NormalException("角色信息不存在");
+        }
+        ParkRole role = sysRoleOptional.get();
+//        List<ParkPermission> permissionList = role.getPermissions().stream().filter(parkPermission -> parkPermission.getChildren()==null).collect(Collectors.toList());
+        List<String> permissionIds = role.getPermissions().stream().map(ParkPermission::getId).collect(Collectors.toList());
+        List<ParkPermission> childParkPermissionList = parkPermissionRepository.findByChildrenIsNullAndIdIsIn(permissionIds);
+        List<ParkPermission> parentParkPermissionList = parkPermissionRepository.findByChildrenIsNotNullAndIdIsIn(permissionIds).stream().collect(
+                collectingAndThen(
+                        toCollection(() -> new TreeSet<>(Comparator.comparing(ParkPermission::getId))), ArrayList::new)
+        );
+        List<ParkUserPermissionDTO> childResponseList = this.convertParkPermissionDTO(childParkPermissionList);
+        List<ParkUserPermissionDTO> parentResponseList = this.convertParkPermissionDTO(parentParkPermissionList);
+        response.setParentPermissionList(parentResponseList);
+        response.setChildPermissionList(childResponseList);
+        return Result.<RolePermissionListResponse>builder().success().data(response).build();
     }
 
     @Override
@@ -115,6 +145,16 @@ public class SysRoleServiceImpl implements ISysRoleService {
         SysRoleResponse response = new SysRoleResponse();
         BeanUtils.copyProperties(parkRole, response);
         return response;
+    }
+
+    private List<ParkUserPermissionDTO> convertParkPermissionDTO(List<ParkPermission> childParkPermissionList) {
+        List<ParkUserPermissionDTO> permissionDTOList = Lists.newArrayList();
+        childParkPermissionList.forEach(permission->{
+            ParkUserPermissionDTO permissionDTO = new ParkUserPermissionDTO();
+            BeanUtils.copyProperties(permission,permissionDTO);
+            permissionDTOList.add(permissionDTO);
+        });
+        return permissionDTOList;
     }
 
 }

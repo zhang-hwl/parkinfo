@@ -3,8 +3,11 @@ package com.parkinfo.web.taskManage;
 import com.parkinfo.common.Result;
 import com.parkinfo.request.taskManage.AddManagementTaskRequest;
 import com.parkinfo.request.taskManage.QueryManagementTaskRequest;
+import com.parkinfo.response.login.ParkInfoListResponse;
+import com.parkinfo.response.login.ParkUserListResponse;
 import com.parkinfo.response.taskManage.ManagementTaskDetailResponse;
 import com.parkinfo.response.taskManage.ManagementTaskListResponse;
+import com.parkinfo.service.parkCulture.ILibraryService;
 import com.parkinfo.service.taskManage.IManagementTaskService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -16,6 +19,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * When I wrote this, only God and I understood what I was doing
@@ -31,6 +35,9 @@ public class ManagementTaskController {
 
     @Autowired
     private IManagementTaskService managementTaskService;
+
+    @Autowired
+    private ILibraryService libraryService;
 
     @PostMapping("/search")
     @ApiOperation(value = "查询管理制度任务")
@@ -84,6 +91,20 @@ public class ManagementTaskController {
     @RequiresPermissions("taskManage:managementTask:managementTask_delete")
     public Result deleteTask(@PathVariable("id") String id){
         return managementTaskService.deleteTask(id);
+    }
+
+    @PostMapping("/park/list")
+    @ApiOperation(value = "管理员获取园区列表")
+    @RequiresPermissions("taskManage:managementTask:managementTask_add")
+    public Result<List<ParkInfoListResponse>> getParkList(){
+        return libraryService.getParkList();
+    }
+
+    @PostMapping("/user/list/{parkId}")
+    @ApiOperation(value = "管理员获取某个园区的人员列表")
+    @RequiresPermissions("taskManage:managementTask:managementTask_add")
+    public Result<List<ParkUserListResponse>> getUserList(@PathVariable("parkId") String parkId){
+        return libraryService.getUserList(parkId);
     }
     
 }

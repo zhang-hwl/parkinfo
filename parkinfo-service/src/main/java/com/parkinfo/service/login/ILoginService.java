@@ -1,6 +1,7 @@
 package com.parkinfo.service.login;
 
 import com.parkinfo.common.Result;
+import com.parkinfo.dto.ParkUserDTO;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.request.login.LoginRequest;
@@ -21,4 +22,6 @@ public interface ILoginService {
     Result<Page<ParkUserResponse>> search(QueryUserByParkRequest request);
 
     Result<List<ParkUserResponse>> findAll();
+
+    Result<ParkUserDTO> getUserInfo();
 }
