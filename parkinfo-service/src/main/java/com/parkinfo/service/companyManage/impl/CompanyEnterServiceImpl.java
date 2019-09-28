@@ -123,6 +123,7 @@ public class CompanyEnterServiceImpl implements ICompanyEnterService {
             }else {
                 EnclosureTotal enclosureTotal = byEnclosureType.get();
                 BeanUtils.copyProperties(addFileRequest,enclosureTotal);
+                enclosureTotal.setCompanyDetail(companyDetail);
                 enclosureTotalRepository.save(enclosureTotal);
             }
         });
