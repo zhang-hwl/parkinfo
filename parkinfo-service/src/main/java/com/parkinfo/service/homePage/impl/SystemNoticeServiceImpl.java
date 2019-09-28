@@ -68,6 +68,7 @@ public class SystemNoticeServiceImpl implements ISystemNoticeService {
         }
         SystemNoticeEntity entity = byId.get();
         entity.setDelete(true);
+        systemNoticeRepository.save(entity);
         return Result.<String>builder().success().data("删除成功").build();
     }
 }
