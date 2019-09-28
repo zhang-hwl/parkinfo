@@ -11,6 +11,7 @@ import com.parkinfo.entity.parkService.learningData.LearningData;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.entity.userConfig.ParkRole;
 import com.parkinfo.entity.userConfig.ParkUser;
+import com.parkinfo.enums.ConvertStatus;
 import com.parkinfo.enums.ParkRoleEnum;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.archiveInfo.ArchiveCommentRepository;
@@ -118,9 +119,15 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
         archiveInfo.setUploadTime(new Date());
         archiveInfo.setDelete(false);
         archiveInfo.setAvailable(true);
+        archiveInfo.setConvertStatus(ConvertStatus.WAITING);
         ArchiveInfo save = archiveInfoRepository.save(archiveInfo);
-        if(StringUtils.isNotBlank(save.getFileAddress())){
-
+        sender.send(save.getId());
+        if(request.getExternal()){
+            LearningData learningData = new LearningData();
+            BeanUtils.copyProperties(save, learningData);
+            learningData.setFilePath(save.getFileAddress());
+            learningData.setDescription(save.getRemark());
+            learningDataRepository.save(learningData);
         }
         return Result.<String>builder().success().data("新增成功").build();
     }
@@ -142,6 +149,9 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
             archiveInfo.setKind(archiveInfoType);
         }
         archiveInfoRepository.save(archiveInfo);
+        if(!archiveInfo.getFileAddress().equals(request.getFileAddress())){
+            sender.send(archiveInfo.getId());
+        }
         return Result.<String>builder().success().data("编辑成功").build();
     }
 

@@ -128,8 +128,22 @@ public class HomeReportServiceImpl implements IHomeRepostService {
                     int year = calendar.get(Calendar.YEAR);
                     calendar.setTime(new Date());
                     int nowYear = calendar.get(Calendar.YEAR);
+                    int month = calendar.get(Calendar.MONTH);   //当前月份
                     if(year == nowYear){
-                        taxCount = temp.getFirstQuarter().add(temp.getSecondQuarter()).add(temp.getThirdQuarter()).add(temp.getFourthQuarter());
+                        switch (month){
+                            case 1: case 2: case 3:
+                                taxCount = temp.getFirstQuarter();
+                                break;
+                            case 4: case 5: case 6:
+                                taxCount = temp.getSecondQuarter();
+                                break;
+                            case 7: case 8: case 9:
+                                taxCount = temp.getThirdQuarter();
+                                break;
+                            case 10: case 11: case 12:
+                                taxCount = temp.getFourthQuarter();
+                                break;
+                        }
                     }
                 }
             }

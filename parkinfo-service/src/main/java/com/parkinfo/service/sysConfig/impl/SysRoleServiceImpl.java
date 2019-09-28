@@ -1,5 +1,6 @@
 package com.parkinfo.service.sysConfig.impl;
 
+import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.userConfig.ParkPermission;
 import com.parkinfo.entity.userConfig.ParkRole;
@@ -76,14 +77,27 @@ public class SysRoleServiceImpl implements ISysRoleService {
     @Override
     public Result<List<ParkRole>> getAllRole() {
         Set<ParkRole> roles = tokenUtils.getLoginUser().getRoles();
+        List<ParkRole> parkRoleList = Lists.newArrayList();
         Optional<ParkRole> admin = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.ADMIN.name());
-        if(admin.isPresent()){
-           parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PRESIDENT.name()).get();
-
+        if(admin.isPresent() && roles.contains(admin.get())){
+            ParkRole park1 = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PRESIDENT.name()).get();
+            ParkRole park2 = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.GENERAL_MANAGER.name()).get();
+            ParkRole park3 = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PARK_MANAGER.name()).get();
+            parkRoleList.add(park1);
+            parkRoleList.add(park2);
+            parkRoleList.add(park3);
         }
-        List<ParkRole> parkRoleList = parkRoleRepository.findAllByDeleteIsFalseAndAvailableIsTrue();
         //管理员->HR,Or,User
         //超管->总裁，总裁办，园管
+        Optional<ParkRole> manager = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PARK_MANAGER.name());
+        if(manager.isPresent() && roles.contains(manager.get())){
+            ParkRole park1 = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.HR_USER.name()).get();
+            ParkRole park2 = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.OFFICER.name()).get();
+            ParkRole park3 = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PARK_USER.name()).get();
+            parkRoleList.add(park1);
+            parkRoleList.add(park2);
+            parkRoleList.add(park3);
+        }
         return Result.<List<ParkRole>>builder().success().data(parkRoleList).build();
     }
 

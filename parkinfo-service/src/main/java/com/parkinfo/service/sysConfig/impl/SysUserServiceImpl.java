@@ -1,11 +1,13 @@
 package com.parkinfo.service.sysConfig.impl;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.entity.userConfig.ParkRole;
 import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.enums.FileUploadType;
+import com.parkinfo.enums.ParkRoleEnum;
 import com.parkinfo.enums.SettingType;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.userConfig.ParkInfoRepository;
@@ -17,7 +19,9 @@ import com.parkinfo.request.sysConfig.SetUserRequest;
 import com.parkinfo.response.sysConfig.SysRoleResponse;
 import com.parkinfo.response.sysConfig.SysUserResponse;
 import com.parkinfo.service.sysConfig.ISysUserService;
+import com.parkinfo.token.TokenUtils;
 import com.parkinfo.tools.oss.IOssService;
+import jdk.nashorn.internal.parser.Token;
 import net.bytebuddy.implementation.bytecode.Throw;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.crypto.hash.SimpleHash;
@@ -31,9 +35,11 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.SetJoin;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.crypto.Data;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class SysUserServiceImpl implements ISysUserService {
@@ -49,6 +55,9 @@ public class SysUserServiceImpl implements ISysUserService {
 
     @Autowired
     private IOssService ossService;
+
+    @Autowired
+    private TokenUtils tokenUtils;
 
     @Override
     public Result<Page<SysUserResponse>> searchUser(QuerySysUserRequest request) {
@@ -98,29 +107,48 @@ public class SysUserServiceImpl implements ISysUserService {
     @Override
     public Result addUser(AddUserRequest request) {
         ParkUser newData = new ParkUser();
+        BeanUtils.copyProperties(request, newData);
         newData.setDelete(false);
         newData.setAvailable(true);
-        newData.setAvatar(request.getAvatar());
-        newData.setAccount(request.getAccount());
-        newData.setNickname(request.getNickname());
         newData.setSalt(SettingType.INIT_SALT.getDefaultValue());
         String initPassword = (SettingType.INIT_PASSWORD.getDefaultValue());
         String password = new SimpleHash("MD5", initPassword, newData.getSalt(), 1024).toHex();
         newData.setPassword(password);
-//        if (request.getRoleId()!=null&&!request.getRoleId().isEmpty()) {
-//            List<ParkRole> sysRoleList = parkRoleRepository.findAllById(request.getRoleId());
-//            newData.setRoles(new HashSet<>(sysRoleList));
-//        }
-//        if (request.getParkId()!=null&&!request.getParkId().isEmpty()) {
-//            List<ParkInfo> parkInfoList = parkInfoRepository.findAllById(request.getParkId());
-//            newData.setParks(new HashSet<>(parkInfoList));
-//        }
-        if(StringUtils.isNotBlank(request.getParkId())){
+        Set<ParkRole> roles = tokenUtils.getLoginUser().getRoles();
+        ParkRole admin = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.ADMIN.name()).get();  //超级管理员
+        ParkRole manager = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PARK_MANAGER.name()).get(); //园区管理员
+        Optional<ParkRole> byId = parkRoleRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(request.getRoleId());
+        if(!byId.isPresent()){
+            throw new NormalException("角色不存在");
+        }
+        ParkRole parkRole = byId.get();
+        //园区管理员，新增本园区员工
+        //超管，新增园管(id必传)，选园区，总裁总裁办默认园区
+        Set<ParkInfo> parkInfos = Sets.newHashSet();
+        Set<ParkRole> parkRoles = Sets.newHashSet();
+        if(roles.contains(admin)){
+            if(parkRole.getName().equals(ParkRoleEnum.PARK_MANAGER.name())){
+                if(StringUtils.isBlank(request.getParkId())){
+                    throw new NormalException("园区id不能为空");
+                }
+                Optional<ParkInfo> byPardId = parkInfoRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(request.getParkId());
+                if(!byPardId.isPresent()){
+                    ParkInfo parkInfo = byPardId.get();
+                    parkInfos.add(parkInfo);
+                }
+            }
+            else{
+                Optional<ParkInfo> byParkName = parkInfoRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue("总裁园区");
+                if(byParkName.isPresent()){
+                    ParkInfo parkInfo = byParkName.get();
+                    parkInfos.add(parkInfo);
+                }
+            }
+        }
+        else{
 
         }
-        if(StringUtils.isNotBlank(request.getRoleId())){
-
-        }
+        newData.setParks(parkInfos);
         parkUserRepository.save(newData);
         return Result.builder().success().message("添加用户成功").build();
     }
@@ -128,17 +156,13 @@ public class SysUserServiceImpl implements ISysUserService {
     @Override
     public Result setUser(SetUserRequest request) {
         ParkUser parkUser = this.checkUser(request.getId());
-        parkUser.setAvatar(request.getAvatar());
-        parkUser.setAccount(request.getAccount());
-        parkUser.setNickname(request.getNickname());
-//        if (request.getRoleId()!=null&&!request.getRoleId().isEmpty()) {
-//            List<ParkRole> sysRoleList = parkRoleRepository.findAllById(request.getRoleId());
-//            parkUser.setRoles(new HashSet<>(sysRoleList));
-//        }
-//        if (request.getParkId()!=null&&!request.getParkId().isEmpty()) {
-//            List<ParkInfo> parkInfoList = parkInfoRepository.findAllById(request.getParkId());
-//            parkUser.setParks(new HashSet<>(parkInfoList));
-//        }
+        BeanUtils.copyProperties(request, parkUser);
+        if(StringUtils.isNotBlank(request.getParkId())){
+
+        }
+        if(StringUtils.isNotBlank(request.getRoleId())){
+
+        }
         parkUserRepository.save(parkUser);
         return Result.builder().success().message("修改用户成功").build();
     }
