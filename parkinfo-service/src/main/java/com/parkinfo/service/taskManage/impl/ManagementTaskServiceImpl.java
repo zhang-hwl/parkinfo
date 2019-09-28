@@ -58,11 +58,8 @@ public class ManagementTaskServiceImpl implements IManagementTaskService {
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
         Specification<ManagementTask> managementTaskSpecification = (Specification<ManagementTask>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
-            if (request.getStartTimeFrom() != null && request.getStartTimeTo() != null) {
-                predicates.add(criteriaBuilder.between(root.get("startTime"), request.getStartTimeFrom(), request.getStartTimeTo()));
-            }
-            if (request.getEndTimeFrom() != null && request.getEndTimeTo() != null) {
-                predicates.add(criteriaBuilder.between(root.get("endTime"), request.getEndTimeFrom(), request.getEndTimeTo()));
+            if (request.getCreateTimeFrom() != null && request.getCreateTimeTo() != null) {
+                predicates.add(criteriaBuilder.between(root.get("createTime"), request.getCreateTimeFrom(), request.getCreateTimeTo()));
             }
             if (StringUtils.isNotBlank(request.getName())) {
                 predicates.add(criteriaBuilder.like(root.get("name").as(String.class), "%" + request.getName() + "%"));
@@ -149,7 +146,7 @@ public class ManagementTaskServiceImpl implements IManagementTaskService {
                 managementTask.getReceivers().forEach(receiver -> {
                     ReceiverListResponse receiverListResponse = new ReceiverListResponse();
                     receiverListResponse.setId(receiver.getId());
-                    receiverListResponse.setNickname(receiver.getNickname());
+                    receiverListResponse.setName(receiver.getNickname());
                     receiverList.add(receiverListResponse);
                 });
                 response.setReceivers(receiverList);
@@ -173,7 +170,7 @@ public class ManagementTaskServiceImpl implements IManagementTaskService {
             managementTask.getReceivers().forEach(receiver -> {
                 ReceiverListResponse receiverListResponse = new ReceiverListResponse();
                 receiverListResponse.setId(receiver.getId());
-                receiverListResponse.setNickname(receiver.getNickname());
+                receiverListResponse.setName(receiver.getNickname());
                 receiverList.add(receiverListResponse);
             });
             response.setReceivers(receiverList);

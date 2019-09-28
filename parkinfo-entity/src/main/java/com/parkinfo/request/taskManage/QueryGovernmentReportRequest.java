@@ -19,17 +19,11 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class QueryGovernmentReportRequest extends PageRequest {
-    @ApiModelProperty(value = "开始时间起")
-    private Date startTimeFrom;
+    @ApiModelProperty(value = "提交时间起")
+    private Date createTimeFrom;
 
-    @ApiModelProperty(value = "开始时间止")
-    private Date startTimeTo;
-
-    @ApiModelProperty(value = "结束时间起")
-    private Date endTimeFrom;
-
-    @ApiModelProperty(value = "结束时间止")
-    private Date endTimeTo;
+    @ApiModelProperty(value = "提交时间止")
+    private Date createTimeTo;
 
     @ApiModelProperty(value = "园区id")
     private String parkId;

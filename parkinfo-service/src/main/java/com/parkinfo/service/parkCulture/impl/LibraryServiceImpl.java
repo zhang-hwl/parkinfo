@@ -350,8 +350,13 @@ public class LibraryServiceImpl implements ILibraryService {
         if (!parkInfoOptional.isPresent()){
             throw new NormalException("该园区不存在");
         }
-        List<ParkUser> parkUserList = parkInfoOptional.get().getUsers().stream().filter(ParkUser::getAvailable).filter(parkUser -> !parkUser.getDelete()).collect(Collectors.toList());
-        List<ParkUserListResponse> responseList = this.convertParkUserList(parkUserList);
+        ParkInfo parkInfo = parkInfoOptional.get();
+        String managerId = null;
+        if (parkInfo.getManager()!=null){
+            managerId = parkInfo.getManager().getId();
+        }
+        List<ParkUser> parkUserList = parkInfo.getUsers().stream().filter(ParkUser::getAvailable).filter(parkUser -> !parkUser.getDelete()).collect(Collectors.toList());
+        List<ParkUserListResponse> responseList = this.convertParkUserList(parkUserList,managerId);
         return Result.<List<ParkUserListResponse>>builder().success().data(responseList).build();
     }
 
@@ -532,11 +537,15 @@ public class LibraryServiceImpl implements ILibraryService {
         return response;
     }
 
-    private List<ParkUserListResponse> convertParkUserList(List<ParkUser> parkUserList) {
+    private List<ParkUserListResponse> convertParkUserList(List<ParkUser> parkUserList,String managerId) {
         List<ParkUserListResponse> responseList = Lists.newArrayList();
         parkUserList.forEach(parkUser -> {
             ParkUserListResponse response = new ParkUserListResponse();
             BeanUtils.copyProperties(parkUser,response);
+            response.setName(parkUser.getNickname());
+            if (managerId.equals(parkUser.getId())){
+                response.setName(parkUser.getNickname()+"(园区管理员)");
+            }
             responseList.add(response);
         });
         return responseList;

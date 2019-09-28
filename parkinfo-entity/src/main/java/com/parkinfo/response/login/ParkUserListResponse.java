@@ -17,7 +17,7 @@ public class ParkUserListResponse {
     private String id;
 
     @ApiModelProperty(value = "用户昵称")
-    private String nickname;
+    private String name;
 
     @ApiModelProperty(value = "用户头像")
     private String avatar;

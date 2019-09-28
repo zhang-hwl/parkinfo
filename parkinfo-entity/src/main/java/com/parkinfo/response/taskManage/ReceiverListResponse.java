@@ -17,5 +17,5 @@ public class ReceiverListResponse {
     private String id;
 
     @ApiModelProperty(value = "用户昵称")
-    private String nickname;
+    private String name;
 }
