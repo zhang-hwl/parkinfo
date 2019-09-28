@@ -59,7 +59,7 @@ public class ArchiveInfo extends BaseEntity {
     private String generalId;
 
     @ApiModelProperty(value = "种类")
-    @ManyToOne(cascade = {CascadeType.REMOVE})
+    @ManyToOne(cascade = {CascadeType.REMOVE}, fetch = FetchType.LAZY)
     @JoinColumn(name = "kind_id")
     private ArchiveInfoType kind;
 
@@ -79,7 +79,7 @@ public class ArchiveInfo extends BaseEntity {
     @ApiModelProperty(value = "HR机构是否有查询权限")
     private Boolean hrOrgan;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parkInfo_id")
     //关联园区信息
     private ParkInfo parkInfo;

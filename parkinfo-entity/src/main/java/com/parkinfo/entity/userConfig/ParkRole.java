@@ -34,6 +34,9 @@ public class ParkRole extends BaseEntity {
      */
     private String remark;
 
+    //园区id
+    private String parkId;
+
     @ManyToMany(targetEntity = ParkPermission.class, fetch = FetchType.LAZY)
     @JoinTable(name = "c_role_permission", joinColumns = {@JoinColumn(name = "role_id")}, inverseJoinColumns = {@JoinColumn(name = "permission_id")})
     @JsonIgnoreProperties(value = "permissions")

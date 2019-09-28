@@ -162,9 +162,11 @@ public class LearningDataServiceImpl implements ILearningDataService {
             List<LearnDataKindResponse> list = Lists.newArrayList();
             Set<LearnDataType> children = temp.getChildren();
             children.forEach(kind -> {
-                LearnDataKindResponse kindResponse = new LearnDataKindResponse();
-                BeanUtils.copyProperties(kind, kindResponse);
-                list.add(kindResponse);
+                if(!kind.getDelete()){
+                    LearnDataKindResponse kindResponse = new LearnDataKindResponse();
+                    BeanUtils.copyProperties(kind, kindResponse);
+                    list.add(kindResponse);
+                }
             });
             BeanUtils.copyProperties(temp, response);
             response.setKind(list);

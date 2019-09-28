@@ -2,6 +2,7 @@ package com.parkinfo.entity.informationTotal;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.parkinfo.entity.base.BaseEntity;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import io.swagger.annotations.ApiModel;
@@ -19,6 +20,7 @@ import java.util.Date;
 @Entity
 @Table(name = "c_info_equipment")
 @EntityListeners(AuditingEntityListener.class)
+@JsonIgnoreProperties(value={"hibernateLazyInitializer","handler"})
 @ApiModel(value = "InfoEquipment", description = "信息统计-信息化设备")
 public class InfoEquipment extends BaseEntity {
 
@@ -66,7 +68,7 @@ public class InfoEquipment extends BaseEntity {
     @ApiModelProperty(value = "备注")
     private String remark;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parkInfo_id")
     //关联园区信息
     private ParkInfo parkInfo;
