@@ -6,6 +6,7 @@ import com.parkinfo.common.Result;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.entity.userConfig.ParkRole;
 import com.parkinfo.entity.userConfig.ParkUser;
+import com.parkinfo.enums.DefaultEnum;
 import com.parkinfo.enums.FileUploadType;
 import com.parkinfo.enums.ParkRoleEnum;
 import com.parkinfo.enums.SettingType;
@@ -78,6 +79,26 @@ public class SysUserServiceImpl implements ISysUserService {
             if (request.getAvailable()!=null){
                 predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class),request.getAvailable()));
             }
+            Set<ParkRole> roles = tokenUtils.getLoginUser().getRoles();
+            String currentRole = "";
+            if (roles != null && roles.size() != 0){
+                //目前是单角色绑定
+                currentRole = roles.iterator().next().getName();
+            }
+            if (currentRole.equals(ParkRoleEnum.ADMIN.toString())){
+                Optional<ParkInfo> byParkName = parkInfoRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(DefaultEnum.CEO_PARK.getDefaultValue());
+                if(byParkName.isPresent()){
+                    SetJoin<ParkUser,ParkRole> setJoin = root.joinSet("parks",JoinType.LEFT);
+                    predicates.add(criteriaBuilder.equal(setJoin.get("id").as(String.class),byParkName.get().getId()));
+                    predicates.add(criteriaBuilder.notEqual(setJoin.get("name").as(String.class),ParkRoleEnum.ADMIN.toString()));
+//                    ParkInfo parkInfo = byParkName.get();
+//                    predicates.add(criteriaBuilder.equal(root.get("parks").as(),request.getAvailable()));
+                }
+            }else {
+                SetJoin<ParkUser,ParkRole> setJoin = root.joinSet("parks",JoinType.LEFT);
+                predicates.add(criteriaBuilder.equal(setJoin.get("id").as(String.class),tokenUtils.getCurrentParkInfo().getId()));
+                predicates.add(criteriaBuilder.notEqual(setJoin.get("name").as(String.class),ParkRoleEnum.PARK_MANAGER.toString()));
+            }
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class),Boolean.FALSE));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
@@ -147,7 +168,7 @@ public class SysUserServiceImpl implements ISysUserService {
                 }
             }
             else{
-                Optional<ParkInfo> byParkName = parkInfoRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue("总裁园区");
+                Optional<ParkInfo> byParkName = parkInfoRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(DefaultEnum.CEO_PARK.getDefaultValue());
                 if(byParkName.isPresent()){
                     ParkInfo parkInfo = byParkName.get();
                     parkInfos.add(parkInfo);

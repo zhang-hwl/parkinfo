@@ -228,17 +228,13 @@ public class TokenUtils {
         List<String> roleNames = parkUserDTO.getRole();
         Set<ParkRole> parkRoles = Sets.newHashSet();
         roleNames.forEach(temp -> {
-            if(temp.equals(ParkRoleEnum.HR_USER) || temp.equals(ParkRoleEnum.OFFICER) || temp.equals(ParkRoleEnum.PARK_MANAGER)){
+            if(temp.equals(ParkRoleEnum.HR_USER.toString()) || temp.equals(ParkRoleEnum.OFFICER.toString()) || temp.equals(ParkRoleEnum.PARK_USER.toString())){
                 Optional<ParkRole> byName = parkRoleRepository.findByNameAndParkIdAndDeleteIsFalseAndAvailableIsTrue(temp, parkUserDTO.getCurrentParkId());
-                if(byName.isPresent()){
-                    parkRoles.add(byName.get());
-                }
+                byName.ifPresent(parkRoles::add);
             }
             else{
                 Optional<ParkRole> byName = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(temp);
-                if(byName.isPresent()){
-                    parkRoles.add(byName.get());
-                }
+                byName.ifPresent(parkRoles::add);
             }
         });
         parkUser.setRoles(parkRoles);

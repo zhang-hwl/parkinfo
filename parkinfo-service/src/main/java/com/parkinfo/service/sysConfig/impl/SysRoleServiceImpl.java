@@ -2,6 +2,7 @@ package com.parkinfo.service.sysConfig.impl;
 
 import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
+import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.entity.userConfig.ParkPermission;
 import com.parkinfo.entity.userConfig.ParkRole;
 import com.parkinfo.enums.ParkRoleEnum;
@@ -121,14 +122,21 @@ public class SysRoleServiceImpl implements ISysRoleService {
         }
         //管理员->HR,Or,User
         //超管->总裁，总裁办，园管
-        Optional<ParkRole> manager = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PARK_MANAGER.name());
-        if(manager.isPresent() && roles.contains(manager.get())){
-            SysRoleResponse park1 = convertRoleResponse(parkRoleRepository.findByNameAndParkIdAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.HR_USER.name(), manager.get().getParkId()).get());
-            SysRoleResponse park2 = convertRoleResponse(parkRoleRepository.findByNameAndParkIdAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.OFFICER.name(), manager.get().getParkId()).get());
-            SysRoleResponse park3 = convertRoleResponse(parkRoleRepository.findByNameAndParkIdAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PARK_USER.name(), manager.get().getParkId()).get());
-            parkRoleList.add(park1);
-            parkRoleList.add(park2);
-            parkRoleList.add(park3);
+//        Optional<ParkRole> manager = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PARK_MANAGER.name());
+        if(tokenUtils.getCurrentParkInfo() != null){
+            ParkInfo currentParkInfo = tokenUtils.getCurrentParkInfo();
+            if (parkRoleRepository.findByNameAndParkIdAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.HR_USER.name(), currentParkInfo.getId()).isPresent()){
+                SysRoleResponse park1 = convertRoleResponse(parkRoleRepository.findByNameAndParkIdAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.HR_USER.name(), currentParkInfo.getId()).get());
+                parkRoleList.add(park1);
+            }
+            if (parkRoleRepository.findByNameAndParkIdAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.OFFICER.name(), currentParkInfo.getId()).isPresent()){
+                SysRoleResponse park2 = convertRoleResponse(parkRoleRepository.findByNameAndParkIdAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.OFFICER.name(), currentParkInfo.getId()).get());
+                parkRoleList.add(park2);
+            }
+            if (parkRoleRepository.findByNameAndParkIdAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PARK_USER.name(), currentParkInfo.getId()).isPresent()){
+                SysRoleResponse park3 = convertRoleResponse(parkRoleRepository.findByNameAndParkIdAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PARK_USER.name(), currentParkInfo.getId()).get());
+                parkRoleList.add(park3);
+            }
         }
         return Result.<List<SysRoleResponse>>builder().success().data(parkRoleList).build();
     }
