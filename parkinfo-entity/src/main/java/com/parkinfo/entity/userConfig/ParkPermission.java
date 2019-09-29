@@ -42,6 +42,11 @@ public class ParkPermission extends BaseEntity {
     private String path;
 
     /**
+     * 优先级
+     */
+    private Integer priority;
+
+    /**
      * 上级权限
      */
     @ManyToOne(fetch= FetchType.LAZY)

@@ -32,7 +32,7 @@ public class HonorPaperController {
     private HonorPaperService archiveInfoService;
 
     @PostMapping("/search")
-    @RequiresPermissions("archiveInfo:policy:search")
+    @RequiresPermissions("archiveInfo:honer:search")
     @ApiOperation(value = "根据查询条件分页查询文件")
     public Result<Page<ArchiveInfoResponse>> search(@RequestBody QueryArchiveInfoRequest request){
         request.setGeneral("荣誉证书");
@@ -46,14 +46,14 @@ public class HonorPaperController {
     }
 
     @PostMapping("/delete/{id}")
-    @RequiresPermissions(value = "archiveInfo:policy:delete")
+    @RequiresPermissions(value = "archiveInfo:honer:delete")
     @ApiOperation(value = "删除文件")
     public Result<String> delete(@PathVariable("id") String id){
         return archiveInfoService.deleteArchiveInfo(id);
     }
 
     @PostMapping("/add")
-    @RequiresPermissions(value = "archiveInfo:policy:add")
+    @RequiresPermissions(value = "archiveInfo:honer:add")
     @ApiOperation(value = "新增文件")
     public Result<String> add(@RequestBody AddArchiveInfoRequest request){
         request.setGeneral("荣誉证书");
@@ -61,7 +61,7 @@ public class HonorPaperController {
     }
 
     @PostMapping("/edit/{id}")
-    @RequiresPermissions(value = "archiveInfo:policy:edit")
+    @RequiresPermissions(value = "archiveInfo:honer:edit")
     @ApiOperation(value = "编辑文件")
     public Result<String> edit(@PathVariable("id")String id, @RequestBody AddArchiveInfoRequest request){
         return archiveInfoService.editArchiveInfo(id, request);
@@ -96,7 +96,7 @@ public class HonorPaperController {
     }
 
     @PostMapping("/download/{id}")
-    @RequiresPermissions(value = "archiveInfo:policy:download")
+    @RequiresPermissions(value = "archiveInfo:honer:download")
     @ApiOperation(value = "下载文件")
     public Result<String> download(@PathVariable("id") String id){
         Result<ArchiveInfoCommentResponse> byId = archiveInfoService.findById(id);

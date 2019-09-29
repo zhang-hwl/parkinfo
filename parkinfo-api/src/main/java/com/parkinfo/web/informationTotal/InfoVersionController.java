@@ -8,6 +8,7 @@ import com.parkinfo.request.infoTotalRequest.InfoVersionResponse;
 import com.parkinfo.service.informationTotal.IInfoVersionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,8 @@ public class InfoVersionController {
     private IInfoVersionService infoVersionService;
 
     @PostMapping("/add")
+    @ApiOperation(value = "新增版本标签")
+    @RequiresPermissions("infoTotal:version:add")
     public Result<String> addVersion(@RequestBody InfoVersionResponse response){
         return infoVersionService.add(response);
     }
@@ -42,12 +45,14 @@ public class InfoVersionController {
 
     @PostMapping("/delete/{id}")
     @ApiOperation(value = "删除信息统计版本")
+    @RequiresPermissions("infoTotal:version:delete")
     public Result<String> delete(@PathVariable("id") String id){
         return infoVersionService.delete(id);
     }
 
     @PostMapping("/findAll")
     @ApiOperation(value = "查询信息统计版本")
+    @RequiresPermissions("infoTotal:version:search")
     public Result<Page<InfoVersionResponse>> findAll(@RequestBody InfoVersionRequest request){
         return infoVersionService.findAll(request);
     }

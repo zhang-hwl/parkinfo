@@ -47,21 +47,21 @@ public class HomeReportController {
     }
 
     @PostMapping("/grade/findAll")
-    @ApiOperation(value = "总裁-获取各园区成绩数据展示")
+    @ApiOperation(value = "总裁-获取各园区税收成绩数据展示")
     public Result<List<BaseReportResponse>> findAllGradeReport(){
         return iHomeRepostService.findAllGradeReport();
     }
 
     @PostMapping("/increase/findAll")
-    @ApiOperation(value = "总裁-获取园区数据增长比例")
+    @ApiOperation(value = "总裁-获取园区税收数据增长比例")
     public Result<List<BaseReportResponse>> findAllIncreaseReport(){
         return iHomeRepostService.findAllIncreaseReport();
     }
 
     @PostMapping("/bigEvent/findAll")
     @ApiOperation(value = "总裁-获取园区大事记")
-    public Result<List<BigEventResponse>> findAllBigEventRepost(){
-        return iHomeRepostService.findAllBigEventRepost();
+    public Result<List<BigEventResponse>> findAllBigEventReport(){
+        return iHomeRepostService.findAllBigEventReport();
     }
 
     @PostMapping("/organ/info/find/year")
@@ -74,6 +74,12 @@ public class HomeReportController {
     @ApiOperation(value = "政府-获取园区当月基本信息")
     public Result<List<OrganInfoReportResponse>> findAllOrganInfoMonthReport(){
         return iHomeRepostService.findAllOrganInfoMonthReport();
+    }
+
+    @PostMapping("/bigEvent/find/office")
+    @ApiOperation(value = "政府-获取园区大事记")
+    public Result<List<BigEventResponse>> findAllOfficeBigEventReport(){
+        return iHomeRepostService.findAllBigEventReport();
     }
 
 }

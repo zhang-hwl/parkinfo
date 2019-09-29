@@ -1,5 +1,6 @@
 package com.parkinfo.entity.notice;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.parkinfo.entity.base.BaseEntity;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import io.swagger.annotations.ApiModel;
@@ -9,6 +10,7 @@ import lombok.EqualsAndHashCode;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.OneToOne;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -26,7 +28,11 @@ public class SystemNotice {
     @ApiModelProperty(value = "概要")
     private String profile;
 
-    @ApiModelProperty(value = "富文本")
+    @ApiModelProperty(value = "内容")
     private String text;
+
+    @ApiModelProperty(value = "发布时间")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    private Date uploadTime;
 
 }

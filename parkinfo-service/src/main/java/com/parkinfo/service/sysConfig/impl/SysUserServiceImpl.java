@@ -115,8 +115,16 @@ public class SysUserServiceImpl implements ISysUserService {
         String password = new SimpleHash("MD5", initPassword, newData.getSalt(), 1024).toHex();
         newData.setPassword(password);
         Set<ParkRole> roles = tokenUtils.getLoginUser().getRoles();
-        ParkRole admin = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.ADMIN.name()).get();  //超级管理员
-        ParkRole manager = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PARK_MANAGER.name()).get(); //园区管理员
+        Optional<ParkRole> byAdmin = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.ADMIN.name());
+        ParkRole admin = new ParkRole();
+        ParkRole manager = new ParkRole();
+        if(byAdmin.isPresent()){
+            admin = byAdmin.get();
+        }
+        Optional<ParkRole> byManager = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PARK_MANAGER.name());
+        if(byManager.isPresent()){
+            manager = byManager.get();
+        }
         Optional<ParkRole> byId = parkRoleRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(request.getRoleId());
         if(!byId.isPresent()){
             throw new NormalException("角色不存在");

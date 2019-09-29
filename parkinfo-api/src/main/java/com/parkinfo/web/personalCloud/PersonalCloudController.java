@@ -8,6 +8,7 @@ import com.parkinfo.response.personalCloud.UploadFileResponse;
 import com.parkinfo.service.personalCloud.IPersonalCloudService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,7 @@ public class PersonalCloudController {
 
     @PostMapping("/findAll")
     @ApiOperation("分页查询所有文件")
+    @RequiresPermissions("personalDisk:myDisk:search")
     public Result<Page<PersonalCloudResponse>> findAll(@RequestBody QueryPersonalCloudRequest request) {
         return personalCloudService.findAll(request);
     }
@@ -41,18 +43,21 @@ public class PersonalCloudController {
 
     @PostMapping("/delete/{id}")
     @ApiOperation("删除文件")
+    @RequiresPermissions("personalDisk:myDisk:delete")
     public Result<String> delete(@PathVariable("id") String id) {
         return personalCloudService.delete(id);
     }
 
     @PostMapping("/update")
     @ApiOperation("文件重命名")
+    @RequiresPermissions("personalDisk:myDisk:set")
     public Result<String> set(@RequestBody SetPersonalCloudRequest request) {
         return personalCloudService.set(request);
     }
 
     @PostMapping("/delete")
     @ApiOperation("批量删除文件")
+    @RequiresPermissions("personalDisk:myDisk:deleteAll")
     public Result<String> deleteAll(@RequestBody DeletePersonalCloudRequest request) {
         return personalCloudService.deleteAll(request);
     }

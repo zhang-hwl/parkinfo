@@ -59,8 +59,8 @@ public class SysParkServiceImpl implements ISysParkService {
         all.getContent().forEach(temp -> {
             SysParkInfoResponse response = new SysParkInfoResponse();
             BeanUtils.copyProperties(temp, response);
-            response.setUserId(temp.getManager().getId());
-            response.setUserName(temp.getManager().getNickname());
+//            response.setUserId(temp.getManager().getId());
+//            response.setUserName(temp.getManager().getNickname());
             list.add(response);
         });
         Page<SysParkInfoResponse> result = new PageImpl<>(list, all.getPageable(), all.getTotalElements());

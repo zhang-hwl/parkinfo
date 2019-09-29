@@ -10,10 +10,10 @@ import java.util.List;
 @Data
 public class InfoTotalReportResponse {
 
-    @ApiModelProperty(value = "基本信息类型，枚举", notes = "ENTER_TOP,HIGH_TAX,ADD_USER")
-    private InfoReportType infoReportType;
+    @ApiModelProperty(value = "基本信息类型")
+    private String infoReportName;
 
-    @ApiModelProperty("<K,V>")
+    @ApiModelProperty("<K,V>,K代表园区名称，V为值")
     private List<BaseReportResponse> baseReportResponses;
 
 }

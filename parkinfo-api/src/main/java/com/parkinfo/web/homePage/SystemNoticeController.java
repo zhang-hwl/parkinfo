@@ -3,6 +3,7 @@ package com.parkinfo.web.homePage;
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.notice.SystemNotice;
 import com.parkinfo.request.base.PageRequest;
+import com.parkinfo.request.notice.QueryNoticeRequest;
 import com.parkinfo.service.homePage.ISystemNoticeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,14 +29,20 @@ public class SystemNoticeController {
 
     @PostMapping("/findAll")
     @ApiOperation(value = "查询公告")
-    public Result<Page<SystemNotice>> findAll(@RequestBody PageRequest pageRequest){
-        return systemNoticeService.findAll(pageRequest);
+    public Result<Page<SystemNotice>> findAll(@RequestBody QueryNoticeRequest request){
+        return systemNoticeService.findAll(request);
     }
 
     @PostMapping("/delete/{id}")
     @ApiOperation(value = "删除公告")
     public Result<String> deleteById(@PathVariable("id") String id){
         return systemNoticeService.deleteById(id);
+    }
+
+    @PostMapping("/find/{count}")
+    @ApiOperation(value = "返回count条最新公告")
+    public Result<List<SystemNotice>> findByLimit(@PathVariable("count") Integer count){
+        return systemNoticeService.findByLimit(count);
     }
 
 }

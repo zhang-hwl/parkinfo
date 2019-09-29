@@ -123,9 +123,9 @@ public class SysRoleServiceImpl implements ISysRoleService {
         //超管->总裁，总裁办，园管
         Optional<ParkRole> manager = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PARK_MANAGER.name());
         if(manager.isPresent() && roles.contains(manager.get())){
-            SysRoleResponse park1 = convertRoleResponse(parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.HR_USER.name()).get());
-            SysRoleResponse park2 = convertRoleResponse(parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.OFFICER.name()).get());
-            SysRoleResponse park3 = convertRoleResponse(parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PARK_USER.name()).get());
+            SysRoleResponse park1 = convertRoleResponse(parkRoleRepository.findByNameAndParkIdAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.HR_USER.name(), manager.get().getParkId()).get());
+            SysRoleResponse park2 = convertRoleResponse(parkRoleRepository.findByNameAndParkIdAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.OFFICER.name(), manager.get().getParkId()).get());
+            SysRoleResponse park3 = convertRoleResponse(parkRoleRepository.findByNameAndParkIdAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PARK_USER.name(), manager.get().getParkId()).get());
             parkRoleList.add(park1);
             parkRoleList.add(park2);
             parkRoleList.add(park3);

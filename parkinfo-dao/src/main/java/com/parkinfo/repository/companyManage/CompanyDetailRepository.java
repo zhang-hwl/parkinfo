@@ -29,6 +29,6 @@ public interface CompanyDetailRepository extends JpaRepository<CompanyDetail,Str
 
     List<CompanyDetail> findByParkInfo_IdAndEnteredIsTrue(String id);
 
-    Optional<CompanyDetail> findByParkUser_Id(String id);
+    List<CompanyDetail> findByParkUser_Id(String id);
 
 }

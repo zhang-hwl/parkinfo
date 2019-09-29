@@ -4,6 +4,7 @@ import com.parkinfo.entity.informationTotal.BigEvent;
 import com.parkinfo.entity.informationTotal.RoomInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,5 +18,11 @@ public interface BigEventRepository extends JpaRepository<BigEvent, String>, Jpa
     List<BigEvent> findAllByDeleteIsFalse();
 
     List<BigEvent> findByParkInfo_IdAndDeleteIsFalseAndAvailableIsTrue(String id);
+
+    @Query(nativeQuery = true, value = "select * from c_big_event where delete='0' and available='1' order by year,month ASC")
+    List<BigEvent> findAllOrder();
+
+    @Query(nativeQuery = true, value = "select * from c_big_event where park_info_id=?1 delete='0' and available='1' order by year,month ASC")
+    List<BigEvent> findAllOrderAndPark(String parkId);
 
 }

@@ -10,7 +10,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/sysConfig/sysPark")
@@ -34,7 +38,12 @@ public class SysParkController {
 
     @PostMapping("/edit/{id}")
     @ApiOperation(value = "编辑园区")
-    public Result<String> editPark(@PathVariable("id") String parkId, @RequestBody AddSysParkRequest request){
+    public Result<String> editPark(@PathVariable("id") String parkId, @Valid @RequestBody AddSysParkRequest request, BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError allError : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(allError.getDefaultMessage()).build();
+            }
+        }
         return sysParkService.editPark(parkId, request);
     }
 

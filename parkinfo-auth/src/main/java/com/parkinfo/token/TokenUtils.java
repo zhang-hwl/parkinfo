@@ -8,6 +8,7 @@ import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.entity.userConfig.ParkPermission;
 import com.parkinfo.entity.userConfig.ParkRole;
 import com.parkinfo.entity.userConfig.ParkUser;
+import com.parkinfo.enums.ParkRoleEnum;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.userConfig.ParkInfoRepository;
 import com.parkinfo.repository.userConfig.ParkRoleRepository;
@@ -227,9 +228,17 @@ public class TokenUtils {
         List<String> roleNames = parkUserDTO.getRole();
         Set<ParkRole> parkRoles = Sets.newHashSet();
         roleNames.forEach(temp -> {
-            Optional<ParkRole> byName = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(temp);
-            if(byName.isPresent()){
-                parkRoles.add(byName.get());
+            if(temp.equals(ParkRoleEnum.HR_USER) || temp.equals(ParkRoleEnum.OFFICER) || temp.equals(ParkRoleEnum.PARK_MANAGER)){
+                Optional<ParkRole> byName = parkRoleRepository.findByNameAndParkIdAndDeleteIsFalseAndAvailableIsTrue(temp, parkUserDTO.getCurrentParkId());
+                if(byName.isPresent()){
+                    parkRoles.add(byName.get());
+                }
+            }
+            else{
+                Optional<ParkRole> byName = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(temp);
+                if(byName.isPresent()){
+                    parkRoles.add(byName.get());
+                }
             }
         });
         parkUser.setRoles(parkRoles);

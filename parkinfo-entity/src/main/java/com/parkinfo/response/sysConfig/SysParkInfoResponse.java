@@ -12,12 +12,6 @@ public class SysParkInfoResponse {
     @ApiModelProperty("园区名称")
     private String name;
 
-    @ApiModelProperty("园区管理人id")
-    private String userId;
-
-    @ApiModelProperty("园区负责人名称")
-    private String userName;
-
     @ApiModelProperty(value = "是否可用")
     private Boolean available;
 
