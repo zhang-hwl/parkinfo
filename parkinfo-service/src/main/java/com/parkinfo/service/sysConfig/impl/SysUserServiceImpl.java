@@ -14,6 +14,7 @@ import com.parkinfo.repository.userConfig.ParkInfoRepository;
 import com.parkinfo.repository.userConfig.ParkRoleRepository;
 import com.parkinfo.repository.userConfig.ParkUserRepository;
 import com.parkinfo.request.sysConfig.AddUserRequest;
+import com.parkinfo.request.sysConfig.ChangePassRequest;
 import com.parkinfo.request.sysConfig.QuerySysUserRequest;
 import com.parkinfo.request.sysConfig.SetUserRequest;
 import com.parkinfo.response.sysConfig.SysRoleResponse;
@@ -140,7 +141,7 @@ public class SysUserServiceImpl implements ISysUserService {
                     throw new NormalException("园区id不能为空");
                 }
                 Optional<ParkInfo> byPardId = parkInfoRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(request.getParkId());
-                if(!byPardId.isPresent()){
+                if(byPardId.isPresent()){
                     ParkInfo parkInfo = byPardId.get();
                     parkInfos.add(parkInfo);
                 }
@@ -162,6 +163,19 @@ public class SysUserServiceImpl implements ISysUserService {
         newData.setRoles(parkRoles);
         parkUserRepository.save(newData);
         return Result.builder().success().message("添加用户成功").build();
+    }
+
+    @Override
+    public Result changePass(ChangePassRequest request) {
+        ParkUser parkUser = this.checkUser(request.getId());
+        String oldPass = new SimpleHash("MD5",request.getOldPass(),parkUser.getSalt(),1024).toHex();
+        if (!oldPass.equals(parkUser.getPassword())){
+            throw new NormalException("原密码不正确");
+        }
+        String newPass = new SimpleHash("MD5",request.getNewPass(),parkUser.getSalt(),1024).toHex();
+        parkUser.setPassword(newPass);
+        parkUserRepository.save(parkUser);
+        return Result.builder().success().message("密码修改成功").build();
     }
 
     @Override

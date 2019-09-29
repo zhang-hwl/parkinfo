@@ -42,6 +42,11 @@ public class ParkPermission extends BaseEntity {
     private String path;
 
     /**
+     * svg图标
+     */
+    private String src;
+
+    /**
      * 优先级
      */
     private Integer priority;

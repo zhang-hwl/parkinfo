@@ -30,4 +30,10 @@ public class ParkUserPermissionDTO {
 
     @ApiModelProperty(value = "路由")
     private String path;
+
+    @ApiModelProperty(value = "上级权限id")
+    private String parentId;
+
+    @ApiModelProperty(value = "icon")
+    private String src;
 }
