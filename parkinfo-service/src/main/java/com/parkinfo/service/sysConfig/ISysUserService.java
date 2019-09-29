@@ -3,6 +3,7 @@ package com.parkinfo.service.sysConfig;
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.request.sysConfig.AddUserRequest;
+import com.parkinfo.request.sysConfig.ChangePassRequest;
 import com.parkinfo.request.sysConfig.QuerySysUserRequest;
 import com.parkinfo.request.sysConfig.SetUserRequest;
 import com.parkinfo.response.sysConfig.SysUserResponse;
@@ -52,4 +53,10 @@ public interface ISysUserService {
      */
     Result deleteUser(String id);
 
+    /**
+     * 修改用户密码
+     * @param request
+     * @return
+     */
+    Result changePass(ChangePassRequest request);
 }

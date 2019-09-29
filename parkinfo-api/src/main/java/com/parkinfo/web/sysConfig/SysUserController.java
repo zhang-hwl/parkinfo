@@ -3,6 +3,7 @@ package com.parkinfo.web.sysConfig;
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.request.sysConfig.AddUserRequest;
+import com.parkinfo.request.sysConfig.ChangePassRequest;
 import com.parkinfo.request.sysConfig.QuerySysUserRequest;
 import com.parkinfo.request.sysConfig.SetUserRequest;
 import com.parkinfo.response.sysConfig.SysUserResponse;
@@ -46,6 +47,17 @@ public class SysUserController {
             }
         }
         return sysUserService.addUser(request);
+    }
+
+    @PostMapping("/changePass")
+    @ApiOperation(value = "修改用户密码")
+    public Result changePass(@Valid @RequestBody ChangePassRequest request, BindingResult result) {
+        if (result.hasErrors()) {
+            for (ObjectError error : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
+        return sysUserService.changePass(request);
     }
 
     @PostMapping("/set")
