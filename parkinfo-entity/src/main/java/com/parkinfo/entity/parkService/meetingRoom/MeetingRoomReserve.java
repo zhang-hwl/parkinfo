@@ -1,6 +1,7 @@
 package com.parkinfo.entity.parkService.meetingRoom;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.parkinfo.entity.base.BaseEntity;
 import com.parkinfo.entity.userConfig.ParkUser;
@@ -13,7 +14,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.util.Date;
 
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true,exclude = {"reserveUser"})
 @Data
 @Entity
 @Table(name = "c_ser_meeting_room_reserve")
@@ -38,6 +39,7 @@ public class MeetingRoomReserve extends BaseEntity {
     @ManyToOne()
     @JoinColumn(name = "user_id")
     @ApiModelProperty("预约人")
+    @JsonIgnoreProperties("meetingRoomReserves")
     private ParkUser reserveUser;
 
     @ApiModelProperty("会议室预约时间区间")

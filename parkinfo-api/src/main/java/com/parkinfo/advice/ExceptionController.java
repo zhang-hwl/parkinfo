@@ -23,7 +23,7 @@ public class ExceptionController {
     // 捕捉shiro的异常
     @ExceptionHandler(ShiroException.class)
     public ResultMap handle401() {
-        return resultMap.fail().code(401).message("您没有权限访问！");
+        return resultMap.fail().code(403).message("您没有权限访问！");
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)

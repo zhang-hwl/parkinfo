@@ -128,7 +128,7 @@ public class ExaminationController {
 
     @PostMapping("/answerSheet/detail/{sheetId}")
     @ApiOperation(value = "获取试卷详情")
-    @RequiresPermissions("parkCulture:examination:answerSheet_start")
+    @RequiresPermissions("parkCulture:examination:answerSheet_detail")
     public Result<AnswerSheetDetailResponse> sheetDetail(@PathVariable("sheetId") String sheetId) {
         return examinationService.sheetDetail(sheetId);
     }

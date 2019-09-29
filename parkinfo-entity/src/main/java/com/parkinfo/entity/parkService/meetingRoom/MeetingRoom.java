@@ -38,12 +38,12 @@ public class MeetingRoom extends BaseEntity {
 
     @ManyToOne()
     @JoinColumn(name = "park_id")
-    @JsonIgnoreProperties("parkInfo")
+    @JsonIgnoreProperties("meetingRooms")
     private ParkInfo parkInfo;
 
     @ManyToOne()
     @JoinColumn(name = "user_id")
-    @JsonIgnoreProperties("user_id")
+    @JsonIgnoreProperties("meetingRooms")
     private ParkUser parkUser;
 
     @OneToMany(mappedBy = "meetingRoom")
