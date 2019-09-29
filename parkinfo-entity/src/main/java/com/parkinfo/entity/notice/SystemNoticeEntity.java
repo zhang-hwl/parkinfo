@@ -26,4 +26,6 @@ public class SystemNoticeEntity extends BaseEntity {
     @ApiModelProperty(value = "富文本")
     private String text;
 
+    @ApiModelProperty(value = "上传人姓名")
+    private String name;
 }

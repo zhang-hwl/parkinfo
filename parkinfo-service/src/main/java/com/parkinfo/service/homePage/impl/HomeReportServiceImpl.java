@@ -97,7 +97,7 @@ public class HomeReportServiceImpl implements IHomeRepostService {
             BaseReportResponse baseReportResponse = new BaseReportResponse();
             baseReportResponse.setKey(parkInfo.getName());
             BigDecimal taxCount = new BigDecimal(0);   //该税收总数
-            List<CompanyDetail> byParkUser_id = companyDetailRepository.findByParkUser_Id(parkInfo.getId());
+            List<CompanyDetail> byParkUser_id = companyDetailRepository.findByParkInfo_Id(parkInfo.getId());
             for(CompanyDetail detail : byParkUser_id){
                 List<EnteredInfo> all = enteredInfoRepository.findAllByCompanyDetail_Id(detail.getId());
                 for (EnteredInfo temp : all) {
@@ -136,7 +136,7 @@ public class HomeReportServiceImpl implements IHomeRepostService {
             BaseReportResponse baseReportResponse = new BaseReportResponse();
             baseReportResponse.setKey(parkInfo.getName());
             BigDecimal taxCount = new BigDecimal(0);   //该税收总数
-            List<CompanyDetail> byParkUser_id = companyDetailRepository.findByParkUser_Id(parkInfo.getId());
+            List<CompanyDetail> byParkUser_id = companyDetailRepository.findByParkInfo_Id(parkInfo.getId());
             for(CompanyDetail detail : byParkUser_id){
                 List<EnteredInfo> all = enteredInfoRepository.findAllByCompanyDetail_Id(detail.getId());
                 for (EnteredInfo temp : all) {
@@ -181,8 +181,16 @@ public class HomeReportServiceImpl implements IHomeRepostService {
     @Override
     public Result<List<InfoTotalReportResponse>> findAllInfoReport() {
         List<InfoTotalReportResponse> result = Lists.newArrayList();
+        Map<ParkInfoResponse, List<CompanyDetail>> map = infoReportService.findAllParam();
         List<ParkInfoResponse> allPark = infoReportService.findAllPark();
-        result.add(infoReportService.getEnterTop(allPark));    //入驻百强企业
+        result.add(infoReportService.getEnterTop(map)); //入驻百强企业
+        result.add(infoReportService.getAddEnter(map)); //入园企业
+        result.add(infoReportService.getExitCompany(map)); //离园企业
+        result.add(infoReportService.getEnterValue(map));   //入园产值统计
+        result.add(infoReportService.getEnterTax(map));   //入园税收统计
+        result.add(infoReportService.getParkRoom(allPark));  //园区房间统计
+        result.add(infoReportService.getActivittTotal(allPark));  //活动类统计
+        result.add(infoReportService.getGetGrade(allPark));  //获得的荣誉
         return Result.<List<InfoTotalReportResponse>>builder().success().data(result).build();
     }
 
@@ -194,7 +202,7 @@ public class HomeReportServiceImpl implements IHomeRepostService {
             BaseReportResponse response = new BaseReportResponse();
             response.setKey(temp.getName());    //横坐标--园区名称
             BigDecimal taxCount = new BigDecimal(0);   //该税收总数
-            List<CompanyDetail> byId = companyDetailRepository.findByParkUser_Id(temp.getId());
+            List<CompanyDetail> byId = companyDetailRepository.findByParkInfo_Id(temp.getId());
             for(CompanyDetail companyDetail : byId){
                 List<EnteredInfo> allEnteredInfo = enteredInfoRepository.findAllByCompanyDetail_Id(companyDetail.getId());
                 for (EnteredInfo enteredInfo : allEnteredInfo) {
@@ -204,6 +212,7 @@ public class HomeReportServiceImpl implements IHomeRepostService {
             taxCount.setScale(0, BigDecimal.ROUND_HALF_UP);
             response.setValue(String.valueOf(taxCount));    //纵坐标--税收合计
             response.setValue("121423");    //测试数据
+            result.add(response);
         });
         return Result.<List<BaseReportResponse>>builder().success().data(result).build();
     }

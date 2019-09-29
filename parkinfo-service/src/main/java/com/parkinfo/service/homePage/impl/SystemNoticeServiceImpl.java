@@ -3,11 +3,13 @@ package com.parkinfo.service.homePage.impl;
 import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.notice.SystemNotice;
+import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.request.notice.QueryNoticeRequest;
 import com.parkinfo.entity.notice.SystemNoticeEntity;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.homePage.SystemNoticeRepository;
 import com.parkinfo.service.homePage.ISystemNoticeService;
+import com.parkinfo.token.TokenUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,8 @@ public class SystemNoticeServiceImpl implements ISystemNoticeService {
 
     @Autowired
     private SystemNoticeRepository systemNoticeRepository;
+    @Autowired
+    private TokenUtils tokenUtils;
 
     @Override
     public Result<String> addNotice(SystemNotice systemNotice) {
@@ -35,6 +39,10 @@ public class SystemNoticeServiceImpl implements ISystemNoticeService {
         BeanUtils.copyProperties(systemNotice, entity);
         entity.setDelete(false);
         entity.setAvailable(true);
+        ParkUser loginUser = tokenUtils.getLoginUser();
+        if(loginUser != null){
+            entity.setName(loginUser.getNickname());
+        }
         systemNoticeRepository.save(entity);
         return Result.<String>builder().success().data("新增成功").build();
     }

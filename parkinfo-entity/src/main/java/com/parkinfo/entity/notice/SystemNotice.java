@@ -35,4 +35,7 @@ public class SystemNotice {
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date uploadTime;
 
+    @ApiModelProperty("上传人姓名")
+    private String name;
+
 }

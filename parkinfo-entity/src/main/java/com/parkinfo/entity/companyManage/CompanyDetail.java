@@ -141,12 +141,12 @@ public class CompanyDetail extends BaseEntity{
     @ApiModelProperty(value = "是否入驻")
     private Boolean entered;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "park_id")
     @JsonIgnore
     private ParkInfo parkInfo;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @JsonIgnore
     private ParkUser parkUser;

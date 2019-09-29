@@ -20,6 +20,6 @@ public interface ArchiveInfoRepository extends JpaRepository<ArchiveInfo, String
 
     List<ArchiveInfo> findAllByDeleteIsFalse();
 
-
+    List<ArchiveInfo> findAllByGeneralIdAndDeleteIsFalse(String id);
 
 }
