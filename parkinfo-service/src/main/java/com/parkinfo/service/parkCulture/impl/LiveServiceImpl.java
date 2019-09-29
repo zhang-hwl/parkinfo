@@ -104,6 +104,7 @@ public class LiveServiceImpl implements ILiveService {
     public Result<PushLiveUrlResponse> generatePushLiveUrl(String id) {
         Live live = this.checkLive(id);
         long timeStamp = System.currentTimeMillis() / 1000 + 30 * 60;//有效期30分钟
+//        long timeStamp = 1569722617L;
         String appName = live.getAppName(); //获取appName
         String streamName = live.getStreamName();  //获取streamName
         String rand = "0";//随机数  目前没有用
@@ -123,6 +124,7 @@ public class LiveServiceImpl implements ILiveService {
     public Result<PullLiveUrlResponse> generatePullLiveUrl(String id) {
         Live live = this.checkLive(id);
         long timeStamp = System.currentTimeMillis() / 1000 + 360 * 60;//有效期360分钟
+//        long timeStamp = 1569722982L;
         String appName = live.getAppName(); //获取appName
         String streamName = live.getStreamName();  //获取streamName
         String rand = "0";//随机数  目前没有用
@@ -133,10 +135,10 @@ public class LiveServiceImpl implements ILiveService {
         String url = live.getPullDomain() + "/" + appName + "/" + streamName;
         String authKeyPrefix = "?auth_key=" + timeStamp + "-" + rand + "-" + uid + "-";
         PullLiveUrlResponse response = PullLiveUrlResponse.builder()
-                .ldUrl(url + "_ld" + authKeyPrefix + DigestUtils.md5Hex(sStringPrefix + "_ld" + sStringSuffix))
-                .sdUrl(url + "_sd" + authKeyPrefix + DigestUtils.md5Hex(sStringPrefix + "_sd" + sStringSuffix))
-                .hdUrl(url + "_hd" + authKeyPrefix + DigestUtils.md5Hex(sStringPrefix + "_hd" + sStringSuffix))
-                .udUrl(url + "_ud" + authKeyPrefix + DigestUtils.md5Hex(sStringPrefix + "_ud" + sStringSuffix))
+                .lldUrl(url + "_lld" + authKeyPrefix + DigestUtils.md5Hex(sStringPrefix + "_lld" + sStringSuffix))
+                .lsdUrl(url + "_lsd" + authKeyPrefix + DigestUtils.md5Hex(sStringPrefix + "_lsd" + sStringSuffix))
+                .lhdUrl(url + "_lhd" + authKeyPrefix + DigestUtils.md5Hex(sStringPrefix + "_lhd" + sStringSuffix))
+                .ludUrl(url + "_lud" + authKeyPrefix + DigestUtils.md5Hex(sStringPrefix + "_lud" + sStringSuffix))
                 .build();
         return Result.<PullLiveUrlResponse>builder().success().data(response).build();
     }

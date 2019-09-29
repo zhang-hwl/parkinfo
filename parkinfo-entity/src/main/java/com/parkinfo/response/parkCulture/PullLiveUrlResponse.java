@@ -16,14 +16,14 @@ import lombok.Data;
 public class PullLiveUrlResponse {
 
     @ApiModelProperty(value = "流畅")
-    private String ldUrl;
+    private String lldUrl;
 
     @ApiModelProperty(value = "标清")
-    private String sdUrl;
+    private String lsdUrl;
 
     @ApiModelProperty(value = "高清")
-    private String hdUrl;
+    private String lhdUrl;
 
     @ApiModelProperty(value = "超清")
-    private String udUrl;
+    private String ludUrl;
 }
