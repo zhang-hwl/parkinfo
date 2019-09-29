@@ -3,9 +3,12 @@ package com.parkinfo.service.sysConfig.impl;
 import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.userConfig.ParkInfo;
+import com.parkinfo.entity.userConfig.ParkRole;
 import com.parkinfo.entity.userConfig.ParkUser;
+import com.parkinfo.enums.ParkRoleEnum;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.userConfig.ParkInfoRepository;
+import com.parkinfo.repository.userConfig.ParkRoleRepository;
 import com.parkinfo.repository.userConfig.ParkUserRepository;
 import com.parkinfo.request.sysConfig.AddSysParkRequest;
 import com.parkinfo.request.sysConfig.QuerySysParkRequest;
@@ -33,6 +36,8 @@ public class SysParkServiceImpl implements ISysParkService {
     private ParkInfoRepository parkInfoRepository;
     @Autowired
     private ParkUserRepository parkUserRepository;
+    @Autowired
+    private ParkRoleRepository parkRoleRepository;
 
     @Override
     public Result<Page<SysParkInfoResponse>> findAll(QuerySysParkRequest request) {
@@ -69,17 +74,21 @@ public class SysParkServiceImpl implements ISysParkService {
             throw new NormalException("园区名称已存在");
         }
         ParkInfo parkInfo = new ParkInfo();
-        parkInfo.setName(request.getParkName());
-//        Optional<ParkUser> byId = parkUserRepository.findByIdAndAvailableIsTrueAndDeleteIsFalse(request.getUserId());
-//        if(!byId.isPresent()){
-//            throw new NormalException("用户不存在");
-//        }
-//        ParkUser parkUser = byId.get();
-//        parkInfo.setManager(parkUser);
         parkInfo.setDelete(false);
         parkInfo.setAvailable(true);
         BeanUtils.copyProperties(request, parkInfo);
-        parkInfoRepository.save(parkInfo);
+        ParkInfo save = parkInfoRepository.save(parkInfo);
+        ParkRoleEnum [] roleNames = {ParkRoleEnum.PARK_USER,ParkRoleEnum.HR_USER,ParkRoleEnum.OFFICER};
+        for(int i = 0; i < 3; i++){
+            ParkRole parkRole = new ParkRole();
+            parkRole.setParkId(save.getId());
+            parkRole.setDelete(false);
+            parkRole.setAvailable(true);
+            parkRole.setName(roleNames[i].name());
+            parkRole.setRemark(roleNames[i].getName());
+            parkRole.setParkId(save.getId());
+            parkRoleRepository.save(parkRole);
+        }
         return Result.<String>builder().success().data("新增成功").build();
     }
 

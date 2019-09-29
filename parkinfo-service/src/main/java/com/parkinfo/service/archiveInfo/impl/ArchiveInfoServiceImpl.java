@@ -129,13 +129,13 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
         if(fileAddress.endsWith("docx") || fileAddress.endsWith("doc") || fileAddress.endsWith("ppt") || fileAddress.endsWith("pptx") || fileAddress.endsWith("xlsx") || fileAddress.endsWith("xls")){
             sender.send(save.getId());
         }
-        if(request.getExternal()){
-            LearningData learningData = new LearningData();
-            BeanUtils.copyProperties(save, learningData);
-            learningData.setFilePath(save.getFileAddress());
-            learningData.setDescription(save.getRemark());
-            learningDataRepository.save(learningData);
-        }
+//        if(request.getExternal()){
+//            LearningData learningData = new LearningData();
+//            BeanUtils.copyProperties(save, learningData);
+//            learningData.setFilePath(save.getFileAddress());
+//            learningData.setDescription(save.getRemark());
+//            learningDataRepository.save(learningData);
+//        }
         return Result.<String>builder().success().data("新增成功").build();
     }
 
@@ -252,9 +252,11 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
         List<ParkInfo> byAll = parkInfoRepository.findAllByDeleteIsFalseAndAvailableIsTrue();
         List<ParkInfoResponse> result = Lists.newArrayList();
         byAll.forEach(temp -> {
-            ParkInfoResponse response = new ParkInfoResponse();
-            BeanUtils.copyProperties(temp, response);
-            result.add(response);
+            if(!temp.getName().equals("总裁园区")){
+                ParkInfoResponse response = new ParkInfoResponse();
+                BeanUtils.copyProperties(temp, response);
+                result.add(response);
+            }
         });
         return Result.<List<ParkInfoResponse>>builder().success().data(result).build();
     }

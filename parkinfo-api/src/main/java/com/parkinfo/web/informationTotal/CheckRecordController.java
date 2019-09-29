@@ -84,7 +84,6 @@ public class CheckRecordController {
 
     @GetMapping("/download/{id}")
     @ApiOperation(value = "文件导出")
-    @RequiresPermissions(value = "infoTotal:checkRecord:export")
     public void download(@PathVariable("id")String id, HttpServletResponse response){
         checkRecordService.download(id, response);
     }

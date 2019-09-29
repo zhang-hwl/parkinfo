@@ -1,6 +1,7 @@
 package com.parkinfo.entity.informationTotal;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.parkinfo.entity.base.BaseEntity;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import io.swagger.annotations.ApiModel;
@@ -17,6 +18,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "c_room_info")
 @EntityListeners(AuditingEntityListener.class)
+@JsonIgnoreProperties(value={"hibernateLazyInitializer","handler"})
 @ApiModel(value = "RoomInfo", description = "本园区房间统计")
 public class RoomInfo extends BaseEntity {
 
@@ -63,7 +65,7 @@ public class RoomInfo extends BaseEntity {
     @ApiModelProperty(value = "备注")
     private String remark;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parkInfo_id")
     //关联园区信息
     private ParkInfo parkInfo;

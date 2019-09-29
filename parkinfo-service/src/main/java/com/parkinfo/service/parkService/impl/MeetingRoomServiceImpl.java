@@ -19,8 +19,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
@@ -38,14 +43,26 @@ public class MeetingRoomServiceImpl implements IMeetingRoomService {
     @Override
     public Result<Page<MeetingRoomResponse>> searchMeetingRoom(SearchMeetingRoomRequest request) {
         Pageable pageable = PageRequest.of(request.getPageNum(),request.getPageSize(), Sort.Direction.DESC,"createTime");
-        ParkUserDTO loginUser = tokenUtils.getLoginUserDTO();
-        MeetingRoom exampleData = new MeetingRoom();
-        if (StringUtils.isNotBlank(request.getMeetingRoomId())){
-            exampleData.setId(request.getMeetingRoomId());
-        }
-        exampleData.setParkInfo(tokenUtils.getCurrentParkInfo());
-        Example<MeetingRoom> example = Example.of(exampleData);
-        Page<MeetingRoom> meetingRooms = meetingRoomRepository.findAll(example, pageable);
+//        ParkUserDTO loginUser = tokenUtils.getLoginUserDTO();
+//        MeetingRoom exampleData = new MeetingRoom();
+//        if (StringUtils.isNotBlank(request.getMeetingRoomId())){
+//            exampleData.setId(request.getMeetingRoomId());
+//        }
+//        ParkInfo currentParkInfo = tokenUtils.getCurrentParkInfo();
+//        exampleData.setParkInfo(tokenUtils.getCurrentParkInfo());
+//        Example<MeetingRoom> example = Example.of(exampleData);
+//        Page<MeetingRoom> meetingRooms = meetingRoomRepository.findAll(example, pageable);
+        Specification<MeetingRoom> specification = (Specification<MeetingRoom>) (root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = Lists.newArrayList();
+            if (StringUtils.isNotBlank(request.getMeetingRoomId())){
+                predicates.add(criteriaBuilder.equal(root.get("id").as(String.class),request.getMeetingRoomId()));
+            }
+            predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class),Boolean.FALSE));
+            predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class),Boolean.TRUE));
+            predicates.add(criteriaBuilder.equal(root.get("parkInfo").as(ParkInfo.class),tokenUtils.getCurrentParkInfo()));
+          return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+        Page<MeetingRoom> meetingRooms = meetingRoomRepository.findAll(specification, pageable);
         Page<MeetingRoomResponse> responses = this.convertMeetingRoomResponse(meetingRooms);
         return Result.<Page<MeetingRoomResponse>>builder().success().data(responses).build();
     }
