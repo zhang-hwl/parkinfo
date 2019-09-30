@@ -70,4 +70,8 @@ public class GovernmentReportListResponse {
      */
     @ApiModelProperty(value = "是否完成")
     private Boolean finished;
+
+    @ApiModelProperty(value = "提交时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date createTime;
 }

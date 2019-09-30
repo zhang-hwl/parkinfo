@@ -27,6 +27,10 @@ public class AddLiveBroadcastRequest {
     @NotBlank(message = "标题不能为空")
     private String title;
 
+    @ApiModelProperty(value = "直播人")
+    @NotBlank(message = "直播人不能为空")
+    private String anchor;
+
     @ApiModelProperty(value = "直播开始时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @NotNull(message = "直播开始时间不能为空")

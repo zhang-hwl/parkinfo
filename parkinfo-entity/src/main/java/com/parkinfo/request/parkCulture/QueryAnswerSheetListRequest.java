@@ -25,4 +25,10 @@ public class QueryAnswerSheetListRequest extends PageRequest {
 
     @NotNull(message = "试卷类型不能为空")
     private AnswerSheetType answerSheetType;
+
+    @ApiModelProperty(value = "试卷名称")
+    private String name;
+
+    @ApiModelProperty(value = "昵称")
+    private String nickname;
 }

@@ -28,6 +28,9 @@ public class LiveListResponse {
     @ApiModelProperty(value = "课程标题")
     private String title;
 
+    @ApiModelProperty(value = "直播人")
+    private String anchor;
+
     @ApiModelProperty(value = "直播开始时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date liveStartTime;

@@ -1,5 +1,6 @@
 package com.parkinfo.response.parkCulture;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -22,5 +23,6 @@ public class VideoRecordListResponse {
     private String nickname;
 
     @ApiModelProperty(value = "观看时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
 }

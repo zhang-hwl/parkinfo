@@ -207,6 +207,12 @@ public class ExaminationServiceImpl implements IExaminationService {
             }else {
                 predicates.add(criteriaBuilder.equal(root.get("creator").get("id").as(String.class), parkUser.getId()));
             }
+            if (StringUtils.isNotBlank(request.getName())){
+                predicates.add(criteriaBuilder.equal(root.get("examination").get("name").as(String.class), request.getName()));
+            }
+            if (StringUtils.isNotBlank(request.getNickname())){
+                predicates.add(criteriaBuilder.equal(root.get("parkUser").get("nickname").as(String.class), request.getNickname()));
+            }
             predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
@@ -353,6 +359,7 @@ public class ExaminationServiceImpl implements IExaminationService {
             }
             if (question.getCategory()!=null){
                 response.setCategoryId(question.getCategory().getId());
+                response.setCategoryName(question.getCategory().getName());
             }
             content.add(response);
         });

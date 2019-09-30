@@ -36,6 +36,9 @@ public class QuestionListResponse {
     @ApiModelProperty(value = "分类id")
     private String categoryId;
 
+    @ApiModelProperty(value = "分类名")
+    private String categoryName;
+
     /**
      * 题目类型
      */

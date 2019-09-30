@@ -282,6 +282,8 @@ public class VideoServiceImpl implements IVideoService {
         if (StringUtils.isNotBlank(request.getParentId())) {
             VideoCategory parent = this.checkVideoCategory(request.getParentId());
             videoCategory.setParent(parent);
+            videoCategory.setAvailable(true);
+            videoCategory.setDelete(false);
         }
         videoCategoryRepository.save(videoCategory);
         return Result.builder().success().message("添加视频分类成功").build();
