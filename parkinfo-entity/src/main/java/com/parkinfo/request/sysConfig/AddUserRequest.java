@@ -23,6 +23,9 @@ public class AddUserRequest {
     @ApiModelProperty(value = "绑定园区id")
     private String parkId;
 
+    @ApiModelProperty(value = "绑定园区id")
+    private List<String> parkIds;
+
     @ApiModelProperty(value = "绑定角色id")
     @NotNull
     private String roleId;

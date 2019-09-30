@@ -36,4 +36,9 @@ public class ParkUserPermissionDTO {
 
     @ApiModelProperty(value = "icon")
     private String src;
+
+    /**
+     * 优先级
+     */
+    private Integer priority;
 }

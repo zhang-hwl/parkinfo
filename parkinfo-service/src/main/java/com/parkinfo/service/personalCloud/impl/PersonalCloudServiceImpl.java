@@ -13,6 +13,7 @@ import com.parkinfo.response.personalCloud.UploadFileResponse;
 import com.parkinfo.service.personalCloud.IPersonalCloudService;
 import com.parkinfo.token.TokenUtils;
 import com.parkinfo.tools.oss.IOssService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -47,11 +48,14 @@ public class PersonalCloudServiceImpl implements IPersonalCloudService {
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
         Specification<CloudDisk> specification = (Specification<CloudDisk>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
+            if (StringUtils.isNotBlank(request.getFileName())){
+                predicates.add(criteriaBuilder.like(root.get("fileName").as(String.class), "%"+request.getFileName()+"%"));
+            }
             ParkUser loginUser = tokenUtils.getLoginUser();
             predicates.add(criteriaBuilder.equal(root.get("parkUser").get("id").as(String.class), loginUser.getId()));
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
             predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
-            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
         Page<CloudDisk> cloudDiskPage = cloudDiskRepository.findAll(specification, pageable);
         Page<PersonalCloudResponse> responses = this.convertCloudPage(cloudDiskPage);

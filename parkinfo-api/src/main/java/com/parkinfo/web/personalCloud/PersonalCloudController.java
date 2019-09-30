@@ -2,9 +2,7 @@ package com.parkinfo.web.personalCloud;
 
 import com.parkinfo.common.Result;
 import com.parkinfo.request.personalCloud.*;
-import com.parkinfo.response.personalCloud.DownloadResponse;
 import com.parkinfo.response.personalCloud.PersonalCloudResponse;
-import com.parkinfo.response.personalCloud.UploadFileResponse;
 import com.parkinfo.service.personalCloud.IPersonalCloudService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 @RestController
 @RequestMapping("/cloud")
@@ -58,7 +55,7 @@ public class PersonalCloudController {
     @PostMapping("/delete")
     @ApiOperation("批量删除文件")
     @RequiresPermissions("personalDisk:myDisk:deleteAll")
-    public Result<String> deleteAll(@RequestBody DeletePersonalCloudRequest request) {
+    public Result deleteAll(@RequestBody DeletePersonalCloudRequest request) {
         return personalCloudService.deleteAll(request);
     }
 }
