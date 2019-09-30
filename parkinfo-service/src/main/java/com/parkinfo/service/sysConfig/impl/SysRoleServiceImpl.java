@@ -116,9 +116,11 @@ public class SysRoleServiceImpl implements ISysRoleService {
             SysRoleResponse park1 = convertRoleResponse(parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PRESIDENT.name()).get());
             SysRoleResponse park2 = convertRoleResponse(parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.GENERAL_MANAGER.name()).get());
             SysRoleResponse park3 = convertRoleResponse(parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PARK_MANAGER.name()).get());
+            SysRoleResponse park4 = convertRoleResponse(parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.AREA_MANAGER.name()).get());
             parkRoleList.add(park1);
             parkRoleList.add(park2);
             parkRoleList.add(park3);
+            parkRoleList.add(park4);
         }
         //管理员->HR,Or,User
         //超管->总裁，总裁办，园管

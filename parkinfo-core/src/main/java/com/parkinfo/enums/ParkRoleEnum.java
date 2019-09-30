@@ -37,6 +37,11 @@ public enum ParkRoleEnum {
         public String getName() {
             return "HR机构";
         }
+    },AREA_MANAGER{
+        @Override
+        public String getName() {
+            return "区域负责人";
+        }
     };
     public abstract String getName();
 }

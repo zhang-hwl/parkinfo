@@ -42,6 +42,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class SysUserServiceImpl implements ISysUserService {
@@ -80,24 +81,20 @@ public class SysUserServiceImpl implements ISysUserService {
                 predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class),request.getAvailable()));
             }
             Set<ParkRole> roles = tokenUtils.getLoginUser().getRoles();
-            String currentRole = "";
-            if (roles != null && roles.size() != 0){
-                //目前是单角色绑定
-                currentRole = roles.iterator().next().getName();
-            }
-            if (currentRole.equals(ParkRoleEnum.ADMIN.toString())){
+            List<String> collect = roles.stream().map(ParkRole::getName).collect(Collectors.toList());
+            if (collect.contains(ParkRoleEnum.ADMIN.toString())){
                 Optional<ParkInfo> byParkName = parkInfoRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(DefaultEnum.CEO_PARK.getDefaultValue());
                 if(byParkName.isPresent()){
-                    SetJoin<ParkUser,ParkRole> setJoin = root.joinSet("parks",JoinType.LEFT);
+                    SetJoin<ParkUser,ParkInfo> setJoin = root.joinSet("parks",JoinType.LEFT);
                     predicates.add(criteriaBuilder.equal(setJoin.get("id").as(String.class),byParkName.get().getId()));
-                    predicates.add(criteriaBuilder.notEqual(setJoin.get("name").as(String.class),ParkRoleEnum.ADMIN.toString()));
-//                    ParkInfo parkInfo = byParkName.get();
-//                    predicates.add(criteriaBuilder.equal(root.get("parks").as(),request.getAvailable()));
+                    SetJoin<ParkUser,ParkRole> roleSetJoin = root.joinSet("roles",JoinType.LEFT);
+                    predicates.add(criteriaBuilder.notEqual(roleSetJoin.get("name").as(String.class),ParkRoleEnum.ADMIN.toString()));
                 }
             }else {
-                SetJoin<ParkUser,ParkRole> setJoin = root.joinSet("parks",JoinType.LEFT);
+                SetJoin<ParkUser,ParkInfo> setJoin = root.joinSet("parks",JoinType.LEFT);
                 predicates.add(criteriaBuilder.equal(setJoin.get("id").as(String.class),tokenUtils.getCurrentParkInfo().getId()));
-                predicates.add(criteriaBuilder.notEqual(setJoin.get("name").as(String.class),ParkRoleEnum.PARK_MANAGER.toString()));
+                SetJoin<ParkUser,ParkRole> roleSetJoin = root.joinSet("roles",JoinType.LEFT);
+                predicates.add(criteriaBuilder.notEqual(roleSetJoin.get("name").as(String.class),ParkRoleEnum.PARK_MANAGER.toString()));
             }
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class),Boolean.FALSE));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
@@ -158,14 +155,16 @@ public class SysUserServiceImpl implements ISysUserService {
         parkRoles.add(parkRole);
         if(roles.contains(admin)){
             if(parkRole.getName().equals(ParkRoleEnum.PARK_MANAGER.name())){
-                if(StringUtils.isBlank(request.getParkId())){
-                    throw new NormalException("园区id不能为空");
+                if(request.getParkIds() == null || request.getParkIds().size() == 0){
+                    throw new NormalException("园区不能为空");
                 }
-                Optional<ParkInfo> byPardId = parkInfoRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(request.getParkId());
-                if(byPardId.isPresent()){
-                    ParkInfo parkInfo = byPardId.get();
-                    parkInfos.add(parkInfo);
-                }
+                request.getParkIds().forEach(id ->{
+                    Optional<ParkInfo> byPardId = parkInfoRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(id);
+                    if(byPardId.isPresent()){
+                        ParkInfo parkInfo = byPardId.get();
+                        parkInfos.add(parkInfo);
+                    }
+                });
             }
             else{
                 Optional<ParkInfo> byParkName = parkInfoRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(DefaultEnum.CEO_PARK.getDefaultValue());
