@@ -28,7 +28,7 @@ public interface IHomeRepostService {
     Result<List<BaseReportResponse>> findAllIncreaseReport();
 
     //获取园区大事记
-    Result<List<BigEventResponse>> findAllBigEventReport();
+    Result<List<BigEventReportResponse>> findAllBigEventReport();
 
     //政府-获取园区当年基本信息
     Result<List<OrganInfoReportResponse>> findAllOrganInfoYearReport();
@@ -37,5 +37,5 @@ public interface IHomeRepostService {
     Result<List<OrganInfoReportResponse>> findAllOrganInfoMonthReport();
 
     //获取政府园区大事记
-    Result<List<BigEventResponse>> findAllOfficeBigEventReport();
+    Result<List<BigEventReportResponse>> findAllOfficeBigEventReport();
 }

@@ -34,6 +34,8 @@ public class HomeReportServiceImpl implements IHomeRepostService {
     private TokenUtils tokenUtils;
     @Autowired
     private InfoReportService infoReportService;
+    @Autowired
+    private ParkInfoReportService parkInfoReportService;
 
     @Override
     public Result<List<EnterReportResponse>> findAllEnterReport() {
@@ -69,7 +71,9 @@ public class HomeReportServiceImpl implements IHomeRepostService {
                 }
             }
             for(int i = 1; i <= 12; i++){
-                map.put(i, (i*289));            //测试数据
+                int test = (int)(Math.random()*1000);
+                map.put(i, test);            //测试数据
+                enterCount += test;
             }
             map.keySet().forEach(key -> {
                 Integer count = map.get(key);
@@ -78,10 +82,14 @@ public class HomeReportServiceImpl implements IHomeRepostService {
                 baseReportResponse.setValue(String.valueOf(count));
                 list.add(baseReportResponse);
             });
-            response.setEnterCount(String.valueOf(enterCount));
-//            response.setParkEnterCount(String.valueOf(parkEnterCount));
             response.setBaseReportResponses(list);
             result.add(response);
+        }
+        int len = result.size();
+        for(int i = 0; i < len; i++){
+            EnterReportResponse response = result.get(i);
+            response.setEnterCount(String.valueOf(enterCount));
+            result.set(i, response);
         }
         return Result.<List<EnterReportResponse>>builder().success().data(result).build();
     }
@@ -110,11 +118,10 @@ public class HomeReportServiceImpl implements IHomeRepostService {
                     }
                 }
             }
-            allTaxCount = allTaxCount.add(taxCount);    //加本园区税收合计
             //测试数据
-            allTaxCount = allTaxCount.add(new BigDecimal("121212"));
-            taxCount = new BigDecimal("2332");
+            taxCount = new BigDecimal((int)(Math.random()*1000));
             //
+            allTaxCount = allTaxCount.add(taxCount);    //加本园区税收合计
             taxCount.setScale(0, BigDecimal.ROUND_HALF_UP);
             baseReportResponse.setValue(String.valueOf(taxCount));
             list.add(baseReportResponse);
@@ -163,11 +170,10 @@ public class HomeReportServiceImpl implements IHomeRepostService {
                     }
                 }
             }
-            allTaxCount = allTaxCount.add(taxCount);    //加本园区税收合计
             //测试数据
-            allTaxCount = allTaxCount.add(new BigDecimal("333"));
-            taxCount = new BigDecimal("12");
+            taxCount = new BigDecimal((int)(Math.random()*1000));
             //
+            allTaxCount = allTaxCount.add(taxCount);    //加本园区税收合计
             taxCount.setScale(0, BigDecimal.ROUND_HALF_UP); //四舍五入
             baseReportResponse.setValue(String.valueOf(taxCount));
             list.add(baseReportResponse);
@@ -211,7 +217,7 @@ public class HomeReportServiceImpl implements IHomeRepostService {
             }
             taxCount.setScale(0, BigDecimal.ROUND_HALF_UP);
             response.setValue(String.valueOf(taxCount));    //纵坐标--税收合计
-            response.setValue("121423");    //测试数据
+            response.setValue((int)(Math.random()*100)+"");    //测试数据
             result.add(response);
         });
         return Result.<List<BaseReportResponse>>builder().success().data(result).build();
@@ -224,11 +230,11 @@ public class HomeReportServiceImpl implements IHomeRepostService {
     }
 
     @Override
-    public Result<List<BigEventResponse>> findAllBigEventReport() {
+    public Result<List<BigEventReportResponse>> findAllBigEventReport() {
         List<BigEventResponse> result = Lists.newArrayList();
         List<ParkInfoResponse> allPark = infoReportService.findAllPark();
         allPark.forEach(tempPark -> {
-            List<BigEvent> byId = bigEventRepository.findByParkInfo_IdAndDeleteIsFalseAndAvailableIsTrue(tempPark.getId());
+            List<BigEvent> byId = bigEventRepository.findAllOrderAndPark(tempPark.getId());
             byId.forEach(tempBigEvent -> {
                 BigEventResponse response = new BigEventResponse();
                 response.setParkName(tempPark.getName());
@@ -236,12 +242,49 @@ public class HomeReportServiceImpl implements IHomeRepostService {
                 result.add(response);
             });
         });
-        return Result.<List<BigEventResponse>>builder().success().data(result).build();
+        Map<String, List<BigEventInnerResponse>> map = new TreeMap<>();
+        result.forEach(temp -> {
+            if(map.containsKey(temp.getYear())){
+                List<BigEventInnerResponse> bigEventInnerResponses = map.get(temp.getYear());
+                BigEventInnerResponse bigEventInnerResponse = new BigEventInnerResponse();
+                BeanUtils.copyProperties(temp, bigEventInnerResponse);
+                String id = UUID.randomUUID().toString().replaceAll("-", "");
+                bigEventInnerResponse.setId(id);
+                bigEventInnerResponses.add(bigEventInnerResponse);
+            }
+            else{
+                List<BigEventInnerResponse> bigEventInnerResponses = Lists.newArrayList();
+                BigEventInnerResponse bigEventInnerResponse = new BigEventInnerResponse();
+                BeanUtils.copyProperties(temp, bigEventInnerResponse);
+                String id = UUID.randomUUID().toString().replaceAll("-", "");
+                bigEventInnerResponse.setId(id);
+                bigEventInnerResponses.add(bigEventInnerResponse);
+                map.put(temp.getYear(), bigEventInnerResponses);
+            }
+        });
+        List<BigEventReportResponse> responses = Lists.newArrayList();
+        map.keySet().forEach(temp -> {
+            BigEventReportResponse bigEventReportResponse = new BigEventReportResponse();
+            bigEventReportResponse.setYear(temp);
+            bigEventReportResponse.setBigEventInnerResponses(map.get(temp));
+            responses.add(bigEventReportResponse);
+        });
+        return Result.<List<BigEventReportResponse>>builder().success().data(responses).build();
     }
 
     @Override
     public Result<List<OrganInfoReportResponse>> findAllOrganInfoYearReport() {
         List<OrganInfoReportResponse> result = Lists.newArrayList();
+        String parkId = tokenUtils.getCurrentParkInfo().getId();
+        List<CompanyDetail> list = companyDetailRepository.findByParkInfo_Id(parkId);
+        result.add(parkInfoReportService.getEnterTop(list));    //入驻百强企业
+        result.add(parkInfoReportService.getAddEnter(list));    //入驻企业
+        result.add(parkInfoReportService.getExitCompany(list)); //退出企业
+        result.add(parkInfoReportService.getEnterValue(list));  //入园企业产值
+        result.add(parkInfoReportService.getEnterTax(list));    //入园企业税收
+        result.add(parkInfoReportService.getParkRoom(parkId));  //本园区房间统计
+        result.add(parkInfoReportService.getActivittTotal(parkId)); //活动类统计
+        result.add(parkInfoReportService.getGetGrade(parkId));  //成绩统计
         return Result.<List<OrganInfoReportResponse>>builder().success().data(result).build();
     }
 
@@ -252,7 +295,7 @@ public class HomeReportServiceImpl implements IHomeRepostService {
     }
 
     @Override
-    public Result<List<BigEventResponse>> findAllOfficeBigEventReport() {
+    public Result<List<BigEventReportResponse>> findAllOfficeBigEventReport() {
         ParkInfo parkInfo = tokenUtils.getCurrentParkInfo();
         if(parkInfo == null){
             throw new NormalException("token不存在或已失效");
@@ -266,6 +309,33 @@ public class HomeReportServiceImpl implements IHomeRepostService {
             response.setParkName(parkInfo.getName());
             result.add(response);
         });
-        return Result.<List<BigEventResponse>>builder().success().data(result).build();
+        Map<String, List<BigEventInnerResponse>> map = new TreeMap<>();
+        result.forEach(temp -> {
+            if(map.containsKey(temp.getYear())){
+                List<BigEventInnerResponse> bigEventInnerResponses = map.get(temp.getYear());
+                BigEventInnerResponse bigEventInnerResponse = new BigEventInnerResponse();
+                BeanUtils.copyProperties(temp, bigEventInnerResponse);
+                String id = UUID.randomUUID().toString().replaceAll("-", "");
+                bigEventInnerResponse.setId(id);
+                bigEventInnerResponses.add(bigEventInnerResponse);
+            }
+            else{
+                List<BigEventInnerResponse> bigEventInnerResponses = Lists.newArrayList();
+                BigEventInnerResponse bigEventInnerResponse = new BigEventInnerResponse();
+                BeanUtils.copyProperties(temp, bigEventInnerResponse);
+                String id = UUID.randomUUID().toString().replaceAll("-", "");
+                bigEventInnerResponse.setId(id);
+                bigEventInnerResponses.add(bigEventInnerResponse);
+                map.put(temp.getYear(), bigEventInnerResponses);
+            }
+        });
+        List<BigEventReportResponse> responses = Lists.newArrayList();
+        map.keySet().forEach(temp -> {
+            BigEventReportResponse bigEventReportResponse = new BigEventReportResponse();
+            bigEventReportResponse.setYear(temp);
+            bigEventReportResponse.setBigEventInnerResponses(map.get(temp));
+            responses.add(bigEventReportResponse);
+        });
+        return Result.<List<BigEventReportResponse>>builder().success().data(responses).build();
     }
 }

@@ -8,7 +8,6 @@ import com.parkinfo.entity.informationTotal.RoomInfo;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.enums.EnterStatus;
 import com.parkinfo.enums.InfoReportType;
-import com.parkinfo.repository.archiveInfo.ArchiveInfoRepository;
 import com.parkinfo.repository.companyManage.CompanyDetailRepository;
 import com.parkinfo.repository.companyManage.EnteredInfoRepository;
 import com.parkinfo.repository.informationTotal.RoomInfoRepository;

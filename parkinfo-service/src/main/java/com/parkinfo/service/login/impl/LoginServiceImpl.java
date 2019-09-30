@@ -3,6 +3,7 @@ package com.parkinfo.service.login.impl;
 import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
 import com.parkinfo.dto.ParkUserDTO;
+import com.parkinfo.dto.ParkUserPermissionDTO;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.exception.NormalException;
@@ -27,9 +28,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -116,6 +115,8 @@ public class LoginServiceImpl implements ILoginService {
     @Override
     public Result<ParkUserDTO> getUserInfo() {
         ParkUserDTO parkUserDTO = tokenUtils.getLoginUserDTO();
+        List<ParkUserPermissionDTO> collect = parkUserDTO.getPermissions().stream().sorted(Comparator.comparing(ParkUserPermissionDTO::getPriority)).collect(Collectors.toList());
+        parkUserDTO.setPermissions(collect);
         return Result.<ParkUserDTO>builder().success().data(parkUserDTO).build();
     }
 

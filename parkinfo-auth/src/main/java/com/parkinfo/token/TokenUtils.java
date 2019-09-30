@@ -244,6 +244,7 @@ public class TokenUtils {
     private ParkUserPermissionDTO convertParkPermission(ParkPermission parkPermission){
         ParkUserPermissionDTO parkUserPermissionDTO = new ParkUserPermissionDTO();
         BeanUtils.copyProperties(parkPermission,parkUserPermissionDTO);
+        parkUserPermissionDTO.setPriority(parkPermission.getPriority());
         if (parkPermission.getParent()!=null){
             parkUserPermissionDTO.setParentId(parkPermission.getParent().getId());
         }

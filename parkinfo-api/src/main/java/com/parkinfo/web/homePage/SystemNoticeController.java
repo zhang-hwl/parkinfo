@@ -7,6 +7,7 @@ import com.parkinfo.request.notice.QueryNoticeRequest;
 import com.parkinfo.service.homePage.ISystemNoticeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ public class SystemNoticeController {
 
     @PostMapping("/add")
     @ApiOperation(value = "新增公告")
+    @RequiresPermissions("sysConfig:news:add")
     public Result<String> addNotice(@RequestBody SystemNotice systemNotice){
         return systemNoticeService.addNotice(systemNotice);
     }
@@ -35,6 +37,7 @@ public class SystemNoticeController {
 
     @PostMapping("/delete/{id}")
     @ApiOperation(value = "删除公告")
+    @RequiresPermissions("sysConfig:news:delete")
     public Result<String> deleteById(@PathVariable("id") String id){
         return systemNoticeService.deleteById(id);
     }

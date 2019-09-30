@@ -3,13 +3,11 @@ package com.parkinfo.response.homePage;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
-public class BigEventResponse {
+public class BigEventInnerResponse {
 
-    @ApiModelProperty("年")
-    private String year;
+    @ApiModelProperty("id")
+    private String id;
 
     @ApiModelProperty("月")
     private String month;
