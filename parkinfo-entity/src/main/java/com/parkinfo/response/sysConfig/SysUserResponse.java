@@ -1,6 +1,7 @@
 package com.parkinfo.response.sysConfig;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.parkinfo.response.login.ParkInfoListResponse;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -52,6 +53,9 @@ public class SysUserResponse {
 
     @ApiModelProperty("角色列表")
     private List<SysRoleResponse> roleResponses;
+
+    @ApiModelProperty("园区列表")
+    private List<ParkInfoListResponse> parkInfoListResponses;
 
 
 }

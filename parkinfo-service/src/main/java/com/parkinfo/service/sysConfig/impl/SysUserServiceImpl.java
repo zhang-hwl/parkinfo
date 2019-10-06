@@ -18,6 +18,7 @@ import com.parkinfo.request.sysConfig.AddUserRequest;
 import com.parkinfo.request.sysConfig.ChangePassRequest;
 import com.parkinfo.request.sysConfig.QuerySysUserRequest;
 import com.parkinfo.request.sysConfig.SetUserRequest;
+import com.parkinfo.response.login.ParkInfoListResponse;
 import com.parkinfo.response.sysConfig.SysRoleResponse;
 import com.parkinfo.response.sysConfig.SysUserResponse;
 import com.parkinfo.service.sysConfig.ISysUserService;
@@ -33,9 +34,7 @@ import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.SetJoin;
+import javax.persistence.criteria.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.crypto.Data;
 import java.util.HashSet;
@@ -83,13 +82,16 @@ public class SysUserServiceImpl implements ISysUserService {
             Set<ParkRole> roles = tokenUtils.getLoginUser().getRoles();
             List<String> collect = roles.stream().map(ParkRole::getName).collect(Collectors.toList());
             if (collect.contains(ParkRoleEnum.ADMIN.toString())){
-                Optional<ParkInfo> byParkName = parkInfoRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(DefaultEnum.CEO_PARK.getDefaultValue());
-                if(byParkName.isPresent()){
-                    SetJoin<ParkUser,ParkInfo> setJoin = root.joinSet("parks",JoinType.LEFT);
-                    predicates.add(criteriaBuilder.equal(setJoin.get("id").as(String.class),byParkName.get().getId()));
-                    SetJoin<ParkUser,ParkRole> roleSetJoin = root.joinSet("roles",JoinType.LEFT);
-                    predicates.add(criteriaBuilder.notEqual(roleSetJoin.get("name").as(String.class),ParkRoleEnum.ADMIN.toString()));
-                }
+                SetJoin<ParkUser,ParkRole> roleSetJoin = root.joinSet("roles",JoinType.LEFT);
+                predicates.add(criteriaBuilder.notEqual(roleSetJoin.get("name").as(String.class),ParkRoleEnum.ADMIN.toString()));
+                List<String> list = Lists.newArrayList();
+                list.add(ParkRoleEnum.PARK_MANAGER.toString());
+                list.add(ParkRoleEnum.AREA_MANAGER.toString());
+                list.add(ParkRoleEnum.PRESIDENT.toString());
+                list.add(ParkRoleEnum.GENERAL_MANAGER.toString());
+                Path<Object> path = roleSetJoin.get("name");
+                CriteriaBuilder.In<Object> in = criteriaBuilder.in(path);
+                list.forEach(in::value);
             }else {
                 SetJoin<ParkUser,ParkInfo> setJoin = root.joinSet("parks",JoinType.LEFT);
                 predicates.add(criteriaBuilder.equal(setJoin.get("id").as(String.class),tokenUtils.getCurrentParkInfo().getId()));
@@ -111,6 +113,15 @@ public class SysUserServiceImpl implements ISysUserService {
                 roleResponses.add(sysRoleResponse);
             });
             sysUserResponse.setRoleResponses(roleResponses);
+            Set<ParkInfo> parks = temp.getParks();
+            List<ParkInfoListResponse>  parkInfoListResponses = Lists.newArrayList();
+            parks.forEach(parkInfo -> {
+                ParkInfoListResponse parkInfoListResponse = new ParkInfoListResponse();
+                parkInfoListResponse.setId(parkInfo.getId());
+                parkInfoListResponse.setName(parkInfo.getName());
+                parkInfoListResponses.add(parkInfoListResponse);
+            });
+            sysUserResponse.setParkInfoListResponses(parkInfoListResponses);
             list.add(sysUserResponse);
         });
         Page<SysUserResponse> result = new PageImpl<>(list, parkUserPage.getPageable(), parkUserPage.getTotalElements());
@@ -152,9 +163,13 @@ public class SysUserServiceImpl implements ISysUserService {
         //超管，新增园管(id必传)，选园区，总裁总裁办默认园区
         Set<ParkInfo> parkInfos = Sets.newHashSet();
         Set<ParkRole> parkRoles = Sets.newHashSet();
-        parkRoles.add(parkRole);
+        if (parkRole.getName().equals(ParkRoleEnum.AREA_MANAGER.name())){
+            parkRoles.add(manager);
+        }else {
+            parkRoles.add(parkRole);
+        }
         if(roles.contains(admin)){
-            if(parkRole.getName().equals(ParkRoleEnum.PARK_MANAGER.name())){
+            if(parkRole.getName().equals(ParkRoleEnum.PARK_MANAGER.name()) || parkRole.getName().equals(ParkRoleEnum.AREA_MANAGER.name())){
                 if(request.getParkIds() == null || request.getParkIds().size() == 0){
                     throw new NormalException("园区不能为空");
                 }
