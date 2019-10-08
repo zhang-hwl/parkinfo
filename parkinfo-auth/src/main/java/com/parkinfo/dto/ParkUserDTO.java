@@ -23,6 +23,9 @@ public class ParkUserDTO implements Serializable {
     @ApiModelProperty(value = "账号")
     private String account;
 
+    @ApiModelProperty(value = "用户头像")
+    private String avatar;
+
     @ApiModelProperty(value = "权限列表")
     private List<ParkUserPermissionDTO> permissions;
 
