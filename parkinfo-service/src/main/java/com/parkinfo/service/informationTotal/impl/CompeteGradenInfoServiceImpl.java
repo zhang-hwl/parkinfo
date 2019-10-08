@@ -161,14 +161,14 @@ public class CompeteGradenInfoServiceImpl implements ICompeteGradenInfoService {
             throw new NormalException("用户不存在");
         }
         String parkId = user.get().getId();
-//        int i = judgePremissionById(id);
-        int i = 1;
+        int i = judgePremissionById(id);
+//        int i = 1;
         List<CompeteGradenInfo> competeGradenInfos;
         if(i == -1){
             competeGradenInfos = Lists.newArrayList();
         }
         else if(i == 0){
-            competeGradenInfos = competeGradenInfoRepository.findByParkInfo_IdAndDeleteIsFalseAndAvailableIsTrue(parkId);
+            competeGradenInfos = competeGradenInfoRepository.findByParkInfo_IdAndDeleteIsFalseAndAvailableIsTrue(tokenUtils.getCurrentParkInfo().getId());
         }
         else{
             competeGradenInfos = competeGradenInfoRepository.findAllByDeleteIsFalse();

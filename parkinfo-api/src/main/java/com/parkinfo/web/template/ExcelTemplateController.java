@@ -9,6 +9,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -24,6 +25,12 @@ public class ExcelTemplateController {
     @ApiOperation("上传模板")
     public Result<String> upload(@RequestBody ExcelTemplateRequest request) {
         return excelTemplateService.upload(request);
+    }
+
+    @PostMapping("/upload/test")
+    @ApiOperation("上传模板Swagger测试接口")
+    public Result<String> upload(@RequestParam("typeId") String typeId, MultipartFile file) {
+        return excelTemplateService.uploadTest(typeId, file);
     }
 
     @PostMapping("/find/type")

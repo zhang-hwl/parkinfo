@@ -52,6 +52,10 @@ public class BigEventServiceImpl implements IBigEventService {
     public Result<String> add(BigEventRequest request) {
         BigEvent bigEvent = new BigEvent();
         BeanUtils.copyProperties(request, bigEvent);
+        Integer year = Integer.parseInt(request.getYear());
+        Integer month = Integer.parseInt(request.getMonth());
+        bigEvent.setYear(year);
+        bigEvent.setMonth(month);
         String parkId = request.getParkInfoResponse().getId();
         Optional<ParkInfo> byIdAndDeleteIsFalse = parkInfoRepository.findByIdAndDeleteIsFalse(parkId);
         if(!byIdAndDeleteIsFalse.isPresent()){
@@ -75,6 +79,10 @@ public class BigEventServiceImpl implements IBigEventService {
         BeanUtils.copyProperties(byIdAndDeleteIsFalse.get(), bigEvent);
         BeanUtils.copyProperties(request, bigEvent);
         bigEvent.setParkInfo(byIdAndDeleteIsFalse.get().getParkInfo());
+        Integer year = Integer.parseInt(request.getYear());
+        Integer month = Integer.parseInt(request.getMonth());
+        bigEvent.setYear(year);
+        bigEvent.setMonth(month);
         bigEventRepository.save(bigEvent);
         return Result.<String>builder().success().data("编辑成功").build();
     }
@@ -103,6 +111,8 @@ public class BigEventServiceImpl implements IBigEventService {
         all.forEach(temp -> {
             BigEventRequest response = new BigEventRequest();
             BeanUtils.copyProperties(temp, response);
+            response.setYear(String.valueOf(temp.getYear()));
+            response.setMonth(String.valueOf(temp.getMonth()));
             ParkInfoResponse parkInfoResponse = new ParkInfoResponse();
             parkInfoResponse.setId(temp.getParkInfo().getId());
             parkInfoResponse.setName(temp.getParkInfo().getName());
@@ -169,7 +179,7 @@ public class BigEventServiceImpl implements IBigEventService {
             list = Lists.newArrayList();
         }
         else if(i == 0){
-            list = bigEventRepository.findByParkInfo_IdAndDeleteIsFalseAndAvailableIsTrue(parkId);
+            list = bigEventRepository.findByParkInfo_IdAndDeleteIsFalseAndAvailableIsTrue(tokenUtils.getCurrentParkInfo().getId());
         }
         else{
             list = bigEventRepository.findAllByDeleteIsFalse();

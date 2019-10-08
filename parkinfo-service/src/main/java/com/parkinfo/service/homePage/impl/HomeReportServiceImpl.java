@@ -239,6 +239,8 @@ public class HomeReportServiceImpl implements IHomeRepostService {
                 BigEventResponse response = new BigEventResponse();
                 response.setParkName(tempPark.getName());
                 BeanUtils.copyProperties(tempBigEvent, response);
+                response.setYear(String.valueOf(tempBigEvent.getYear()));
+                response.setMonth(String.valueOf(tempBigEvent.getMonth()));
                 result.add(response);
             });
         });
@@ -306,6 +308,8 @@ public class HomeReportServiceImpl implements IHomeRepostService {
         allOrderAndPark.forEach(temp -> {
             BigEventResponse response = new BigEventResponse();
             BeanUtils.copyProperties(temp, response);
+            response.setYear(String.valueOf(temp.getYear()));
+            response.setMonth(String.valueOf(temp.getMonth()));
             response.setParkName(parkInfo.getName());
             result.add(response);
         });

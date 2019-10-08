@@ -165,14 +165,14 @@ public class PolicyTotalServiceImpl implements IPolicyTotalService {
             throw new NormalException("用户不存在");
         }
         String parkId = byId.get().getId();
-//        int i = judgePremissionByUserId(id);
-        int i = 1;
+        int i = judgePremissionByUserId(id);
+//        int i = 1;
         List<PolicyTotal> policyTotals;
         if(i == -1){
             policyTotals = Lists.newArrayList();
         }
         else if(i == 0){
-            policyTotals = policyTotalRepository.findByParkInfo_IdAndDeleteIsFalseAndAvailableIsTrue(parkId);
+            policyTotals = policyTotalRepository.findByParkInfo_IdAndDeleteIsFalseAndAvailableIsTrue(tokenUtils.getCurrentParkInfo().getId());
         }
         else{
             policyTotals = policyTotalRepository.findAllByDeleteIsFalse();

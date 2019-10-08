@@ -116,4 +116,22 @@ public class AliyunOssService implements IOssService {
             throw new NormalException("请选择上传文件");
         }
     }
+
+    @Override
+    public String fileUploadTest(MultipartFile file, String keyPrefix) {
+        StringBuilder filePath = new StringBuilder();
+        String fileName = file.getOriginalFilename();
+        try {
+            InputStream inputStream = file.getInputStream();
+            String imageUrl = this.upload(inputStream,keyPrefix,fileName);
+            filePath.append(imageUrl).append(",");
+            inputStream.close();
+        } catch (IOException e) {
+            throw new NormalException("上传失败," + "文件格式不正确");
+        }
+        if (filePath.toString().endsWith(",")) {
+            filePath = new StringBuilder(filePath.substring(0, filePath.length() - 1));
+        }
+        return filePath.toString();
+    }
 }
