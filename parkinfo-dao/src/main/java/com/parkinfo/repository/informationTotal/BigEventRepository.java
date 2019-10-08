@@ -19,10 +19,10 @@ public interface BigEventRepository extends JpaRepository<BigEvent, String>, Jpa
 
     List<BigEvent> findByParkInfo_IdAndDeleteIsFalseAndAvailableIsTrue(String id);
 
-    @Query(nativeQuery = true, value = "select * from c_big_event where `delete`='0' and `available`='1' order by year,month DESC")
+    @Query(nativeQuery = true, value = "select * from c_big_event where `delete`='0' and `available`='1' order by year,month")
     List<BigEvent> findAllOrder();
 
-    @Query(nativeQuery = true, value = "select * from c_big_event where park_info_id=?1 and `delete`='0' and `available`='1' order by year,month DESC")
+    @Query(nativeQuery = true, value = "select * from c_big_event where park_info_id=?1 and `delete`='0' and `available`='1' order by year,month")
     List<BigEvent> findAllOrderAndPark(String parkId);
 
 }
