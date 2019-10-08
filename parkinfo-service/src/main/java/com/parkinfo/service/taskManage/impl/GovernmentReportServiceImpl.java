@@ -5,6 +5,7 @@ import com.parkinfo.common.Result;
 import com.parkinfo.dto.ParkUserDTO;
 import com.parkinfo.entity.taskManage.GovernmentReport;
 import com.parkinfo.entity.taskManage.SpecialTask;
+import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.enums.ParkRoleEnum;
 import com.parkinfo.enums.TaskType;
@@ -147,6 +148,8 @@ public class GovernmentReportServiceImpl implements IGovernmentReportService {
                     ReceiverListResponse receiverListResponse = new ReceiverListResponse();
                     receiverListResponse.setId(receiver.getId());
                     receiverListResponse.setName(receiver.getNickname());
+                    Optional<ParkInfo> parkInfoOptional = receiver.getParks().stream().findFirst();
+                    parkInfoOptional.ifPresent(parkInfo -> receiverListResponse.setParkId(parkInfo.getId()));
                     receiverList.add(receiverListResponse);
                 });
                 response.setReceivers(receiverList);
@@ -171,6 +174,8 @@ public class GovernmentReportServiceImpl implements IGovernmentReportService {
                 ReceiverListResponse receiverListResponse = new ReceiverListResponse();
                 receiverListResponse.setId(receiver.getId());
                 receiverListResponse.setName(receiver.getNickname());
+                Optional<ParkInfo> parkInfoOptional = receiver.getParks().stream().findFirst();
+                parkInfoOptional.ifPresent(parkInfo -> receiverListResponse.setParkId(parkInfo.getId()));
                 receiverList.add(receiverListResponse);
             });
             response.setReceivers(receiverList);

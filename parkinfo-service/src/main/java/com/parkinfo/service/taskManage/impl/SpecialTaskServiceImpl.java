@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
 import com.parkinfo.dto.ParkUserDTO;
 import com.parkinfo.entity.taskManage.SpecialTask;
+import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.enums.ParkRoleEnum;
 import com.parkinfo.enums.TaskType;
@@ -151,6 +152,8 @@ public class SpecialTaskServiceImpl implements ISpecialTaskService {
                     ReceiverListResponse receiverListResponse = new ReceiverListResponse();
                     receiverListResponse.setId(receiver.getId());
                     receiverListResponse.setName(receiver.getNickname());
+                    Optional<ParkInfo> parkInfoOptional = receiver.getParks().stream().findFirst();
+                    parkInfoOptional.ifPresent(parkInfo -> receiverListResponse.setParkId(parkInfo.getId()));
                     receiverList.add(receiverListResponse);
                 });
                 response.setReceivers(receiverList);
@@ -175,6 +178,8 @@ public class SpecialTaskServiceImpl implements ISpecialTaskService {
                 ReceiverListResponse receiverListResponse = new ReceiverListResponse();
                 receiverListResponse.setId(receiver.getId());
                 receiverListResponse.setName(receiver.getNickname());
+                Optional<ParkInfo> parkInfoOptional = receiver.getParks().stream().findFirst();
+                parkInfoOptional.ifPresent(parkInfo -> receiverListResponse.setParkId(parkInfo.getId()));
                 receiverList.add(receiverListResponse);
             });
             response.setReceivers(receiverList);

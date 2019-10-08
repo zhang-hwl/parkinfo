@@ -6,6 +6,7 @@ import com.parkinfo.dto.ParkUserDTO;
 import com.parkinfo.entity.taskManage.ManagementTask;
 import com.parkinfo.entity.taskManage.ManagementTask;
 import com.parkinfo.entity.taskManage.SpecialTask;
+import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.enums.ParkRoleEnum;
 import com.parkinfo.enums.TaskType;
@@ -50,7 +51,7 @@ public class ManagementTaskServiceImpl implements IManagementTaskService {
 
     @Autowired
     private ParkUserRepository parkUserRepository;
-    
+
     @Override
     public Result<Page<ManagementTaskListResponse>> search(QueryManagementTaskRequest request) {
         ParkUserDTO currentUser = tokenUtils.getLoginUserDTO();
@@ -72,8 +73,8 @@ public class ManagementTaskServiceImpl implements IManagementTaskService {
                     }
                 }
             } else {
-                ListJoin<ManagementTask,ParkUser> join= root.join(root.getModel().getList("receivers",ParkUser.class), JoinType.LEFT);
-                Predicate p2 = criteriaBuilder.equal(join.get("id").as(String.class),tokenUtils.getLoginUserDTO().getId());
+                ListJoin<ManagementTask, ParkUser> join = root.join(root.getModel().getList("receivers", ParkUser.class), JoinType.LEFT);
+                Predicate p2 = criteriaBuilder.equal(join.get("id").as(String.class), tokenUtils.getLoginUserDTO().getId());
                 //这里面的join代表的是parkUser，属于加入进来的部分，而不是链接表的全部结果；
                 predicates.add(p2);
             }
@@ -146,6 +147,10 @@ public class ManagementTaskServiceImpl implements IManagementTaskService {
                     ReceiverListResponse receiverListResponse = new ReceiverListResponse();
                     receiverListResponse.setId(receiver.getId());
                     receiverListResponse.setName(receiver.getNickname());
+//                    if (receiver.getParks()!=null&&!receiver.getParks().isEmpty()){
+                    Optional<ParkInfo> parkInfoOptional = receiver.getParks().stream().findFirst();
+                    parkInfoOptional.ifPresent(parkInfo -> receiverListResponse.setParkId(parkInfo.getId()));
+//                    }
                     receiverList.add(receiverListResponse);
                 });
                 response.setReceivers(receiverList);
@@ -170,6 +175,8 @@ public class ManagementTaskServiceImpl implements IManagementTaskService {
                 ReceiverListResponse receiverListResponse = new ReceiverListResponse();
                 receiverListResponse.setId(receiver.getId());
                 receiverListResponse.setName(receiver.getNickname());
+                Optional<ParkInfo> parkInfoOptional = receiver.getParks().stream().findFirst();
+                parkInfoOptional.ifPresent(parkInfo -> receiverListResponse.setParkId(parkInfo.getId()));
                 receiverList.add(receiverListResponse);
             });
             response.setReceivers(receiverList);
