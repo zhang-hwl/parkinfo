@@ -83,7 +83,7 @@ public class SysUserServiceImpl implements ISysUserService {
             List<String> collect = roles.stream().map(ParkRole::getName).collect(Collectors.toList());
             if (collect.contains(ParkRoleEnum.ADMIN.toString())){
                 SetJoin<ParkUser,ParkRole> roleSetJoin = root.joinSet("roles",JoinType.LEFT);
-                predicates.add(criteriaBuilder.notEqual(roleSetJoin.get("name").as(String.class),ParkRoleEnum.ADMIN.toString()));
+//                predicates.add(criteriaBuilder.notEqual(roleSetJoin.get("name").as(String.class),ParkRoleEnum.ADMIN.toString()));
                 List<String> list = Lists.newArrayList();
                 list.add(ParkRoleEnum.PARK_MANAGER.toString());
                 list.add(ParkRoleEnum.AREA_MANAGER.toString());
@@ -92,6 +92,7 @@ public class SysUserServiceImpl implements ISysUserService {
                 Path<Object> path = roleSetJoin.get("name");
                 CriteriaBuilder.In<Object> in = criteriaBuilder.in(path);
                 list.forEach(in::value);
+                predicates.add(in);
             }else {
                 SetJoin<ParkUser,ParkInfo> setJoin = root.joinSet("parks",JoinType.LEFT);
                 predicates.add(criteriaBuilder.equal(setJoin.get("id").as(String.class),tokenUtils.getCurrentParkInfo().getId()));
@@ -148,12 +149,17 @@ public class SysUserServiceImpl implements ISysUserService {
         Optional<ParkRole> byAdmin = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.ADMIN.name());
         ParkRole admin = new ParkRole();
         ParkRole manager = new ParkRole();
+        ParkRole areaManager = new ParkRole();
         if(byAdmin.isPresent()){
             admin = byAdmin.get();
         }
         Optional<ParkRole> byManager = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PARK_MANAGER.name());
         if(byManager.isPresent()){
             manager = byManager.get();
+        }
+        Optional<ParkRole> areaManagerOptional = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.AREA_MANAGER.name());
+        if(areaManagerOptional.isPresent()){
+            areaManager = areaManagerOptional.get();
         }
         Optional<ParkRole> byId = parkRoleRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(request.getRoleId());
         if(!byId.isPresent()){
@@ -165,6 +171,7 @@ public class SysUserServiceImpl implements ISysUserService {
         Set<ParkRole> parkRoles = Sets.newHashSet();
         if (parkRole.getName().equals(ParkRoleEnum.AREA_MANAGER.name())){
             parkRoles.add(manager);
+            parkRoles.add(areaManager);
         }else {
             parkRoles.add(parkRole);
         }
