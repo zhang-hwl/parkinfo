@@ -155,8 +155,7 @@ public class CheckRecordServiceImpl implements ICheckRecordService {
 
     @Override
     public void download(String id, HttpServletResponse response) {
-//        int i = judgePremissionById(id);
-        int i = 1;
+        int i = judgePremissionById(id);
         List<CheckRecord> list;
         Optional<ParkUser> byId = parkUserRepository.findByIdAndDeleteIsFalse(id);
         if(!byId.isPresent()){
@@ -167,7 +166,7 @@ public class CheckRecordServiceImpl implements ICheckRecordService {
             list = Lists.newArrayList();
         }
          else if(i == 0){
-            list = checkRecordRepository.findByParkInfo_IdAndDeleteIsFalseAndAvailableIsTrue(parkId);
+            list = checkRecordRepository.findByParkInfo_IdAndDeleteIsFalseAndAvailableIsTrue(tokenUtils.getCurrentParkInfo().getId());
         }
         else{
             list = checkRecordRepository.findAllByDeleteIsFalse();

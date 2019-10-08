@@ -35,11 +35,11 @@ public class BigEvent extends BaseEntity {
 
     @Excel(name = "年份", width = 15, fixedIndex = 2)
     @ApiModelProperty(value = "年份")
-    private String year;
+    private Integer year;
 
     @Excel(name = "月份", width = 15, fixedIndex = 3)
     @ApiModelProperty(value = "月份")
-    private String month;
+    private Integer month;
 
     @Excel(name = "内容", width = 40, fixedIndex = 4)
     @ApiModelProperty(value = "内容")

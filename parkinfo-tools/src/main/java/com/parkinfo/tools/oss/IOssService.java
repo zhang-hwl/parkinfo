@@ -1,5 +1,7 @@
 package com.parkinfo.tools.oss;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import javax.servlet.http.HttpServletRequest;
 import java.io.InputStream;
 
@@ -19,4 +21,6 @@ public interface IOssService {
      * @return
      */
     String MultipartFileUpload(HttpServletRequest request, String keyPrefix);
+
+    String fileUploadTest(MultipartFile file, String keyPrefix);
 }
