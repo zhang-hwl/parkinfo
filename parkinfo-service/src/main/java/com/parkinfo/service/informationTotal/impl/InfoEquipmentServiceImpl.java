@@ -145,12 +145,6 @@ public class InfoEquipmentServiceImpl implements IInfoEquipmentService {
     @Override
     public void download(String id, HttpServletResponse response) {
         List<InfoEquipment> list = infoEquipmentRepository.findByDeleteIsFalse();
-//        int size = list.size();
-//        for(int i = 0; i < size; i++){
-//            InfoEquipment infoEquipment = list.get(i);
-//            infoEquipment.setParkInfo(null);
-//            list.set(i, infoEquipment);
-//        }
         try {
             ExcelUtils.exportExcel(list, null, null, InfoEquipment.class, "xinxi", response);
         } catch (Exception e) {

@@ -179,7 +179,7 @@ public class BigEventServiceImpl implements IBigEventService {
             list = Lists.newArrayList();
         }
         else if(i == 0){
-            list = bigEventRepository.findByParkInfo_IdAndDeleteIsFalseAndAvailableIsTrue(parkId);
+            list = bigEventRepository.findByParkInfo_IdAndDeleteIsFalseAndAvailableIsTrue(tokenUtils.getCurrentParkInfo().getId());
         }
         else{
             list = bigEventRepository.findAllByDeleteIsFalse();
