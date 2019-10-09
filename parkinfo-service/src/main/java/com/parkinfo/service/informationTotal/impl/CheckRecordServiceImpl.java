@@ -154,19 +154,18 @@ public class CheckRecordServiceImpl implements ICheckRecordService {
     }
 
     @Override
-    public void download(String id, HttpServletResponse response) {
+    public void download(String id, String parkId, HttpServletResponse response) {
         int i = judgePremissionById(id);
         List<CheckRecord> list;
         Optional<ParkUser> byId = parkUserRepository.findByIdAndDeleteIsFalse(id);
         if(!byId.isPresent()){
             throw new NormalException("用户不存在");
         }
-        String parkId = byId.get().getId();
         if(i == -1){
             list = Lists.newArrayList();
         }
          else if(i == 0){
-            list = checkRecordRepository.findByParkInfo_IdAndDeleteIsFalseAndAvailableIsTrue(tokenUtils.getCurrentParkInfo().getId());
+            list = checkRecordRepository.findByParkInfo_IdAndDeleteIsFalseAndAvailableIsTrue(parkId);
         }
         else{
             list = checkRecordRepository.findAllByDeleteIsFalse();

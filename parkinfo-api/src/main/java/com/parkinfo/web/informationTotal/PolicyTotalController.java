@@ -83,10 +83,10 @@ public class PolicyTotalController {
         return templateService.getTemplateUrl("政策统计");
     }
 
-    @GetMapping("/download/{id}")
-    @ApiOperation(value = "文件导出", notes = "传用户id")
-    public void download(@PathVariable("id")String id, HttpServletResponse response){
-        policyTotalService.download(id, response);
+    @GetMapping("/download/{id}/{parkId}")
+    @ApiOperation(value = "文件导出", notes = "{用户ID}/{园区ID}")
+    public void download(@PathVariable("id")String id, @PathVariable("parkId") String parkId, HttpServletResponse response){
+        policyTotalService.download(id, parkId, response);
     }
 
     @PostMapping("/find/version")

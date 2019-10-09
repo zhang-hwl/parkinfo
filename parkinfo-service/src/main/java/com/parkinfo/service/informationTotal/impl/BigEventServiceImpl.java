@@ -166,20 +166,19 @@ public class BigEventServiceImpl implements IBigEventService {
     }
 
     @Override
-    public void download(String id, HttpServletResponse response) {
+    public void download(String id, String parkId, HttpServletResponse response) {
         //仅下载权限内的文件
         int i = judgePremissionById(id);
         Optional<ParkUser> byIdAndDeleteIsFalse = parkUserRepository.findByIdAndDeleteIsFalse(id);
         if(!byIdAndDeleteIsFalse.isPresent()){
             throw new NormalException("用户不存在");
         }
-        String parkId = byIdAndDeleteIsFalse.get().getId();
         List<BigEvent> list;
         if(i == -1){
             list = Lists.newArrayList();
         }
         else if(i == 0){
-            list = bigEventRepository.findByParkInfo_IdAndDeleteIsFalseAndAvailableIsTrue(tokenUtils.getCurrentParkInfo().getId());
+            list = bigEventRepository.findByParkInfo_IdAndDeleteIsFalseAndAvailableIsTrue(parkId);
         }
         else{
             list = bigEventRepository.findAllByDeleteIsFalse();

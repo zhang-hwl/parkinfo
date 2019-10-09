@@ -81,10 +81,10 @@ public class CompeteGradenInfoController {
         return templateService.getTemplateUrl("竞争园区信息");
     }
 
-    @GetMapping("/download/{id}")
-    @ApiOperation(value = "文件导出", notes = "传用户id")
-    public void download(@PathVariable("id")String id, HttpServletResponse response){
-        competeGradenInfoService.download(id, response);
+    @GetMapping("/download/{id}/{parkId}")
+    @ApiOperation(value = "文件导出", notes = "{用户ID}/{园区ID}")
+    public void download(@PathVariable("id")String id, @PathVariable("parkId") String parkId, HttpServletResponse response){
+        competeGradenInfoService.download(id, parkId, response);
     }
 
     @PostMapping("/find/version")

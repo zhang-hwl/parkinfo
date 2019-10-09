@@ -82,10 +82,10 @@ public class CheckRecordController {
         return templateService.getTemplateUrl("点检记录表");
     }
 
-    @GetMapping("/download/{id}")
-    @ApiOperation(value = "文件导出")
-    public void download(@PathVariable("id")String id, HttpServletResponse response){
-        checkRecordService.download(id, response);
+    @GetMapping("/download/{id}/{parkId}")
+    @ApiOperation(value = "文件导出", notes = "{用户ID}/{园区ID}")
+    public void download(@PathVariable("id")String id, @PathVariable("parkId")String parkId, HttpServletResponse response){
+        checkRecordService.download(id, parkId, response);
     }
 
     @PostMapping("/find/version")

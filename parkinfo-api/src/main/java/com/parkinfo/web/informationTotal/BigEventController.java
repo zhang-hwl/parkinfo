@@ -76,10 +76,10 @@ public class BigEventController {
         return templateService.getTemplateUrl("园区大事记");
     }
 
-    @GetMapping("/download/{id}")
-    @ApiOperation(value = "文件导出")
-    public void download(@PathVariable("id")String id, HttpServletResponse response){
-        bigEventService.download(id, response);
+    @GetMapping("/download/{id}/{parkId}")
+    @ApiOperation(value = "文件导出", notes = "{用户ID}/{园区ID}")
+    public void download(@PathVariable("id")String id, @PathVariable("parkId") String parkId, HttpServletResponse response){
+        bigEventService.download(id, parkId, response);
     }
 
     @PostMapping("/find/version")

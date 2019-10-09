@@ -149,12 +149,11 @@ public class RoomInfoServiceImpl implements IRoomInfoService {
     }
 
     @Override
-    public void download(String id, HttpServletResponse response) {
+    public void download(String id, String parkId, HttpServletResponse response) {
         Optional<ParkUser> byId = parkUserRepository.findByIdAndDeleteIsFalse(id);
         if(!byId.isPresent()){
             throw new NormalException("用户不存在");
         }
-        String parkId = byId.get().getId();
         List<RoomInfo> list = roomInfoRepository.findByParkInfo_IdAndDeleteIsFalseAndAvailableIsTrue(parkId);
         try {
             ExcelUtils.exportExcel(list, null, null, RoomInfo.class, "fangjian", response);

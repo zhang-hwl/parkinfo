@@ -76,10 +76,10 @@ public class InfoEquipmentController {
         return templateService.getTemplateUrl("信息化设备");
     }
 
-    @GetMapping("/download/{id}")
-    @ApiOperation(value = "文件导出", notes = "传用户id")
-    public void download(@PathVariable("id")String id, HttpServletResponse response){
-        infoEquipmentService.download(id, response);
+    @GetMapping("/download/{id}/{parkId}")
+    @ApiOperation(value = "文件导出", notes = "{用户ID}/{园区ID}")
+    public void download(@PathVariable("id")String id, @PathVariable("parkId")String parkId, HttpServletResponse response){
+        infoEquipmentService.download(id, parkId, response);
     }
 
     @PostMapping("/find/version")

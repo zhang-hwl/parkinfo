@@ -143,7 +143,7 @@ public class InfoEquipmentServiceImpl implements IInfoEquipmentService {
     }
 
     @Override
-    public void download(String id, HttpServletResponse response) {
+    public void download(String id, String parkId, HttpServletResponse response) {
         List<InfoEquipment> list = infoEquipmentRepository.findByDeleteIsFalse();
         try {
             ExcelUtils.exportExcel(list, null, null, InfoEquipment.class, "xinxi", response);

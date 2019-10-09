@@ -24,6 +24,6 @@ public interface ICheckRecordService {
 
     Result<String> deleteCheckRecord(String id);
 
-    void download(String id, HttpServletResponse response);
+    void download(String id, String parkId, HttpServletResponse response);
 
 }

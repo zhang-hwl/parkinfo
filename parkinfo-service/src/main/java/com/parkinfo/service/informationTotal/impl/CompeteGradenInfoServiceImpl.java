@@ -155,12 +155,11 @@ public class CompeteGradenInfoServiceImpl implements ICompeteGradenInfoService {
     }
 
     @Override
-    public void download(String id, HttpServletResponse response) {
+    public void download(String id, String parkId, HttpServletResponse response) {
         Optional<ParkUser> user = parkUserRepository.findByIdAndDeleteIsFalse(id);
         if(!user.isPresent()){
             throw new NormalException("用户不存在");
         }
-        String parkId = user.get().getId();
         int i = judgePremissionById(id);
 //        int i = 1;
         List<CompeteGradenInfo> competeGradenInfos;
@@ -168,7 +167,7 @@ public class CompeteGradenInfoServiceImpl implements ICompeteGradenInfoService {
             competeGradenInfos = Lists.newArrayList();
         }
         else if(i == 0){
-            competeGradenInfos = competeGradenInfoRepository.findByParkInfo_IdAndDeleteIsFalseAndAvailableIsTrue(tokenUtils.getCurrentParkInfo().getId());
+            competeGradenInfos = competeGradenInfoRepository.findByParkInfo_IdAndDeleteIsFalseAndAvailableIsTrue(parkId);
         }
         else{
             competeGradenInfos = competeGradenInfoRepository.findAllByDeleteIsFalse();

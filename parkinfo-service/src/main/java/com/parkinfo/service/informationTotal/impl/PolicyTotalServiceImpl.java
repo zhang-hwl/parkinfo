@@ -159,12 +159,11 @@ public class PolicyTotalServiceImpl implements IPolicyTotalService {
     }
 
     @Override
-    public void download(String id, HttpServletResponse response) {
+    public void download(String id, String parkId, HttpServletResponse response) {
         Optional<ParkUser> byId = parkUserRepository.findByIdAndDeleteIsFalse(id);
         if(!byId.isPresent()){
             throw new NormalException("用户不存在");
         }
-        String parkId = byId.get().getId();
         int i = judgePremissionByUserId(id);
 //        int i = 1;
         List<PolicyTotal> policyTotals;
@@ -172,7 +171,7 @@ public class PolicyTotalServiceImpl implements IPolicyTotalService {
             policyTotals = Lists.newArrayList();
         }
         else if(i == 0){
-            policyTotals = policyTotalRepository.findByParkInfo_IdAndDeleteIsFalseAndAvailableIsTrue(tokenUtils.getCurrentParkInfo().getId());
+            policyTotals = policyTotalRepository.findByParkInfo_IdAndDeleteIsFalseAndAvailableIsTrue(parkId);
         }
         else{
             policyTotals = policyTotalRepository.findAllByDeleteIsFalse();

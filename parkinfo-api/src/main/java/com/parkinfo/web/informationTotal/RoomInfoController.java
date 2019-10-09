@@ -76,10 +76,10 @@ public class RoomInfoController {
         return templateService.getTemplateUrl("本园区房间统计");
     }
 
-    @GetMapping("/download/{id}")
-    @ApiOperation(value = "文件导出")
-    public void download(@PathVariable("id")String id, HttpServletResponse response){
-        roomInfoService.download(id, response);
+    @GetMapping("/download/{id}/{parkId}")
+    @ApiOperation(value = "文件导出", notes = "{用户ID}/{园区ID}")
+    public void download(@PathVariable("id")String id, @PathVariable("parkId") String parkId, HttpServletResponse response){
+        roomInfoService.download(id, parkId, response);
     }
 
     @PostMapping("/find/version")
