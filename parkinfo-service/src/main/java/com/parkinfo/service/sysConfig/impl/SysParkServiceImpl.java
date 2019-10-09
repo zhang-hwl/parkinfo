@@ -5,6 +5,7 @@ import com.parkinfo.common.Result;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.entity.userConfig.ParkRole;
 import com.parkinfo.entity.userConfig.ParkUser;
+import com.parkinfo.enums.DefaultEnum;
 import com.parkinfo.enums.ParkRoleEnum;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.userConfig.ParkInfoRepository;
@@ -49,6 +50,7 @@ public class SysParkServiceImpl implements ISysParkService {
                 if(StringUtils.isNotBlank(request.getParkName())){
                     predicates.add(criteriaBuilder.like(root.get("name").as(String.class), request.getParkName()));
                 }
+                predicates.add(criteriaBuilder.notEqual(root.get("id").as(String.class), DefaultEnum.CEO_PARK.getDefaultValue()));
                 predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class),Boolean.FALSE));
                 predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class),Boolean.TRUE));
                 return criteriaBuilder.and(predicates.toArray(new Predicate[0]));

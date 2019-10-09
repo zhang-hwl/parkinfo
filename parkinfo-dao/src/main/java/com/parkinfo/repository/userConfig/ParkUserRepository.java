@@ -25,7 +25,7 @@ public interface ParkUserRepository extends JpaRepository<ParkUser,String> {
 
     Optional<ParkUser> findByCompanyDetail_IdAndDeleteIsFalseAndAvailableIsTrue(String id);
 
-    @Query(nativeQuery = true, value = "select user_id from c_user_park where park_id=?1")
+    @Query(nativeQuery = true, value = "select up.user_id from c_user_park up left join c_park_user pu on up.user_id = pu.id where up.park_id=?1 and pu.`delete`=0")
     List<String> fingAllByParkInfoId(String id);
 
 
