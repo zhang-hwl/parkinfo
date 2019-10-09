@@ -18,4 +18,7 @@ public class ReceiverListResponse {
 
     @ApiModelProperty(value = "用户昵称")
     private String name;
+
+    @ApiModelProperty(value = "所属园区id")
+    private String parkId;
 }
