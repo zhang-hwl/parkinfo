@@ -223,7 +223,9 @@ public class LibraryServiceImpl implements ILibraryService {
             predicates.add(criteriaBuilder.like(root.get("book").get("id").as(String.class), request.getBookId()));
             predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
-            predicates.add(criteriaBuilder.equal(root.get("necessary").as(Boolean.class), Boolean.TRUE));
+            if (request.getNecessary() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("necessary").as(Boolean.class), request.getNecessary()));
+            }
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
         Page<ReadProcess> readProcessPage = readProcessRepository.findAll(readProcessSpecification, pageable);
@@ -328,16 +330,16 @@ public class LibraryServiceImpl implements ILibraryService {
     public Result<List<ParkInfoListResponse>> getParkList() {
         List<ParkInfoListResponse> responseList;
         ParkUserDTO currentUser = tokenUtils.getLoginUserDTO();
-        if (currentUser.getRole().contains(ParkRoleEnum.PARK_MANAGER.toString())){
+        if (currentUser.getRole().contains(ParkRoleEnum.PARK_MANAGER.toString())) {
             ParkInfo parkInfo = tokenUtils.getCurrentParkInfo();
             ParkInfoListResponse response = this.convertParkInfo(parkInfo);
-            responseList=Lists.newArrayList(response);
-        }else if (currentUser.getRole().contains(ParkRoleEnum.PRESIDENT.toString())||
-                currentUser.getRole().contains(ParkRoleEnum.GENERAL_MANAGER.toString())||
-                currentUser.getRole().contains(ParkRoleEnum.ADMIN.toString())){
+            responseList = Lists.newArrayList(response);
+        } else if (currentUser.getRole().contains(ParkRoleEnum.PRESIDENT.toString()) ||
+                currentUser.getRole().contains(ParkRoleEnum.GENERAL_MANAGER.toString()) ||
+                currentUser.getRole().contains(ParkRoleEnum.ADMIN.toString())) {
             List<ParkInfo> parkInfoList = parkInfoRepository.findAllByDeleteIsFalseAndAvailableIsTrue();
             responseList = this.convertParkInfoList(parkInfoList);
-        }else {
+        } else {
             responseList = Lists.newArrayList();
         }
         return Result.<List<ParkInfoListResponse>>builder().success().data(responseList).build();
@@ -347,16 +349,16 @@ public class LibraryServiceImpl implements ILibraryService {
     public Result<List<ParkUserListResponse>> getUserList(String parkId) {
 //        List<ParkUserListResponse> responseList;
         Optional<ParkInfo> parkInfoOptional = parkInfoRepository.findByIdAndDeleteIsFalse(parkId);
-        if (!parkInfoOptional.isPresent()){
+        if (!parkInfoOptional.isPresent()) {
             throw new NormalException("该园区不存在");
         }
         ParkInfo parkInfo = parkInfoOptional.get();
         String managerId = null;
-        if (parkInfo.getManager()!=null){
+        if (parkInfo.getManager() != null) {
             managerId = parkInfo.getManager().getId();
         }
         List<ParkUser> parkUserList = parkInfo.getUsers().stream().filter(ParkUser::getAvailable).filter(parkUser -> !parkUser.getDelete()).collect(Collectors.toList());
-        List<ParkUserListResponse> responseList = this.convertParkUserList(parkUserList,managerId);
+        List<ParkUserListResponse> responseList = this.convertParkUserList(parkUserList, managerId);
         return Result.<List<ParkUserListResponse>>builder().success().data(responseList).build();
     }
 
@@ -364,7 +366,7 @@ public class LibraryServiceImpl implements ILibraryService {
     @Override
     public Result addReadProcess(AddReadProcessRequest request) {
         Book book = this.checkBook(request.getBookId());
-        request.getUserIds().forEach(id->{
+        request.getUserIds().forEach(id -> {
             ParkUser parkUser = this.checkUser(id);
             ReadProcess readProcess = new ReadProcess();
             readProcess.setBook(book);
@@ -484,7 +486,7 @@ public class LibraryServiceImpl implements ILibraryService {
                 }
             }
         }
-        if (StringUtils.isBlank(book.getFileName())&&book.getSource() != null) {
+        if (StringUtils.isBlank(book.getFileName()) && book.getSource() != null) {
             response.setFileName(FilenameUtils.getName(book.getSource()));
         }
         return response;
@@ -514,7 +516,7 @@ public class LibraryServiceImpl implements ILibraryService {
         List<ParkInfoListResponse> responseList = Lists.newArrayList();
         parkInfoList.forEach(parkInfo -> {
             ParkInfoListResponse response = new ParkInfoListResponse();
-            BeanUtils.copyProperties(parkInfo,response);
+            BeanUtils.copyProperties(parkInfo, response);
             responseList.add(response);
         });
         return responseList;
@@ -522,9 +524,10 @@ public class LibraryServiceImpl implements ILibraryService {
 
     private ParkInfoListResponse convertParkInfo(ParkInfo parkInfo) {
         ParkInfoListResponse response = new ParkInfoListResponse();
-        BeanUtils.copyProperties(parkInfo,response);
+        BeanUtils.copyProperties(parkInfo, response);
         return response;
     }
+
     /**
      * convert from ReadProcess to ReadProcessResponse
      *
@@ -537,21 +540,21 @@ public class LibraryServiceImpl implements ILibraryService {
         return response;
     }
 
-    private List<ParkUserListResponse> convertParkUserList(List<ParkUser> parkUserList,String managerId) {
+    private List<ParkUserListResponse> convertParkUserList(List<ParkUser> parkUserList, String managerId) {
         List<ParkUserListResponse> responseList = Lists.newArrayList();
         parkUserList.forEach(parkUser -> {
-            if (managerId.equals(parkUser.getId())){
+            if (managerId.equals(parkUser.getId())) {
                 ParkUserListResponse response = new ParkUserListResponse();
-                BeanUtils.copyProperties(parkUser,response);
+                BeanUtils.copyProperties(parkUser, response);
 //                response.setName(parkUser.getNickname());
-                response.setName(parkUser.getNickname()+"(园区管理员)");
+                response.setName(parkUser.getNickname() + "(园区管理员)");
                 responseList.add(response);
             }
         });
         parkUserList.forEach(parkUser -> {
-            if (!managerId.equals(parkUser.getId())){
+            if (!managerId.equals(parkUser.getId())) {
                 ParkUserListResponse response = new ParkUserListResponse();
-                BeanUtils.copyProperties(parkUser,response);
+                BeanUtils.copyProperties(parkUser, response);
                 response.setName(parkUser.getNickname());
 //                response.setName(parkUser.getNickname()+"(园区管理员)");
                 responseList.add(response);
@@ -589,7 +592,7 @@ public class LibraryServiceImpl implements ILibraryService {
     private ParkUser checkUser(String id) {
         Optional<ParkUser> parkUserOptional = parkUserRepository.findByIdAndAvailableIsTrueAndDeleteIsFalse(id);
         if (!parkUserOptional.isPresent()) {
-            throw new NormalException("id为"+id+"的用户不存在");
+            throw new NormalException("id为" + id + "的用户不存在");
         }
         return parkUserOptional.get();
     }

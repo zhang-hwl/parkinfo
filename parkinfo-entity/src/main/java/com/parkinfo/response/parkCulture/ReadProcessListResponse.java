@@ -31,6 +31,9 @@ public class ReadProcessListResponse {
     @ApiModelProperty(value = "阅读进度")
     private BigDecimal process;
 
+    @ApiModelProperty(value = "是否必读")
+    private Boolean necessary;
+
     @ApiModelProperty(value = "分配日期")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;

@@ -18,4 +18,7 @@ public class QueryReadProcessListRequest extends PageRequest {
 
     @ApiModelProperty(value = "图书id")
     private String bookId;
+
+    @ApiModelProperty(value = "是否必读")
+    private Boolean necessary;
 }
