@@ -81,6 +81,8 @@ public class SysUserServiceImpl implements ISysUserService {
             }
             Set<ParkRole> roles = tokenUtils.getLoginUser().getRoles();
             List<String> collect = roles.stream().map(ParkRole::getName).collect(Collectors.toList());
+            //去重
+            criteriaQuery.distinct(true);
             if (collect.contains(ParkRoleEnum.ADMIN.toString())){
                 SetJoin<ParkUser,ParkRole> roleSetJoin = root.joinSet("roles",JoinType.LEFT);
 //                predicates.add(criteriaBuilder.notEqual(roleSetJoin.get("name").as(String.class),ParkRoleEnum.ADMIN.toString()));
@@ -149,6 +151,13 @@ public class SysUserServiceImpl implements ISysUserService {
         String initPassword = (SettingType.INIT_PASSWORD.getDefaultValue());
         String password = new SimpleHash("MD5", initPassword, newData.getSalt(), 1024).toHex();
         newData.setPassword(password);
+        this.setUser(newData,request);
+        return Result.builder().success().message("添加用户成功").build();
+    }
+
+    private void setUser(ParkUser newData,AddUserRequest request){
+        newData.setRoles(null);
+        newData.setParks(null);
         Set<ParkRole> roles = tokenUtils.getLoginUser().getRoles();
         Optional<ParkRole> byAdmin = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.ADMIN.name());
         ParkRole admin = new ParkRole();
@@ -208,7 +217,6 @@ public class SysUserServiceImpl implements ISysUserService {
         newData.setParks(parkInfos);
         newData.setRoles(parkRoles);
         parkUserRepository.save(newData);
-        return Result.builder().success().message("添加用户成功").build();
     }
 
     @Override
@@ -228,7 +236,7 @@ public class SysUserServiceImpl implements ISysUserService {
     public Result setUser(SetUserRequest request) {
         ParkUser parkUser = this.checkUser(request.getId());
         BeanUtils.copyProperties(request, parkUser);
-        parkUserRepository.save(parkUser);
+        this.setUser(parkUser,request);
         return Result.builder().success().message("修改用户成功").build();
     }
 

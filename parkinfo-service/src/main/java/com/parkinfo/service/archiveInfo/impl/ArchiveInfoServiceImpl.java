@@ -12,6 +12,7 @@ import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.entity.userConfig.ParkRole;
 import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.enums.ConvertStatus;
+import com.parkinfo.enums.DefaultEnum;
 import com.parkinfo.enums.ParkRoleEnum;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.archiveInfo.ArchiveCommentRepository;
@@ -252,7 +253,7 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
         List<ParkInfo> byAll = parkInfoRepository.findAllByDeleteIsFalseAndAvailableIsTrue();
         List<ParkInfoResponse> result = Lists.newArrayList();
         byAll.forEach(temp -> {
-            if(!temp.getName().equals("总裁园区")){
+            if(!temp.getId().equals(DefaultEnum.CEO_PARK.getDefaultValue())){
                 ParkInfoResponse response = new ParkInfoResponse();
                 BeanUtils.copyProperties(temp, response);
                 result.add(response);
