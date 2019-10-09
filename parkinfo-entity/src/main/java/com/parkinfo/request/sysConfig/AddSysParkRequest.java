@@ -3,13 +3,14 @@ package com.parkinfo.request.sysConfig;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
 public class AddSysParkRequest {
 
     @ApiModelProperty("园区名称")
-    @NotNull
+    @NotBlank(message = "园区名称不能为空")
     private String parkName;
 
     @ApiModelProperty("园区负责人id")

@@ -32,7 +32,12 @@ public class SysParkController {
 
     @PostMapping("/add")
     @ApiOperation(value = "新增园区")
-    public Result<String> addPark(@RequestBody AddSysParkRequest request){
+    public Result<String> addPark(@Valid @RequestBody AddSysParkRequest request, BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError allError : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(allError.getDefaultMessage()).build();
+            }
+        }
         return sysParkService.addPark(request);
     }
 
