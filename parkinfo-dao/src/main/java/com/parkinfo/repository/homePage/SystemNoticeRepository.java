@@ -12,7 +12,7 @@ public interface SystemNoticeRepository extends JpaRepository<SystemNoticeEntity
 
     Optional<SystemNoticeEntity> findByIdAndDeleteIsFalseAndAvailableIsTrue(String id);
 
-    @Query(nativeQuery = true, value = "select * from c_system_notice order by create_time DESC limit ?1")
+    @Query(nativeQuery = true, value = "select * from c_system_notice where `delete`=0 and available=1 order by create_time DESC limit ?1")
     List<SystemNoticeEntity> findByLimit(Integer count);
 
 }
