@@ -193,7 +193,7 @@ public class SysUserServiceImpl implements ISysUserService {
                 });
             }
             else{
-                Optional<ParkInfo> byParkName = parkInfoRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(DefaultEnum.CEO_PARK.getDefaultValue());
+                Optional<ParkInfo> byParkName = parkInfoRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(DefaultEnum.CEO_PARK.getDefaultValue());
                 if(byParkName.isPresent()){
                     ParkInfo parkInfo = byParkName.get();
                     parkInfos.add(parkInfo);
