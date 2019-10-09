@@ -79,6 +79,7 @@ public class SysParkServiceImpl implements ISysParkService {
         parkInfo.setDelete(false);
         parkInfo.setAvailable(true);
         BeanUtils.copyProperties(request, parkInfo);
+        parkInfo.setName(request.getParkName());
         ParkInfo save = parkInfoRepository.save(parkInfo);
         ParkRoleEnum [] roleNames = {ParkRoleEnum.PARK_USER,ParkRoleEnum.HR_USER,ParkRoleEnum.OFFICER};
         for(int i = 0; i < 3; i++){
