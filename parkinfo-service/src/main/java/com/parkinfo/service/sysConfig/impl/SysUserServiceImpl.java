@@ -137,6 +137,10 @@ public class SysUserServiceImpl implements ISysUserService {
 
     @Override
     public Result addUser(AddUserRequest request) {
+        Optional<ParkUser> byAccount = parkUserRepository.findByAccountAndAvailableIsTrueAndDeleteIsFalse(request.getAccount());
+        if(byAccount.isPresent()){
+            throw new NormalException("账号已存在");
+        }
         ParkUser newData = new ParkUser();
         BeanUtils.copyProperties(request, newData);
         newData.setDelete(false);
@@ -189,7 +193,7 @@ public class SysUserServiceImpl implements ISysUserService {
                 });
             }
             else{
-                Optional<ParkInfo> byParkName = parkInfoRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(DefaultEnum.CEO_PARK.getDefaultValue());
+                Optional<ParkInfo> byParkName = parkInfoRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(DefaultEnum.CEO_PARK.getDefaultValue());
                 if(byParkName.isPresent()){
                     ParkInfo parkInfo = byParkName.get();
                     parkInfos.add(parkInfo);
