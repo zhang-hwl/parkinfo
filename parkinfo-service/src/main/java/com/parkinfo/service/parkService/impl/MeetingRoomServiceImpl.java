@@ -159,17 +159,17 @@ public class MeetingRoomServiceImpl implements IMeetingRoomService {
             MeetingRoomResponse meetingRoomResponse = new MeetingRoomResponse();
             BeanUtils.copyProperties(meetingRoom,meetingRoomResponse);
             meetingRoomResponse.setUserName(meetingRoom.getParkUser().getNickname());
+            List<MeetingRoomReserveResponse> meetingRoomReserveResponseList = Lists.newArrayList();
             if (meetingRoom.getMeetingRoomReserves() != null && meetingRoom.getMeetingRoomReserves().size() != 0){
                 Date now = Date.from(LocalDate.now().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
                 Date tomorrow = Date.from(LocalDate.now().plusDays(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
                 List<MeetingRoomReserve> collect = meetingRoom.getMeetingRoomReserves().stream().filter(meetingRoomReserve -> meetingRoomReserve.getStartTime().after(now) && meetingRoomReserve.getEndTime().before(tomorrow)).collect(Collectors.toList());
-                List<MeetingRoomReserveResponse> meetingRoomReserveResponseList = Lists.newArrayList();
                 collect.forEach(meetingRoomReserve -> {
                     MeetingRoomReserveResponse meetingRoomReserveResponse = this.convertMeetingRoomReserveResponse(meetingRoomReserve);
                     meetingRoomReserveResponseList.add(meetingRoomReserveResponse);
                 });
-                meetingRoomResponse.setReserveResponse(meetingRoomReserveResponseList);
             }
+            meetingRoomResponse.setReserveResponse(meetingRoomReserveResponseList);
             response.add(meetingRoomResponse);
         });
         return new PageImpl<>(response,meetingRooms.getPageable(),meetingRooms.getTotalElements());
