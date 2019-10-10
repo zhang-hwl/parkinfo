@@ -12,4 +12,6 @@ public interface ReadProcessRepository extends JpaRepository<ReadProcess,String>
     Optional<ReadProcess> findByBook_IdAndDeleteIsTrueAndAvailableIsFalse(String bookId);
 
     Page<ReadProcess> findAll(Specification<ReadProcess> readProcessSpecification, Pageable pageable);
+
+    Optional<ReadProcess> findByBook_IdAndReader_IdAndDeleteIsFalseAndAvailableIsTrue(String bookId, String id);
 }
