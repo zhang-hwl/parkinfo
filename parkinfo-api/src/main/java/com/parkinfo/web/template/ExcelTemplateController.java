@@ -1,6 +1,7 @@
 package com.parkinfo.web.template;
 
 import com.parkinfo.common.Result;
+import com.parkinfo.enums.TemplateEnum;
 import com.parkinfo.request.template.ExcelTemplateRequest;
 import com.parkinfo.response.template.ExcelTemplateTypeResponse;
 import com.parkinfo.service.informationTotal.IInfoTotalTemplateService;
@@ -20,6 +21,8 @@ public class ExcelTemplateController {
 
     @Autowired
     private IExcelTemplateService excelTemplateService;
+    @Autowired
+    private IInfoTotalTemplateService templateService;
 
     @PostMapping("/upload")
     @ApiOperation("上传模板")
@@ -37,6 +40,18 @@ public class ExcelTemplateController {
     @ApiOperation("获取所有模板类型")
     public Result<List<ExcelTemplateTypeResponse>> getTemplateType(){
         return excelTemplateService.findAllType();
+    }
+
+    @PostMapping("/export/work")
+    @ApiOperation(value = "下载工作计划模板")
+    public Result<String> exportWork(){
+        return templateService.getTemplateUrl(TemplateEnum.WORK_PLAN.getName());
+    }
+
+    @PostMapping("/export/exam")
+    @ApiOperation(value = "下载考试模板")
+    public Result<String> exportExam(){
+        return templateService.getTemplateUrl(TemplateEnum.ENTER_BASIC.getName());
     }
 
 }

@@ -13,4 +13,7 @@ import javax.validation.constraints.NotBlank;
 public class SearchMeetingRoomRequest extends PageRequest {
     @ApiModelProperty("会议室id")
     private String meetingRoomId;
+
+    @ApiModelProperty("会议室名称")
+    private String name;
 }

@@ -3,6 +3,7 @@ package com.parkinfo.web.informationTotal;
 import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.informationTotal.TemplateField;
+import com.parkinfo.enums.TemplateEnum;
 import com.parkinfo.request.infoTotalRequest.QueryByVersionRequest;
 import com.parkinfo.request.infoTotalRequest.CheckRecordRequest;
 import com.parkinfo.request.infoTotalRequest.UploadAndVersionRequest;
@@ -79,7 +80,7 @@ public class CheckRecordController {
     @PostMapping("/export")
     @ApiOperation(value = "下载点检记录表模板")
     public Result<String> export(){
-        return templateService.getTemplateUrl("点检记录表");
+        return templateService.getTemplateUrl(TemplateEnum.CHECK_RECORD.getName());
     }
 
     @GetMapping("/download/{id}/{parkId}")

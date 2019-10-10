@@ -71,4 +71,7 @@ public class AddInvestmentRequest {
 
     @ApiModelProperty(value = "洽谈内容备注")
     private String remarkTalk;
+
+    @ApiModelProperty(value = "类型id")
+    private String typeId;
 }

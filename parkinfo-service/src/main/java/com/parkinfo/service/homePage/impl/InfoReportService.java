@@ -90,8 +90,7 @@ public class InfoReportService {
                 }
             }
             reportResponse.setValue(String.valueOf(count));
-            BigDecimal test = new BigDecimal(Math.random()*1000);
-            test.setScale(0, BigDecimal.ROUND_HALF_UP);
+            BigDecimal test = new BigDecimal(Math.random()*1000).setScale(0, BigDecimal.ROUND_HALF_UP);
             reportResponse.setValue(String.valueOf(test));  //测试数据
             list.add(reportResponse);
         });
@@ -115,8 +114,7 @@ public class InfoReportService {
                 }
             }
             reportResponse.setValue(String.valueOf(count));
-            BigDecimal test = new BigDecimal(Math.random()*1000);
-            test.setScale(0, BigDecimal.ROUND_HALF_UP);
+            BigDecimal test = new BigDecimal(Math.random()*1000).setScale(0, BigDecimal.ROUND_HALF_UP);
             reportResponse.setValue(String.valueOf(test));  //测试数据
             list.add(reportResponse);
         });
@@ -140,8 +138,7 @@ public class InfoReportService {
                 }
             }
             reportResponse.setValue(String.valueOf(count));
-            BigDecimal test = new BigDecimal(Math.random()*1000);
-            test.setScale(0, BigDecimal.ROUND_HALF_UP);
+            BigDecimal test = new BigDecimal(Math.random()*1000).setScale(0, BigDecimal.ROUND_HALF_UP);
             reportResponse.setValue(String.valueOf(test));  //测试数据
             list.add(reportResponse);
         });
@@ -166,8 +163,7 @@ public class InfoReportService {
                 }
             }
             reportResponse.setValue(String.valueOf(count));
-            BigDecimal test = new BigDecimal(Math.random()*1000);
-            test.setScale(0, BigDecimal.ROUND_HALF_UP);
+            BigDecimal test = new BigDecimal(Math.random()*1000).setScale(0, BigDecimal.ROUND_HALF_UP);
             reportResponse.setValue(String.valueOf(test));  //测试数据
             list.add(reportResponse);
         });
@@ -192,8 +188,7 @@ public class InfoReportService {
                 }
             }
             reportResponse.setValue(String.valueOf(count));
-            BigDecimal test = new BigDecimal(Math.random()*1000);
-            test.setScale(0, BigDecimal.ROUND_HALF_UP);
+            BigDecimal test = new BigDecimal(Math.random()*1000).setScale(0, BigDecimal.ROUND_HALF_UP);
             reportResponse.setValue(String.valueOf(test));  //测试数据
             list.add(reportResponse);
         });
@@ -215,8 +210,7 @@ public class InfoReportService {
                  count = byId.size();
             }
             baseReportResponse.setValue(String.valueOf(count));
-            BigDecimal test = new BigDecimal(Math.random()*1000);
-            test.setScale(0, BigDecimal.ROUND_HALF_UP);
+            BigDecimal test = new BigDecimal(Math.random()*1000).setScale(0, BigDecimal.ROUND_HALF_UP);
             baseReportResponse.setValue(String.valueOf(test));  //测试数据
             list.add(baseReportResponse);
         });
@@ -238,8 +232,7 @@ public class InfoReportService {
                 count = allActivity.size();
             }
             baseReportResponse.setValue(String.valueOf(count));
-            BigDecimal test = new BigDecimal(Math.random()*1100);
-            test.setScale(0, BigDecimal.ROUND_HALF_UP);
+            BigDecimal test = new BigDecimal(Math.random()*1100).setScale(0, BigDecimal.ROUND_HALF_UP);
             baseReportResponse.setValue(String.valueOf(test));  //测试数据
             list.add(baseReportResponse);
         });
@@ -261,8 +254,7 @@ public class InfoReportService {
                 count = allActivity.size();
             }
             baseReportResponse.setValue(String.valueOf(count));
-            BigDecimal test = new BigDecimal(Math.random()*1200);
-            test.setScale(0, BigDecimal.ROUND_HALF_UP);
+            BigDecimal test = new BigDecimal(Math.random()*1200).setScale(0, BigDecimal.ROUND_HALF_UP);
             baseReportResponse.setValue(String.valueOf(test));  //测试数据
             list.add(baseReportResponse);
         });

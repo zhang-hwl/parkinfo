@@ -1,6 +1,7 @@
 package com.parkinfo.web.companyManage;
 
 import com.parkinfo.common.Result;
+import com.parkinfo.enums.TemplateEnum;
 import com.parkinfo.request.compayManage.AddCompanyInfoRequest;
 import com.parkinfo.request.compayManage.QueryCompanyRequest;
 import com.parkinfo.request.compayManage.SetCompanyInfoRequest;
@@ -42,7 +43,7 @@ public class CompanyDemandController {
     @GetMapping("/companyExport")
     @ApiOperation("下载需求信息模板")
     public Result<String> companyExport(HttpServletResponse response) {
-        return templateService.getTemplateUrl("需求信息");
+        return templateService.getTemplateUrl(TemplateEnum.DEMAND_INFO.getName());
     }
 
     @PostMapping("/findAll")

@@ -21,4 +21,8 @@ public class QueryManagementRequest extends PageRequest {
 
     @ApiModelProperty(value = "洽谈状态")//WAIT_LOOK,LOOKED,FOLLOWING,FIRST_PASS 未参园,已参观,跟进中,第一次通过
     private DiscussStatus discussStatus;
+
+    @ApiModelProperty(value = "类型id")
+    private String typeId;
+
 }

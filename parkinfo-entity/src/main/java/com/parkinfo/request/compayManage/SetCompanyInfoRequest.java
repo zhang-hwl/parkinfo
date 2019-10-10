@@ -53,4 +53,7 @@ public class SetCompanyInfoRequest {
 
     @ApiModelProperty(value = "需求详情")
     private String requireDetail;
+
+    @ApiModelProperty(value = "类型id")
+    private String typeId;
 }

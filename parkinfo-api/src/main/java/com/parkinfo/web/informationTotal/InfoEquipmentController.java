@@ -2,6 +2,7 @@ package com.parkinfo.web.informationTotal;
 
 import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
+import com.parkinfo.enums.TemplateEnum;
 import com.parkinfo.request.infoTotalRequest.QueryByVersionRequest;
 import com.parkinfo.request.infoTotalRequest.InfoEquipmentRequest;
 import com.parkinfo.request.infoTotalRequest.UploadAndVersionRequest;
@@ -73,7 +74,7 @@ public class InfoEquipmentController {
     @PostMapping("/export")
     @ApiOperation(value = "下载信息化设备模板")
     public Result<String> export(){
-        return templateService.getTemplateUrl("信息化设备");
+        return templateService.getTemplateUrl(TemplateEnum.INFO_EQUIPMENT.getName());
     }
 
     @GetMapping("/download/{id}/{parkId}")

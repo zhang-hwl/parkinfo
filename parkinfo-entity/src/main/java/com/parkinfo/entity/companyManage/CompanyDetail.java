@@ -18,7 +18,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.util.*;
 
-@EqualsAndHashCode(callSuper = true, exclude = {"parkInfo", "parkUser", "enteredInfos", "enclosureTotals"})
+//招商信息表
+@EqualsAndHashCode(callSuper = true, exclude = {"parkInfo", "parkUser", "enteredInfos", "enclosureTotals", "companyType"})
 @Data
 @Entity
 @Table(name = "c_company_detail")
@@ -160,4 +161,9 @@ public class CompanyDetail extends BaseEntity{
     @JsonIgnore
     @ApiModelProperty(value = "企业附件")
     private Set<EnclosureTotal> enclosureTotals = new HashSet<>();
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "type_id")
+    @JsonIgnore
+    private CompanyType companyType;
 }
