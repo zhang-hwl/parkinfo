@@ -22,10 +22,7 @@ import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
@@ -56,6 +53,9 @@ public class MeetingRoomServiceImpl implements IMeetingRoomService {
             List<Predicate> predicates = Lists.newArrayList();
             if (StringUtils.isNotBlank(request.getMeetingRoomId())){
                 predicates.add(criteriaBuilder.equal(root.get("id").as(String.class),request.getMeetingRoomId()));
+            }
+            if (StringUtils.isNotBlank(request.getName())){
+                predicates.add(criteriaBuilder.like(root.get("name").as(String.class),"%"+request.getName()+"%"));
             }
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class),Boolean.FALSE));
             predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class),Boolean.TRUE));
