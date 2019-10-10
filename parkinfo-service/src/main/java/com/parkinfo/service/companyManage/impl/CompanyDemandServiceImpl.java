@@ -4,11 +4,13 @@ import com.parkinfo.common.Result;
 import com.parkinfo.dto.ParkUserDTO;
 import com.parkinfo.entity.companyManage.CompanyDemand;
 import com.parkinfo.entity.companyManage.CompanyDetail;
+import com.parkinfo.entity.companyManage.CompanyType;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.enums.CheckStatus;
 import com.parkinfo.enums.ParkRoleEnum;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.companyManage.CompanyDemandRepository;
+import com.parkinfo.repository.companyManage.CompanyTypeRepository;
 import com.parkinfo.request.compayManage.AddCompanyInfoRequest;
 import com.parkinfo.request.compayManage.QueryCompanyRequest;
 import com.parkinfo.request.compayManage.SetCompanyInfoRequest;
@@ -43,6 +45,9 @@ public class CompanyDemandServiceImpl implements ICompanyDemandService {
 
     @Autowired
     private TokenUtils tokenUtils;
+
+    @Autowired
+    private CompanyTypeRepository companyTypeRepository;
 
     @Override
     public Result companyImport(MultipartFile file) {
@@ -87,6 +92,9 @@ public class CompanyDemandServiceImpl implements ICompanyDemandService {
         Specification<CompanyDemand> specification = (Specification<CompanyDemand>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             ParkUserDTO currentUser = tokenUtils.getLoginUserDTO();
+            if(StringUtils.isNotBlank(request.getTypeId())){
+                predicates.add(criteriaBuilder.equal(root.get("companyType").get("id").as(String.class), request.getTypeId()));
+            }
             if (StringUtils.isNotBlank(request.getCompanyName())) {
                 predicates.add(criteriaBuilder.like(root.get("companyName").as(String.class), "%" + request.getCompanyName()+ "%"));
             }
@@ -119,14 +127,27 @@ public class CompanyDemandServiceImpl implements ICompanyDemandService {
         CompanyDemand companyDemand = this.checkCompany(id);
         CompanyDemandResponse response = new CompanyDemandResponse();
         BeanUtils.copyProperties(companyDemand,response);
+        if(companyDemand.getCompanyType() != null){
+           response.setTypeId(companyDemand.getCompanyType().getId());
+           response.setParentId(companyDemand.getCompanyType().getParent().getId());
+        }
         return Result.<CompanyDemandResponse>builder().success().data(response).build();
     }
 
     @Override
     public Result add(AddCompanyInfoRequest request) {
+        CompanyType type = null;
+        if(StringUtils.isNotBlank(request.getTypeId())){
+            Optional<CompanyType> byId = companyTypeRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(request.getTypeId());
+            if(!byId.isPresent()){
+                throw new NormalException("类型不存在");
+            }
+            type = byId.get();
+        }
         CompanyDemand companyDemand = new CompanyDemand();
         ParkInfo parkInfo = tokenUtils.getCurrentParkInfo();
         BeanUtils.copyProperties(request,companyDemand);
+        companyDemand.setCompanyType(type);
         companyDemand.setParkInfo(parkInfo);
         companyDemand.setAvailable(true);
         companyDemand.setDelete(false);
@@ -137,8 +158,17 @@ public class CompanyDemandServiceImpl implements ICompanyDemandService {
 
     @Override
     public Result set(SetCompanyInfoRequest request) {
+        CompanyType type = null;
+        if(StringUtils.isNotBlank(request.getTypeId())){
+            Optional<CompanyType> byId = companyTypeRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(request.getTypeId());
+            if(!byId.isPresent()){
+                throw new NormalException("类型不存在");
+            }
+            type = byId.get();
+        }
         CompanyDemand companyDemand = this.checkCompany(request.getId());
         BeanUtils.copyProperties(request,companyDemand);
+        companyDemand.setCompanyType(type);
         companyDemandRepository.save(companyDemand);
         return Result.builder().success().message("修改成功").build();
     }

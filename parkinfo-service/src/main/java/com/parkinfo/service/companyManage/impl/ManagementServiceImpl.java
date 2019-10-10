@@ -3,12 +3,14 @@ package com.parkinfo.service.companyManage.impl;
 import com.parkinfo.common.Result;
 import com.parkinfo.dto.ParkUserDTO;
 import com.parkinfo.entity.companyManage.CompanyDetail;
+import com.parkinfo.entity.companyManage.CompanyType;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.enums.DiscussStatus;
 import com.parkinfo.enums.EnterStatus;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.companyManage.CompanyDetailRepository;
+import com.parkinfo.repository.companyManage.CompanyTypeRepository;
 import com.parkinfo.repository.userConfig.ParkUserRepository;
 import com.parkinfo.request.compayManage.*;
 import com.parkinfo.response.companyManage.ManageDetailResponse;
@@ -41,6 +43,9 @@ public class ManagementServiceImpl implements IManagementService {
 
     @Autowired
     private TokenUtils tokenUtils;
+
+    @Autowired
+    private CompanyTypeRepository companyTypeRepository;
 
     @Override
     public Result investImport(MultipartFile file) {
@@ -83,6 +88,15 @@ public class ManagementServiceImpl implements IManagementService {
 
     @Override
     public Result add(AddInvestmentRequest request) {
+        CompanyType type = null;
+        if(StringUtils.isNotBlank(request.getTypeId())){
+            Optional<CompanyType> byId = companyTypeRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(request.getTypeId());
+            if(!byId.isPresent()){
+                throw new NormalException("类型不存在");
+            }
+            type = byId.get();
+        }
+        Optional<CompanyType> byId = companyTypeRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(request.getTypeId());
         CompanyDetail companyDetail = new CompanyDetail();
         ParkInfo parkInfo = tokenUtils.getCurrentParkInfo();
         BeanUtils.copyProperties(request, companyDetail);
@@ -91,6 +105,7 @@ public class ManagementServiceImpl implements IManagementService {
         companyDetail.setDelete(false);
         companyDetail.setDeleteEnter(false);
         companyDetail.setEntered(false);
+        companyDetail.setCompanyType(type);
         companyDetail.setEnterStatus(EnterStatus.WAITING);
         companyDetailRepository.save(companyDetail);
         return Result.builder().success().message("添加成功").build();
@@ -112,6 +127,9 @@ public class ManagementServiceImpl implements IManagementService {
             }
             if (StringUtils.isNotBlank(request.getParkId())){
                 predicates.add(criteriaBuilder.equal(root.get("parkInfo").get("id").as(String.class), request.getParkId()));
+            }
+            if(StringUtils.isNotBlank(request.getTypeId())){
+                predicates.add(criteriaBuilder.equal(root.get("companyType").get("id").as(String.class), request.getTypeId()));
             }
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
             predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
@@ -137,6 +155,13 @@ public class ManagementServiceImpl implements IManagementService {
         CompanyDetail investment = this.checkInvestment(id);
         ManageDetailResponse response = new ManageDetailResponse();
         BeanUtils.copyProperties(investment,response);
+        if(investment.getCompanyType() != null){
+            response.setTypeId(investment.getCompanyType().getId());
+            response.setParentId(investment.getCompanyType().getParent().getId());
+        }
+        if(investment.getCompanyType() != null){
+            response.setTypeId(investment.getCompanyType().getId());
+        }
         Optional<ParkUser> optionalParkUser = parkUserRepository.findByCompanyDetail_IdAndDeleteIsFalseAndAvailableIsTrue(investment.getId());
         if (!optionalParkUser.isPresent()) {
             return Result.<ManageDetailResponse>builder().success().data(response).build();
@@ -150,8 +175,17 @@ public class ManagementServiceImpl implements IManagementService {
 
     @Override
     public Result set(SetInvestmentRequest request) {
+        CompanyType type = null;
+        if(StringUtils.isNotBlank(request.getTypeId())){
+            Optional<CompanyType> byId = companyTypeRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(request.getTypeId());
+            if(!byId.isPresent()){
+                throw new NormalException("类型不存在");
+            }
+            type = byId.get();
+        }
         CompanyDetail companyDetail = this.checkInvestment(request.getId());
         BeanUtils.copyProperties(request, companyDetail);
+        companyDetail.setCompanyType(type);
         companyDetailRepository.save(companyDetail);
         return Result.builder().success().message("修改成功").build();
     }

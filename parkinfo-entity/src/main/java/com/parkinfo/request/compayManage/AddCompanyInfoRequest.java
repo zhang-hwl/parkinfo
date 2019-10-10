@@ -1,6 +1,7 @@
 package com.parkinfo.request.compayManage;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -51,4 +52,7 @@ public class AddCompanyInfoRequest {
 
     @ApiModelProperty(value = "需求详情")
     private String requireDetail;
+
+    @ApiModelProperty(value = "类型id")
+    private String typeId;
 }
