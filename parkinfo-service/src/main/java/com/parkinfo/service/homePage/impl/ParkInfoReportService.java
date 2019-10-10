@@ -55,8 +55,7 @@ public class ParkInfoReportService {
             }
         }
         response.setValue(String.valueOf(count));
-        BigDecimal test = new BigDecimal(Math.random() * 1000);
-        test.setScale(0, BigDecimal.ROUND_HALF_UP);
+        BigDecimal test = new BigDecimal(Math.random() * 1000).setScale(0, BigDecimal.ROUND_HALF_UP);
         return response;
     }
 
@@ -71,8 +70,7 @@ public class ParkInfoReportService {
             }
         }
         response.setValue(String.valueOf(count));
-        BigDecimal test = new BigDecimal(Math.random() * 1000);
-        test.setScale(0, BigDecimal.ROUND_HALF_UP);
+        BigDecimal test = new BigDecimal(Math.random() * 1000).setScale(0, BigDecimal.ROUND_HALF_UP);
         response.setValue(String.valueOf(test));  //测试数据
         return response;
     }
@@ -88,8 +86,7 @@ public class ParkInfoReportService {
             }
         }
         response.setValue(String.valueOf(count));
-        BigDecimal test = new BigDecimal(Math.random() * 1000);
-        test.setScale(0, BigDecimal.ROUND_HALF_UP);
+        BigDecimal test = new BigDecimal(Math.random() * 1000).setScale(0, BigDecimal.ROUND_HALF_UP);
         response.setValue(String.valueOf(test));  //测试数据
         return response;
     }
@@ -107,8 +104,7 @@ public class ParkInfoReportService {
             }
         }
         response.setValue(String.valueOf(count));
-        BigDecimal test = new BigDecimal(Math.random() * 1000);
-        test.setScale(0, BigDecimal.ROUND_HALF_UP);
+        BigDecimal test = new BigDecimal(Math.random() * 1000).setScale(0, BigDecimal.ROUND_HALF_UP);
         response.setValue(String.valueOf(test));  //测试数据
         return response;
     }
@@ -125,8 +121,7 @@ public class ParkInfoReportService {
             }
         }
         response.setValue(String.valueOf(count));
-        BigDecimal test = new BigDecimal(Math.random() * 1000);
-        test.setScale(0, BigDecimal.ROUND_HALF_UP);
+        BigDecimal test = new BigDecimal(Math.random() * 1000).setScale(0, BigDecimal.ROUND_HALF_UP);
         response.setValue(String.valueOf(test));  //测试数据
         return response;
     }
@@ -141,8 +136,7 @@ public class ParkInfoReportService {
             count = byId.size();
         }
         response.setValue(String.valueOf(count));
-        BigDecimal test = new BigDecimal(Math.random() * 1000);
-        test.setScale(0, BigDecimal.ROUND_HALF_UP);
+        BigDecimal test = new BigDecimal(Math.random() * 1000).setScale(0, BigDecimal.ROUND_HALF_UP);
         response.setValue(String.valueOf(test));  //测试数据
         return response;
     }
@@ -159,8 +153,7 @@ public class ParkInfoReportService {
             }
         }
         response.setValue(String.valueOf(count));
-        BigDecimal test = new BigDecimal(Math.random() * 1100);
-        test.setScale(0, BigDecimal.ROUND_HALF_UP);
+        BigDecimal test = new BigDecimal(Math.random() * 1100).setScale(0, BigDecimal.ROUND_HALF_UP);
         response.setValue(String.valueOf(test));  //测试数据
         return response;
     }
@@ -177,8 +170,7 @@ public class ParkInfoReportService {
             }
         }
         response.setValue(String.valueOf(count));
-        BigDecimal test = new BigDecimal(Math.random() * 1200);
-        test.setScale(0, BigDecimal.ROUND_HALF_UP);
+        BigDecimal test = new BigDecimal(Math.random() * 1200).setScale(0, BigDecimal.ROUND_HALF_UP);
         response.setValue(String.valueOf(test));  //测试数据
         return response;
     }

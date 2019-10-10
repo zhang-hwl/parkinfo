@@ -48,4 +48,10 @@ public class CompanyDemandResponse {
 
     @ApiModelProperty(value = "需求详情")
     private String requireDetail;
+
+    @ApiModelProperty(value = "分类id")
+    private String typeId;
+
+    @ApiModelProperty(value = "父类id")
+    private String parentId;
 }

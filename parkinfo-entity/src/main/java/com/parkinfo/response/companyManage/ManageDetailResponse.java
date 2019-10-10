@@ -45,6 +45,7 @@ public class ManageDetailResponse {
     private String requireArea;
 
     @ApiModelProperty(value = "对接时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date connectTime;
 
     @ApiModelProperty(value = "是否有意向")
@@ -73,4 +74,10 @@ public class ManageDetailResponse {
 
     @ApiModelProperty(value = "管理公司信息人id")
     private String manId;
+
+    @ApiModelProperty(value = "类型id")
+    private String typeId;
+
+    @ApiModelProperty(value = "父类id")
+    private String parentId;
 }

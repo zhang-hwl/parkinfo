@@ -121,12 +121,10 @@ public class HomeReportServiceImpl implements IHomeRepostService {
             taxCount = new BigDecimal((int)(Math.random()*1000));
             //
             allTaxCount = allTaxCount.add(taxCount);    //加本园区税收合计
-            taxCount.setScale(0, BigDecimal.ROUND_HALF_UP);
             baseReportResponse.setValue(String.valueOf(taxCount));
             list.add(baseReportResponse);
         }
-        allTaxCount.setScale(0, BigDecimal.ROUND_HALF_UP);
-        result.setRevenueCount(String.valueOf(allTaxCount));    //累计税收
+        result.setRevenueCount(String.valueOf(allTaxCount.setScale(0, BigDecimal.ROUND_HALF_UP)));    //累计税收
         result.setBaseReportResponses(list);
         return Result.<TaxReportResponse>builder().success().data(result).build();
     }
@@ -173,12 +171,10 @@ public class HomeReportServiceImpl implements IHomeRepostService {
             taxCount = new BigDecimal((int)(Math.random()*1000));
             //
             allTaxCount = allTaxCount.add(taxCount);    //加本园区税收合计
-            taxCount.setScale(0, BigDecimal.ROUND_HALF_UP); //四舍五入
             baseReportResponse.setValue(String.valueOf(taxCount));
             list.add(baseReportResponse);
         }
-        allTaxCount.setScale(0, BigDecimal.ROUND_HALF_UP);  //四舍五入
-        result.setRevenueCount(String.valueOf(allTaxCount));    //累计税收
+        result.setRevenueCount(String.valueOf(allTaxCount.setScale(0, BigDecimal.ROUND_HALF_UP)));    //累计税收
         result.setBaseReportResponses(list);
         return Result.<TaxReportResponse>builder().success().data(result).build();
     }

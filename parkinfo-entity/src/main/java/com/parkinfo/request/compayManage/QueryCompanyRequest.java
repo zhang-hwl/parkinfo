@@ -25,4 +25,7 @@ public class QueryCompanyRequest extends PageRequest {
     @ApiModelProperty(value = "审核状态")
     @Enumerated(EnumType.ORDINAL)  //APPLYING,AGREE,REFUSE
     private CheckStatus checkStatus;
+
+    @ApiModelProperty(value = "小类id")
+    private String typeId;
 }

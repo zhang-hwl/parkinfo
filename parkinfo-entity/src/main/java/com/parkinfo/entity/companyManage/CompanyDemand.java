@@ -15,7 +15,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.util.Date;
 
-@EqualsAndHashCode(callSuper = true)
+//需求
+@EqualsAndHashCode(callSuper = true, exclude = {"companyType","parkInfo"})
 @Data
 @Entity
 @Table(name = "c_company_demand")
@@ -80,4 +81,10 @@ public class CompanyDemand extends BaseEntity {
     @JoinColumn(name = "park_id")
     @JsonIgnore
     private ParkInfo parkInfo;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "type_id")
+    @JsonIgnore
+    private CompanyType companyType;
+
 }
