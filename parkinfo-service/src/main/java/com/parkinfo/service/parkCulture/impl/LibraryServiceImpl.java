@@ -146,7 +146,8 @@ public class LibraryServiceImpl implements ILibraryService {
     @Override
     public Result<ReadProcessResponse> getReadProcess(String bookId) {
         Book book = this.checkBook(bookId);
-        Optional<ReadProcess> readProcessOptional = readProcessRepository.findByBook_IdAndDeleteIsTrueAndAvailableIsFalse(bookId);
+        ParkUserDTO parkUserDTO = tokenUtils.getLoginUserDTO();
+        Optional<ReadProcess> readProcessOptional = readProcessRepository.findByBook_IdAndReader_IdAndDeleteIsFalseAndAvailableIsTrue(bookId,parkUserDTO.getId());
         ReadProcess readProcess;
         if (!readProcessOptional.isPresent()) {
             readProcess = new ReadProcess();
