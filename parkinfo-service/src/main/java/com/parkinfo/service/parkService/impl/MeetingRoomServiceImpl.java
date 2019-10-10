@@ -22,10 +22,7 @@ import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
@@ -56,6 +53,9 @@ public class MeetingRoomServiceImpl implements IMeetingRoomService {
             List<Predicate> predicates = Lists.newArrayList();
             if (StringUtils.isNotBlank(request.getMeetingRoomId())){
                 predicates.add(criteriaBuilder.equal(root.get("id").as(String.class),request.getMeetingRoomId()));
+            }
+            if (StringUtils.isNotBlank(request.getName())){
+                predicates.add(criteriaBuilder.like(root.get("name").as(String.class),"%"+request.getName()+"%"));
             }
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class),Boolean.FALSE));
             predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class),Boolean.TRUE));
@@ -159,17 +159,17 @@ public class MeetingRoomServiceImpl implements IMeetingRoomService {
             MeetingRoomResponse meetingRoomResponse = new MeetingRoomResponse();
             BeanUtils.copyProperties(meetingRoom,meetingRoomResponse);
             meetingRoomResponse.setUserName(meetingRoom.getParkUser().getNickname());
+            List<MeetingRoomReserveResponse> meetingRoomReserveResponseList = Lists.newArrayList();
             if (meetingRoom.getMeetingRoomReserves() != null && meetingRoom.getMeetingRoomReserves().size() != 0){
                 Date now = Date.from(LocalDate.now().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
                 Date tomorrow = Date.from(LocalDate.now().plusDays(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
                 List<MeetingRoomReserve> collect = meetingRoom.getMeetingRoomReserves().stream().filter(meetingRoomReserve -> meetingRoomReserve.getStartTime().after(now) && meetingRoomReserve.getEndTime().before(tomorrow)).collect(Collectors.toList());
-                List<MeetingRoomReserveResponse> meetingRoomReserveResponseList = Lists.newArrayList();
                 collect.forEach(meetingRoomReserve -> {
                     MeetingRoomReserveResponse meetingRoomReserveResponse = this.convertMeetingRoomReserveResponse(meetingRoomReserve);
                     meetingRoomReserveResponseList.add(meetingRoomReserveResponse);
                 });
-                meetingRoomResponse.setReserveResponse(meetingRoomReserveResponseList);
             }
+            meetingRoomResponse.setReserveResponse(meetingRoomReserveResponseList);
             response.add(meetingRoomResponse);
         });
         return new PageImpl<>(response,meetingRooms.getPageable(),meetingRooms.getTotalElements());
