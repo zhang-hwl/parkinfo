@@ -44,7 +44,6 @@ public class HomeReportServiceImpl implements IHomeRepostService {
         Calendar calendar = Calendar.getInstance();
         Long enterCount = 0L; //累积入驻企业数
         for(ParkInfoResponse temp : allPark){
-
             //获取一个园区的统计信息
             Long parkEnterCount = 0L;
             EnterReportResponse response = new EnterReportResponse();
