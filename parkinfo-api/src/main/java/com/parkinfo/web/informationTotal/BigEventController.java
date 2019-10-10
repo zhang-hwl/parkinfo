@@ -2,6 +2,7 @@ package com.parkinfo.web.informationTotal;
 
 import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
+import com.parkinfo.enums.TemplateEnum;
 import com.parkinfo.request.infoTotalRequest.QueryByVersionRequest;
 import com.parkinfo.request.infoTotalRequest.BigEventRequest;
 import com.parkinfo.request.infoTotalRequest.UploadAndVersionRequest;
@@ -73,7 +74,7 @@ public class BigEventController {
     @PostMapping("/export")
     @ApiOperation(value = "下载园区大事件模板")
     public Result<String> export(){
-        return templateService.getTemplateUrl("园区大事记");
+        return templateService.getTemplateUrl(TemplateEnum.BIG_EVENT.getName());
     }
 
     @GetMapping("/download/{id}/{parkId}")

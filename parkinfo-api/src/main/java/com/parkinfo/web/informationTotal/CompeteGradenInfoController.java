@@ -3,6 +3,7 @@ package com.parkinfo.web.informationTotal;
 import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.informationTotal.TemplateField;
+import com.parkinfo.enums.TemplateEnum;
 import com.parkinfo.request.infoTotalRequest.QueryByVersionRequest;
 import com.parkinfo.request.infoTotalRequest.CompeteGradenInfoRequest;
 import com.parkinfo.request.infoTotalRequest.UploadAndVersionRequest;
@@ -78,7 +79,7 @@ public class CompeteGradenInfoController {
     @PostMapping("/export")
     @ApiOperation(value = "下载竞争园区信息模板")
     public Result<String> export(){
-        return templateService.getTemplateUrl("竞争园区信息");
+        return templateService.getTemplateUrl(TemplateEnum.COMPETE.getName());
     }
 
     @GetMapping("/download/{id}/{parkId}")

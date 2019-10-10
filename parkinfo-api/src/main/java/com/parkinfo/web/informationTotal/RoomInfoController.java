@@ -2,6 +2,7 @@ package com.parkinfo.web.informationTotal;
 
 import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
+import com.parkinfo.enums.TemplateEnum;
 import com.parkinfo.request.infoTotalRequest.QueryByVersionRequest;
 import com.parkinfo.request.infoTotalRequest.RoomInfoRequest;
 import com.parkinfo.request.infoTotalRequest.UploadAndVersionRequest;
@@ -73,7 +74,7 @@ public class RoomInfoController {
     @PostMapping("/export")
     @ApiOperation(value = "下载本园区房间统计模板")
     public Result<String> export(){
-        return templateService.getTemplateUrl("本园区房间统计");
+        return templateService.getTemplateUrl(TemplateEnum.ROOM.getName());
     }
 
     @GetMapping("/download/{id}/{parkId}")

@@ -1,6 +1,7 @@
 package com.parkinfo.web.companyManage;
 
 import com.parkinfo.common.Result;
+import com.parkinfo.enums.TemplateEnum;
 import com.parkinfo.request.compayManage.*;
 import com.parkinfo.response.companyManage.ManageDetailResponse;
 import com.parkinfo.response.companyManage.ManagementResponse;
@@ -39,7 +40,7 @@ public class ManagementController {
     @GetMapping("/investExport")
     @ApiOperation("下载招商信息模板")
     public Result investExport(HttpServletResponse response) {
-        return templateService.getTemplateUrl("招商信息");
+        return templateService.getTemplateUrl(TemplateEnum.STORE_INFO.getName());
     }
 
     @PostMapping("/add")
