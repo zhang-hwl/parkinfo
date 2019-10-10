@@ -2,11 +2,14 @@ package com.parkinfo.service.taskManage;
 
 import com.parkinfo.common.Result;
 import com.parkinfo.request.taskManage.AddParkWorkPlanRequest;
+import com.parkinfo.request.taskManage.ExportWorkPlanRequest;
 import com.parkinfo.request.taskManage.QueryWorkPlanListRequest;
 import com.parkinfo.request.taskManage.SetParkWorkPlanRequest;
 import com.parkinfo.response.taskManage.ParkWorkPlanDetailResponse;
 import com.parkinfo.response.taskManage.ParkWorkPlanListResponse;
 import org.springframework.data.domain.Page;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 园区工作计划及小节
@@ -47,4 +50,11 @@ public interface IParkWorkPlanService {
      * @return
      */
     Result deleteTask(String id);
+
+    /**
+     * 导出园区工作计划及小节详情
+     * @param request
+     * @param response
+     */
+    void exportWorkPlan(ExportWorkPlanRequest request, HttpServletResponse response);
 }

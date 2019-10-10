@@ -2,6 +2,7 @@ package com.parkinfo.web.taskManage;
 
 import com.parkinfo.common.Result;
 import com.parkinfo.request.taskManage.AddPersonalWorkPlanRequest;
+import com.parkinfo.request.taskManage.ExportWorkPlanRequest;
 import com.parkinfo.request.taskManage.QueryPersonalPlanListRequest;
 import com.parkinfo.request.taskManage.SetPersonalWorkPlanRequest;
 import com.parkinfo.response.taskManage.PersonalWorkPlanDetailResponse;
@@ -16,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 /**
@@ -50,6 +52,12 @@ public class PersonalWorkPlanController {
     @RequiresPermissions("taskManage:personalWorkPlan:personalWorkPlan_detail")
     public Result<PersonalWorkPlanDetailResponse> detail(@PathVariable("id") String id){
         return personalWorkPlanService.detail(id);
+    }
+
+    @PostMapping("/export")
+    @ApiOperation(value = "导出个人工作计划及小节详情")
+    public void exportWorkPlan(@RequestBody ExportWorkPlanRequest request, HttpServletResponse response){
+        personalWorkPlanService.exportWorkPlan(request,response);
     }
 
     @PostMapping("/add")

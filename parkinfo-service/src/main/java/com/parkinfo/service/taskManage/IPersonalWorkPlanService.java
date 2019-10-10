@@ -8,6 +8,8 @@ import com.parkinfo.response.taskManage.PersonalWorkPlanDetailResponse;
 import com.parkinfo.response.taskManage.PersonalWorkPlanListResponse;
 import org.springframework.data.domain.Page;
 
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * When I wrote this, only God and I understood what I was doing
  * Now, God only knows
@@ -50,4 +52,10 @@ public interface IPersonalWorkPlanService {
      * @return
      */
     Result deleteTask(String id);
+
+    /**
+     *导出个人工作计划及小节详情
+     * @param request
+     */
+    void exportWorkPlan(ExportWorkPlanRequest request, HttpServletResponse response);
 }

@@ -2,6 +2,7 @@ package com.parkinfo.web.taskManage;
 
 import com.parkinfo.common.Result;
 import com.parkinfo.request.taskManage.AddParkWorkPlanRequest;
+import com.parkinfo.request.taskManage.ExportWorkPlanRequest;
 import com.parkinfo.request.taskManage.QueryWorkPlanListRequest;
 import com.parkinfo.request.taskManage.SetParkWorkPlanRequest;
 import com.parkinfo.response.taskManage.ParkWorkPlanDetailResponse;
@@ -16,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 /**
@@ -81,5 +83,11 @@ public class ParkWorkPlanController {
     @RequiresPermissions("taskManage:parkWorkPlan:parkWorkPlan_delete")
     public  Result deleteTask(@PathVariable("id") String id){
         return parkWorkPlanService.deleteTask(id);
+    }
+
+    @PostMapping("/export")
+    @ApiOperation(value = "导出园区工作计划及小节详情")
+    public void exportWorkPlan(@RequestBody ExportWorkPlanRequest request, HttpServletResponse response){
+        parkWorkPlanService.exportWorkPlan(request,response);
     }
 }

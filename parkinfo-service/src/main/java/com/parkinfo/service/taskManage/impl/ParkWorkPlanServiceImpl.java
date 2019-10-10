@@ -3,6 +3,7 @@ package com.parkinfo.service.taskManage.impl;
 import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
 import com.parkinfo.dto.ParkUserDTO;
+import com.parkinfo.entity.companyManage.CompanyDetail;
 import com.parkinfo.entity.taskManage.ParkWorkPlan;
 import com.parkinfo.entity.taskManage.WorkPlanDetail;
 import com.parkinfo.entity.userConfig.ParkInfo;
@@ -11,12 +12,15 @@ import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.taskManage.ParkWorkPlanRepository;
 import com.parkinfo.repository.taskManage.WorkPlanDetailRepository;
 import com.parkinfo.request.taskManage.AddParkWorkPlanRequest;
+import com.parkinfo.request.taskManage.ExportWorkPlanRequest;
 import com.parkinfo.request.taskManage.QueryWorkPlanListRequest;
 import com.parkinfo.request.taskManage.SetParkWorkPlanRequest;
+import com.parkinfo.response.taskManage.ExportWorkPlanDetailResponse;
 import com.parkinfo.response.taskManage.ParkWorkPlanDetailResponse;
 import com.parkinfo.response.taskManage.ParkWorkPlanListResponse;
 import com.parkinfo.service.taskManage.IParkWorkPlanService;
 import com.parkinfo.token.TokenUtils;
+import com.parkinfo.util.ExcelUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -27,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.Predicate;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -164,6 +169,17 @@ public class ParkWorkPlanServiceImpl implements IParkWorkPlanService {
         return Result.builder().success().message("删除成功").build();
     }
 
+    @Override
+    public void exportWorkPlan(ExportWorkPlanRequest request, HttpServletResponse response) {
+        List<WorkPlanDetail> workPlanDetailList = workPlanDetailRepository.findByParkWorkPlan_IdInAndDeleteIsFalseAndAvailableIsTrue(request.getIds());
+        List<ExportWorkPlanDetailResponse> workPlanDetailResponseList = this.convertParkWorkPlanWorkPlanDetailToExport(workPlanDetailList);
+        try {
+            ExcelUtils.exportExcel(workPlanDetailResponseList, "园区工作计划及小节详情", "园区工作计划及小节详情", ExportWorkPlanDetailResponse.class, "temp", response);
+        } catch (Exception e) {
+            throw new NormalException("园区工作计划及小节详情导出失败");
+        }
+    }
+
     private Page<ParkWorkPlanListResponse> convertParkWorkPlanList(Page<ParkWorkPlan> parkWorkPlanPage) {
         List<ParkWorkPlanListResponse> content = Lists.newArrayList();
         parkWorkPlanPage.forEach(parkWorkPlan -> {
@@ -194,6 +210,19 @@ public class ParkWorkPlanServiceImpl implements IParkWorkPlanService {
         List<WorkPlanDetail> detailList = workPlanDetailRepository.findByParkWorkPlan_IdAndDeleteIsFalseAndAvailableIsTrue(response.getId());
         response.setWorkPlanDetailList(detailList);
         return response;
+    }
+
+    private List<ExportWorkPlanDetailResponse> convertParkWorkPlanWorkPlanDetailToExport(List<WorkPlanDetail> workPlanDetailList) {
+        List<ExportWorkPlanDetailResponse> responseList = Lists.newArrayList();
+        workPlanDetailList.forEach(workPlanDetail -> {
+            ExportWorkPlanDetailResponse response = new ExportWorkPlanDetailResponse();
+            BeanUtils.copyProperties(workPlanDetail,response);
+            if (workPlanDetail.getParkWorkPlan()!=null){
+                response.setName(workPlanDetail.getParkWorkPlan().getName());
+            }
+            responseList.add(response);
+        });
+        return responseList;
     }
 
     private ParkWorkPlan checkParkWorkPlan(String id) {

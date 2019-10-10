@@ -10,4 +10,8 @@ public interface WorkPlanDetailRepository extends JpaRepository<WorkPlanDetail,S
     List<WorkPlanDetail> findByParkWorkPlan_IdAndDeleteIsFalseAndAvailableIsTrue(String id);
 
     List<WorkPlanDetail> findByPersonalWorkPlan_IdAndDeleteIsFalseAndAvailableIsTrue(String id);
+
+    List<WorkPlanDetail> findByPersonalWorkPlan_IdInAndDeleteIsFalseAndAvailableIsTrue(List<String> id);
+
+    List<WorkPlanDetail> findByParkWorkPlan_IdInAndDeleteIsFalseAndAvailableIsTrue(List<String> ids);
 }
