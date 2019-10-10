@@ -6,6 +6,7 @@ import com.parkinfo.entity.companyManage.CompanyDetail;
 import com.parkinfo.entity.companyManage.EnteredInfo;
 import com.parkinfo.entity.informationTotal.RoomInfo;
 import com.parkinfo.entity.userConfig.ParkInfo;
+import com.parkinfo.enums.DefaultEnum;
 import com.parkinfo.enums.EnterStatus;
 import com.parkinfo.enums.InfoReportType;
 import com.parkinfo.repository.companyManage.CompanyDetailRepository;
@@ -48,7 +49,7 @@ public class InfoReportService {
         List<ParkInfo> all = parkInfoRepository.findAllByDeleteIsFalseAndAvailableIsTrue();
         List<ParkInfoResponse> parkInfoResponses = Lists.newArrayList();
         all.forEach(temp -> {
-            if(!temp.getName().equals("总裁园区")){
+            if(!temp.getId().equals(DefaultEnum.CEO_PARK.getDefaultValue())){
                 ParkInfoResponse response = new ParkInfoResponse();
                 BeanUtils.copyProperties(temp, response);
                 parkInfoResponses.add(response);
@@ -63,7 +64,7 @@ public class InfoReportService {
         List<ParkInfo> all = parkInfoRepository.findAllByDeleteIsFalseAndAvailableIsTrue();
         Map<ParkInfoResponse, List<CompanyDetail>> map = new HashMap<>();
         all.forEach(temp -> {
-            if(!temp.getName().equals("总裁园区")){
+            if(!temp.getId().equals(DefaultEnum.CEO_PARK.getDefaultValue())){
                 ParkInfoResponse response = new ParkInfoResponse();
                 BeanUtils.copyProperties(temp, response);
                 List<CompanyDetail> list = companyDetailRepository.findByParkInfo_Id(temp.getId());
