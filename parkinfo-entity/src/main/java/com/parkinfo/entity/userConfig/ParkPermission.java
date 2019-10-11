@@ -49,7 +49,7 @@ public class ParkPermission extends BaseEntity {
     /**
      * 优先级
      */
-    private Integer priority;
+    private String priority;
 
     /**
      * 上级权限

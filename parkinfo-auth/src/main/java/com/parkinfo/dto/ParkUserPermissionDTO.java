@@ -40,5 +40,6 @@ public class ParkUserPermissionDTO {
     /**
      * 优先级
      */
-    private Integer priority;
+    @ApiModelProperty(value = "优先级")
+    private String priority;
 }
