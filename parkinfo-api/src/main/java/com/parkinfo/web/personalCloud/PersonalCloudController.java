@@ -38,6 +38,12 @@ public class PersonalCloudController {
         return personalCloudService.uploadFile(request, fileRequest);
     }
 
+    @PostMapping("/changeStatus/{id}")
+    @ApiOperation("确认上传文件")
+    public Result<String> changeStatus(@PathVariable("id") String id) {
+        return personalCloudService.changeStatus(id);
+    }
+
     @PostMapping("/delete/{id}")
     @ApiOperation("删除文件")
     @RequiresPermissions("personalDisk:myDisk:delete")
