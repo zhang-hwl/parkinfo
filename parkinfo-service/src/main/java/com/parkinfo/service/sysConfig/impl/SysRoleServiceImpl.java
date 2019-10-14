@@ -2,13 +2,17 @@ package com.parkinfo.service.sysConfig.impl;
 
 import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
+import com.parkinfo.dto.ParkUserDTO;
+//import com.parkinfo.dto.ParkUserPermissionDTO;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.entity.userConfig.ParkPermission;
 import com.parkinfo.entity.userConfig.ParkRole;
+import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.enums.ParkRoleEnum;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.userConfig.ParkPermissionRepository;
 import com.parkinfo.repository.userConfig.ParkRoleRepository;
+import com.parkinfo.repository.userConfig.ParkUserRepository;
 import com.parkinfo.request.sysConfig.QuerySysRoleRequest;
 import com.parkinfo.request.sysConfig.SetPermissionRequest;
 import com.parkinfo.response.sysConfig.ParkUserPermissionDTO;
@@ -36,6 +40,9 @@ import static java.util.stream.Collectors.toCollection;
 public class SysRoleServiceImpl implements ISysRoleService {
 
     @Autowired
+    private ParkUserRepository parkUserRepository;
+
+    @Autowired
     private ParkRoleRepository parkRoleRepository;
 
     @Autowired
@@ -47,9 +54,35 @@ public class SysRoleServiceImpl implements ISysRoleService {
 
     @Override
     public Result<List<ParkPermission>> findPermission() {
-        List<ParkPermission> permissionList = parkPermissionRepository.findAllByParentIsNullAndAvailableIsTrueAndDeleteIsFalse();
-        return Result.<List<ParkPermission>>builder().success().data(permissionList).build();
+        ParkUserDTO parkUserDTO = tokenUtils.getLoginUserDTO();
+//        currentUser.getPermissions().forEach();
+        if (parkUserDTO.getRole().contains(ParkRoleEnum.AREA_MANAGER.toString()) || parkUserDTO.getRole().contains(ParkRoleEnum.PARK_MANAGER.toString())) {
+            Optional<ParkUser> currentUserOptional = parkUserRepository.findById(parkUserDTO.getId());
+            if (!currentUserOptional.isPresent()) {
+                throw new NormalException("用户不存在");
+            }
+            ParkUser currentUser = currentUserOptional.get();
+//            List<ParkPermission> permissionList = Lists.newArrayList();
+            List<ParkPermission> currentPermissionList = Lists.newArrayList();
+            if (currentUser.getRoles() != null) {
+                currentUser.getRoles().forEach(parkRole -> {
+                    currentPermissionList.addAll(parkRole.getPermissions());
+                });
+            }
+            List<ParkPermission> permissionList = currentPermissionList.stream().filter(parkPermission -> parkPermission.getParent() == null).collect(Collectors.toList());
+//            currentPermissionList.forEach(currentPermission -> {
+//                if (currentPermission.getParent().getId().equals())
+//            });
+            permissionList.forEach(parkPermission -> {
+                this.convertTreePermission(currentPermissionList, parkPermission);
+            });
+            return Result.<List<ParkPermission>>builder().success().data(permissionList).build();
+        } else {
+            List<ParkPermission> permissionList = parkPermissionRepository.findAllByParentIsNullAndAvailableIsTrueAndDeleteIsFalse();
+            return Result.<List<ParkPermission>>builder().success().data(permissionList).build();
+        }
     }
+
 
     @Override
     public Result<Page<ParkRole>> findRole(QuerySysRoleRequest request) {
@@ -112,7 +145,7 @@ public class SysRoleServiceImpl implements ISysRoleService {
         Set<ParkRole> roles = tokenUtils.getLoginUser().getRoles();
         List<SysRoleResponse> parkRoleList = Lists.newArrayList();
         Optional<ParkRole> admin = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.ADMIN.name());
-        if(admin.isPresent() && roles.contains(admin.get())){
+        if (admin.isPresent() && roles.contains(admin.get())) {
             SysRoleResponse park1 = convertRoleResponse(parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PRESIDENT.name()).get());
             SysRoleResponse park2 = convertRoleResponse(parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.GENERAL_MANAGER.name()).get());
             SysRoleResponse park3 = convertRoleResponse(parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PARK_MANAGER.name()).get());
@@ -125,17 +158,17 @@ public class SysRoleServiceImpl implements ISysRoleService {
         //管理员->HR,Or,User
         //超管->总裁，总裁办，园管
 //        Optional<ParkRole> manager = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PARK_MANAGER.name());
-        if(tokenUtils.getCurrentParkInfo() != null){
+        if (tokenUtils.getCurrentParkInfo() != null) {
             ParkInfo currentParkInfo = tokenUtils.getCurrentParkInfo();
-            if (parkRoleRepository.findByNameAndParkIdAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.HR_USER.name(), currentParkInfo.getId()).isPresent()){
+            if (parkRoleRepository.findByNameAndParkIdAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.HR_USER.name(), currentParkInfo.getId()).isPresent()) {
                 SysRoleResponse park1 = convertRoleResponse(parkRoleRepository.findByNameAndParkIdAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.HR_USER.name(), currentParkInfo.getId()).get());
                 parkRoleList.add(park1);
             }
-            if (parkRoleRepository.findByNameAndParkIdAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.OFFICER.name(), currentParkInfo.getId()).isPresent()){
+            if (parkRoleRepository.findByNameAndParkIdAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.OFFICER.name(), currentParkInfo.getId()).isPresent()) {
                 SysRoleResponse park2 = convertRoleResponse(parkRoleRepository.findByNameAndParkIdAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.OFFICER.name(), currentParkInfo.getId()).get());
                 parkRoleList.add(park2);
             }
-            if (parkRoleRepository.findByNameAndParkIdAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PARK_USER.name(), currentParkInfo.getId()).isPresent()){
+            if (parkRoleRepository.findByNameAndParkIdAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PARK_USER.name(), currentParkInfo.getId()).isPresent()) {
                 SysRoleResponse park3 = convertRoleResponse(parkRoleRepository.findByNameAndParkIdAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PARK_USER.name(), currentParkInfo.getId()).get());
                 parkRoleList.add(park3);
             }
@@ -151,7 +184,7 @@ public class SysRoleServiceImpl implements ISysRoleService {
         return sysRoleOptional.get();
     }
 
-    private SysRoleResponse convertRoleResponse(ParkRole parkRole){
+    private SysRoleResponse convertRoleResponse(ParkRole parkRole) {
         SysRoleResponse response = new SysRoleResponse();
         BeanUtils.copyProperties(parkRole, response);
         return response;
@@ -159,12 +192,24 @@ public class SysRoleServiceImpl implements ISysRoleService {
 
     private List<ParkUserPermissionDTO> convertParkPermissionDTO(List<ParkPermission> childParkPermissionList) {
         List<ParkUserPermissionDTO> permissionDTOList = Lists.newArrayList();
-        childParkPermissionList.forEach(permission->{
+        childParkPermissionList.forEach(permission -> {
             ParkUserPermissionDTO permissionDTO = new ParkUserPermissionDTO();
-            BeanUtils.copyProperties(permission,permissionDTO);
+            BeanUtils.copyProperties(permission, permissionDTO);
             permissionDTOList.add(permissionDTO);
         });
         return permissionDTOList;
     }
 
+    private void convertTreePermission(List<ParkPermission> currentPermissionList, ParkPermission parentParkPermission) {
+        if (parentParkPermission.getChildren() != null) {
+            List<ParkPermission> childPermissionList = Lists.newArrayList();
+            currentPermissionList.forEach(currentPermission -> {
+                if (currentPermission.getParent()!=null&&currentPermission.getParent().getId().equals(parentParkPermission.getId())) {
+                    this.convertTreePermission(currentPermissionList, currentPermission);
+                    childPermissionList.add(currentPermission);
+                }
+            });
+            parentParkPermission.setChildren(new HashSet<>(childPermissionList));
+        }
+    }
 }

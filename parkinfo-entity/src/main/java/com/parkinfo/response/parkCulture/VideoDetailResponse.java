@@ -19,6 +19,9 @@ public class VideoDetailResponse {
     @ApiModelProperty(value = "视频id")
     private String id;
 
+    @ApiModelProperty(value = "封面")
+    private String cover;
+
     @ApiModelProperty(value = "视频名称")
     private String name;
 
@@ -37,4 +40,7 @@ public class VideoDetailResponse {
 
     @ApiModelProperty(value = "二级分类id")
     private String secondCategoryId;
+
+    @ApiModelProperty(value = "备注")
+    private String remark;
 }

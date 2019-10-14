@@ -38,4 +38,7 @@ public class LiveListResponse {
     @ApiModelProperty(value = "直播状态")
     @Enumerated(EnumType.ORDINAL)//字段持久化为0，1
     private BroadcastType live;
+
+    @ApiModelProperty(value = "详情")
+    private String desc;
 }

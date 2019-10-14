@@ -74,7 +74,7 @@ public class PersonalCloudServiceImpl implements IPersonalCloudService {
         cloudDisk.setUploadTime(new Date());
         cloudDisk.setRemark(request.getRemark());
         cloudDisk.setParkUser(loginUser);
-        cloudDisk.setDelete(false);
+        cloudDisk.setDelete(true);
         cloudDisk.setAvailable(true);
         cloudDisk.setFileName(filename);
         String size_S = String.valueOf(file.getSize());
@@ -99,7 +99,7 @@ public class PersonalCloudServiceImpl implements IPersonalCloudService {
         String url = ossService.MultipartFileUpload(servletRequest, path);
         cloudDisk.setFileUrl(url);
         cloudDiskRepository.save(cloudDisk);
-        return Result.<String>builder().success().data("上传成功").build();
+        return Result.<String>builder().success().data(cloudDisk.getId()).build();
     }
 
     @Override
@@ -126,6 +126,17 @@ public class PersonalCloudServiceImpl implements IPersonalCloudService {
         });
         cloudDiskRepository.saveAll(cloudDiskList);
         return Result.builder().success().message("删除成功").build();
+    }
+
+    @Override
+    public Result<String> changeStatus(String id) {
+        Optional<CloudDisk> cloudDiskOptional = cloudDiskRepository.findById(id);
+        if (cloudDiskOptional.isPresent()){
+            CloudDisk cloudDisk = cloudDiskOptional.get();
+            cloudDisk.setDelete(Boolean.FALSE);
+            cloudDiskRepository.save(cloudDisk);
+        }
+        return Result.<String>builder().success().message("上传成功").build();
     }
 
     private Page<PersonalCloudResponse> convertCloudPage(Page<CloudDisk> cloudDiskPage) {

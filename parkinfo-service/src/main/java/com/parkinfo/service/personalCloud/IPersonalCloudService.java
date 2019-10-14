@@ -37,4 +37,10 @@ public interface IPersonalCloudService {
      */
     Result deleteAll(DeletePersonalCloudRequest request);
 
+    /**
+     * 确认上传文件
+     * @param id
+     * @return
+     */
+    Result<String> changeStatus(String id);
 }
