@@ -1,5 +1,6 @@
 package com.parkinfo.service.companyManage.impl;
 
+import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
 import com.parkinfo.dto.ParkUserDTO;
 import com.parkinfo.entity.companyManage.CompanyDetail;
@@ -13,6 +14,7 @@ import com.parkinfo.repository.companyManage.CompanyDetailRepository;
 import com.parkinfo.repository.companyManage.CompanyTypeRepository;
 import com.parkinfo.repository.userConfig.ParkUserRepository;
 import com.parkinfo.request.compayManage.*;
+import com.parkinfo.response.companyManage.CompanyDetailResponse;
 import com.parkinfo.response.companyManage.ManageDetailResponse;
 import com.parkinfo.response.companyManage.ManagementResponse;
 import com.parkinfo.service.companyManage.IManagementService;
@@ -125,12 +127,10 @@ public class ManagementServiceImpl implements IManagementService {
             if (null != request.getDiscussStatus()) {
                 predicates.add(criteriaBuilder.equal(root.get("discussStatus").as(DiscussStatus.class), request.getDiscussStatus().ordinal()));
             }
-            if (StringUtils.isNotBlank(request.getParkId())){
-                predicates.add(criteriaBuilder.equal(root.get("parkInfo").get("id").as(String.class), request.getParkId()));
-            }
             if(StringUtils.isNotBlank(request.getTypeId())){
                 predicates.add(criteriaBuilder.equal(root.get("companyType").get("id").as(String.class), request.getTypeId()));
             }
+            predicates.add(criteriaBuilder.equal(root.get("parkInfo").get("id").as(String.class), tokenUtils.getCurrentParkInfo().getId()));
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
             predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
             predicates.add(criteriaBuilder.equal(root.get("entered").as(Boolean.class), Boolean.FALSE));
@@ -193,10 +193,10 @@ public class ManagementServiceImpl implements IManagementService {
     @Override
     public Result enter(String id) {
         CompanyDetail companyDetail = this.checkInvestment(id);
-        ParkUser parkUser = companyDetail.getParkUser();
-        if (parkUser == null) {
-            throw new NormalException("请先绑定负责人");
-        }
+//        ParkUser parkUser = companyDetail.getParkUser();
+//        if (parkUser == null) {
+//            throw new NormalException("请先绑定负责人");
+//        }
         companyDetail.setEntered(true);
         companyDetail.setEnterStatus(EnterStatus.ENTERED);
         companyDetailRepository.save(companyDetail);
@@ -216,6 +216,19 @@ public class ManagementServiceImpl implements IManagementService {
         parkUser.setCompanyDetail(investment);
         parkUserRepository.save(parkUser);
         return Result.builder().success().message("绑定成功").build();
+    }
+
+    @Override
+    public Result<List<CompanyDetailResponse>> findAllCompany() {
+        List<CompanyDetail> all = companyDetailRepository.findAllByDeleteIsFalseAndAvailableIsTrueAndParkInfo_Id(tokenUtils.getCurrentParkInfo().getId());
+        List<CompanyDetailResponse> result = Lists.newArrayList();
+        all.forEach(temp -> {
+            CompanyDetailResponse response = new CompanyDetailResponse();
+            BeanUtils.copyProperties(temp, response);
+            response.setName(temp.getCompanyName());
+            result.add(response);
+        });
+        return Result.<List<CompanyDetailResponse>>builder().success().data(result).build();
     }
 
     private Page<ManagementResponse> convertDetailPage(Page<CompanyDetail> companyDetailPage) {

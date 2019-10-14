@@ -33,4 +33,8 @@ public interface CompanyDetailRepository extends JpaRepository<CompanyDetail,Str
 
     List<CompanyDetail> findByParkUser_Id(String id);
 
+    List<CompanyDetail> findAllByDeleteIsFalseAndAvailableIsTrueAndParkUserIsNullAndParkInfo_Id(String parkId);
+
+    List<CompanyDetail> findAllByDeleteIsFalseAndAvailableIsTrueAndParkInfo_Id(String parkId);
+
 }

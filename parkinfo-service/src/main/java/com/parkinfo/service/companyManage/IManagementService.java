@@ -2,12 +2,14 @@ package com.parkinfo.service.companyManage;
 
 import com.parkinfo.common.Result;
 import com.parkinfo.request.compayManage.*;
+import com.parkinfo.response.companyManage.CompanyDetailResponse;
 import com.parkinfo.response.companyManage.ManageDetailResponse;
 import com.parkinfo.response.companyManage.ManagementResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 public interface IManagementService {
 
@@ -81,4 +83,6 @@ public interface IManagementService {
      * @return
      */
     Result bind(BindCompanyRequest request);
+
+    Result<List<CompanyDetailResponse>> findAllCompany();
 }

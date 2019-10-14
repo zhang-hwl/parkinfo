@@ -57,5 +57,8 @@ public class SysUserResponse {
     @ApiModelProperty("园区列表")
     private List<ParkInfoListResponse> parkInfoListResponses;
 
+    @ApiModelProperty("企业id")
+    private String companyId;
+
 
 }
