@@ -101,6 +101,11 @@ public class LibraryServiceImpl implements ILibraryService {
             throw new NormalException("该图书不存在");
         }
         Book book = bookOptional.get();
+        if (book.getReadNum()==null){
+            book.setReadNum(0);
+        }
+        book.setReadNum(book.getReadNum()+1);
+        bookRepository.save(book);
         BookDetailResponse response = this.convertBookDetail(book);
         return Result.<BookDetailResponse>builder().success().data(response).build();
     }

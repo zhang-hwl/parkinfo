@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
@@ -86,8 +87,14 @@ public class VideoServiceImpl implements IVideoService {
     }
 
     @Override
+    @Transactional
     public Result<VideoDetailResponse> detail(String id) {
         Video video = this.checkVideo(id);
+        if (video.getReadNum()==null){
+            video.setReadNum(0);
+        }
+        video.setReadNum(video.getReadNum()+1);
+        videoRepository.save(video);
         VideoDetailResponse response = new VideoDetailResponse();
         BeanUtils.copyProperties(video, response);
         VideoCategory secondCategory = video.getCategory();
