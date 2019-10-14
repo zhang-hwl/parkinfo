@@ -3,6 +3,7 @@ package com.parkinfo.service.taskManage;
 import com.parkinfo.common.Result;
 import com.parkinfo.request.taskManage.AddGovernmentReportRequest;
 import com.parkinfo.request.taskManage.QueryGovernmentReportRequest;
+import com.parkinfo.request.taskManage.SetTaskExecutedRequest;
 import com.parkinfo.response.taskManage.GovernmentReportDetailResponse;
 import com.parkinfo.response.taskManage.GovernmentReportListResponse;
 import org.springframework.data.domain.Page;
@@ -36,4 +37,11 @@ public interface IGovernmentReportService {
      * @return
      */
     Result deleteTask(String taskId);
+
+    /**
+     * 设置政府工作汇报任务完成情况
+     * @param request
+     * @return
+     */
+    Result setTaskExecuted(SetTaskExecutedRequest request);
 }

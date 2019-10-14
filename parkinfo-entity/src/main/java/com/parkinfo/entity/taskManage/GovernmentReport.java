@@ -81,4 +81,11 @@ public class GovernmentReport extends BaseEntity {
      */
     private Boolean finished;
 
+    /**
+     * 完成人
+     */
+    @ManyToMany(targetEntity = ParkUser.class, fetch = FetchType.LAZY)
+    @JoinTable(name = "c_government_task_executive", joinColumns = {@JoinColumn(name = "task_id")}, inverseJoinColumns = {@JoinColumn(name = "executive_id")})
+    private List<ParkUser> executive;
+
 }

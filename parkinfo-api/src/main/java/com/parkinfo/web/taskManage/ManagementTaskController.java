@@ -3,6 +3,7 @@ package com.parkinfo.web.taskManage;
 import com.parkinfo.common.Result;
 import com.parkinfo.request.taskManage.AddManagementTaskRequest;
 import com.parkinfo.request.taskManage.QueryManagementTaskRequest;
+import com.parkinfo.request.taskManage.SetTaskExecutedRequest;
 import com.parkinfo.response.login.ParkInfoListResponse;
 import com.parkinfo.response.login.ParkUserListResponse;
 import com.parkinfo.response.taskManage.ManagementTaskDetailResponse;
@@ -105,6 +106,17 @@ public class ManagementTaskController {
     @RequiresPermissions("taskManage:managementTask:managementTask_add")
     public Result<List<ParkUserListResponse>> getUserList(@PathVariable("parkId") String parkId){
         return libraryService.getUserList(parkId);
+    }
+
+    @PostMapping("/setTaskExecuted/")
+    @ApiOperation(value = "设置管理制度任务任务完成情况")
+    public Result setTaskExecuted(@Valid @RequestBody SetTaskExecutedRequest request,BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError error:result.getAllErrors()) {
+                return Result.builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
+        return managementTaskService.setTaskExecuted(request);
     }
     
 }

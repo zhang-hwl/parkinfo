@@ -3,6 +3,7 @@ package com.parkinfo.service.taskManage;
 import com.parkinfo.common.Result;
 import com.parkinfo.request.taskManage.AddManagementTaskRequest;
 import com.parkinfo.request.taskManage.QueryManagementTaskRequest;
+import com.parkinfo.request.taskManage.SetTaskExecutedRequest;
 import com.parkinfo.response.taskManage.ManagementTaskDetailResponse;
 import com.parkinfo.response.taskManage.ManagementTaskListResponse;
 import org.springframework.data.domain.Page;
@@ -39,4 +40,11 @@ public interface IManagementTaskService {
      * @return
      */
     Result deleteTask(String taskId);
+
+    /**
+     * 设置管理制度任务任务完成情况
+     * @param request
+     * @return
+     */
+    Result setTaskExecuted(SetTaskExecutedRequest request);
 }

@@ -544,7 +544,7 @@ public class LibraryServiceImpl implements ILibraryService {
     private List<ParkUserListResponse> convertParkUserList(List<ParkUser> parkUserList, String managerId) {
         List<ParkUserListResponse> responseList = Lists.newArrayList();
         parkUserList.forEach(parkUser -> {
-            if (managerId.equals(parkUser.getId())) {
+            if (StringUtils.isNotBlank(managerId)&&managerId.equals(parkUser.getId())) {
                 ParkUserListResponse response = new ParkUserListResponse();
                 BeanUtils.copyProperties(parkUser, response);
 //                response.setName(parkUser.getNickname());
@@ -553,7 +553,7 @@ public class LibraryServiceImpl implements ILibraryService {
             }
         });
         parkUserList.forEach(parkUser -> {
-            if (!managerId.equals(parkUser.getId())) {
+            if (StringUtils.isBlank(managerId)||!managerId.equals(parkUser.getId())) {
                 ParkUserListResponse response = new ParkUserListResponse();
                 BeanUtils.copyProperties(parkUser, response);
                 response.setName(parkUser.getNickname());
