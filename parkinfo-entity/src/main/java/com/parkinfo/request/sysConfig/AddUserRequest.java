@@ -27,7 +27,7 @@ public class AddUserRequest {
     private List<String> parkIds;
 
     @ApiModelProperty(value = "绑定角色id")
-    @NotNull
+    @NotBlank(message = "角色不能为空")
     private String roleId;
 
     //身份证
@@ -49,4 +49,7 @@ public class AddUserRequest {
     //紧急联系电话
     @ApiModelProperty("紧急联系电话")
     private String urgencyPhone;
+
+    @ApiModelProperty("企业id，角色为HR时必传")
+    private String companyId;
 }

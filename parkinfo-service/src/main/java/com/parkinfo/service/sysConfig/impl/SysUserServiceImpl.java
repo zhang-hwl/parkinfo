@@ -3,6 +3,7 @@ package com.parkinfo.service.sysConfig.impl;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.parkinfo.common.Result;
+import com.parkinfo.entity.companyManage.CompanyDetail;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.entity.userConfig.ParkRole;
 import com.parkinfo.entity.userConfig.ParkUser;
@@ -11,6 +12,7 @@ import com.parkinfo.enums.FileUploadType;
 import com.parkinfo.enums.ParkRoleEnum;
 import com.parkinfo.enums.SettingType;
 import com.parkinfo.exception.NormalException;
+import com.parkinfo.repository.companyManage.CompanyDetailRepository;
 import com.parkinfo.repository.userConfig.ParkInfoRepository;
 import com.parkinfo.repository.userConfig.ParkRoleRepository;
 import com.parkinfo.repository.userConfig.ParkUserRepository;
@@ -33,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.*;
 import javax.servlet.http.HttpServletRequest;
@@ -60,6 +63,9 @@ public class SysUserServiceImpl implements ISysUserService {
 
     @Autowired
     private TokenUtils tokenUtils;
+
+    @Autowired
+    private CompanyDetailRepository companyDetailRepository;
 
     @Override
     public Result<Page<SysUserResponse>> searchUser(QuerySysUserRequest request) {
@@ -97,9 +103,21 @@ public class SysUserServiceImpl implements ISysUserService {
                 predicates.add(in);
             }else {
                 SetJoin<ParkUser,ParkInfo> setJoin = root.joinSet("parks",JoinType.LEFT);
-                predicates.add(criteriaBuilder.equal(setJoin.get("id").as(String.class),tokenUtils.getCurrentParkInfo().getId()));
+//                predicates.add(criteriaBuilder.equal(setJoin.get("id").as(String.class),tokenUtils.getCurrentParkInfo().getId()));
+                String id = tokenUtils.getLoginUser().getId();
+                ParkUser parkUser = this.checkUser(id);
+                Set<ParkInfo> parks = parkUser.getParks();
+                if (parks != null && parks.size() != 0){
+                    Path<Object> path = setJoin.get("id");
+                    CriteriaBuilder.In<Object> in = criteriaBuilder.in(path);
+                    parks.forEach(parkInfo -> {
+                        in.value(parkInfo.getId());
+                    });
+                    predicates.add(in);
+                }
                 SetJoin<ParkUser,ParkRole> roleSetJoin = root.joinSet("roles",JoinType.LEFT);
                 predicates.add(criteriaBuilder.notEqual(roleSetJoin.get("name").as(String.class),ParkRoleEnum.PARK_MANAGER.toString()));
+                predicates.add(criteriaBuilder.notEqual(roleSetJoin.get("name").as(String.class),ParkRoleEnum.AREA_MANAGER.toString()));
             }
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class),Boolean.FALSE));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
@@ -109,6 +127,9 @@ public class SysUserServiceImpl implements ISysUserService {
         parkUserPage.getContent().forEach(temp -> {
             SysUserResponse sysUserResponse = new SysUserResponse();
             BeanUtils.copyProperties(temp, sysUserResponse);
+            if(temp.getCompanyDetail() != null){
+                sysUserResponse.setCompanyId(temp.getCompanyDetail().getId());
+            }
             List<SysRoleResponse> roleResponses = Lists.newArrayList();
             temp.getRoles().forEach(tempRole -> {
                 SysRoleResponse sysRoleResponse = new SysRoleResponse();
@@ -138,6 +159,7 @@ public class SysUserServiceImpl implements ISysUserService {
     }
 
     @Override
+    @Transactional
     public Result addUser(AddUserRequest request) {
         Optional<ParkUser> byAccount = parkUserRepository.findByAccountAndAvailableIsTrueAndDeleteIsFalse(request.getAccount());
         if(byAccount.isPresent()){
@@ -185,7 +207,8 @@ public class SysUserServiceImpl implements ISysUserService {
         if (parkRole.getName().equals(ParkRoleEnum.AREA_MANAGER.name())){
             parkRoles.add(manager);
             parkRoles.add(areaManager);
-        }else {
+        }
+        else {
             parkRoles.add(parkRole);
         }
         if(roles.contains(admin)){
@@ -216,7 +239,25 @@ public class SysUserServiceImpl implements ISysUserService {
         }
         newData.setParks(parkInfos);
         newData.setRoles(parkRoles);
-        parkUserRepository.save(newData);
+        ParkUser save = parkUserRepository.save(newData);
+        if(parkRole.getName().equals(ParkRoleEnum.HR_USER.name())){
+            //新增HR，需绑定企业
+            Optional<CompanyDetail> companyDetailOptional = companyDetailRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(request.getCompanyId());
+            if(!companyDetailOptional.isPresent()){
+                throw new NormalException("企业不存在");
+            }
+            CompanyDetail companyDetail = companyDetailOptional.get();
+            if(save.getCompanyDetail() != companyDetail){
+                //编辑HR，企业更新
+                if(companyDetail.getParkUser() != null){
+                    throw new NormalException("该企业已绑定负责人");
+                }
+            }
+            companyDetail.setParkUser(save);
+            CompanyDetail save1 = companyDetailRepository.save(companyDetail);
+            save.setCompanyDetail(save1);
+            parkUserRepository.save(save);
+        }
     }
 
     @Override

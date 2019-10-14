@@ -3,6 +3,7 @@ package com.parkinfo.web.companyManage;
 import com.parkinfo.common.Result;
 import com.parkinfo.enums.TemplateEnum;
 import com.parkinfo.request.compayManage.*;
+import com.parkinfo.response.companyManage.CompanyDetailResponse;
 import com.parkinfo.response.companyManage.ManageDetailResponse;
 import com.parkinfo.response.companyManage.ManagementResponse;
 import com.parkinfo.service.companyManage.IManagementService;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/companyManage/management")
@@ -105,5 +107,11 @@ public class ManagementController {
             }
         }
         return managementService.bind(request);
+    }
+
+    @PostMapping("/find/company")
+    @ApiOperation(value = "查询本园区企业")
+    public Result<List<CompanyDetailResponse>> findAllCompany(){
+        return managementService.findAllCompany();
     }
 }
