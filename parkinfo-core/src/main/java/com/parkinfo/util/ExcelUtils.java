@@ -109,8 +109,10 @@ public class ExcelUtils {
      */
     private static void downLoadExcel(String fileName, HttpServletResponse response, Workbook workbook) throws IOException {
         try {
+//            response.reset();
             response.setCharacterEncoding("UTF-8");
-            response.setHeader("content-Type", "application/vnd.ms-excel");
+            response.setContentType("application/octet-stream");
+//            response.setHeader("content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName,"UTF-8") + "." + ExcelTypeEnum.XLSX.getValue());
             response.setHeader("Access-Control-Expose-Headers","Content-Disposition");
             workbook.write(response.getOutputStream());
