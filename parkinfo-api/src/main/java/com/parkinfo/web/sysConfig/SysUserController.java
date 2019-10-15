@@ -10,6 +10,7 @@ import com.parkinfo.response.sysConfig.SysUserResponse;
 import com.parkinfo.service.sysConfig.ISysUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.BindingResult;
@@ -78,7 +79,8 @@ public class SysUserController {
     }
 
     @PostMapping("/delete/{id}")
-    @ApiOperation(value = "逻辑删除用户")
+    @RequiresPermissions("sysConfig:sysUser:user_delete")
+    @ApiOperation(value = "删除用户")
     public Result deleteUser(@PathVariable String id) {
         return sysUserService.deleteUser(id);
     }

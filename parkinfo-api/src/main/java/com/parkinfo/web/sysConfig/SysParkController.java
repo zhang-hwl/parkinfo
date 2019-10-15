@@ -8,6 +8,7 @@ import com.parkinfo.response.sysConfig.SysParkInfoResponse;
 import com.parkinfo.service.sysConfig.ISysParkService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.BindingResult;
@@ -54,9 +55,15 @@ public class SysParkController {
 
     @PostMapping("/change/{id}")
     @ApiOperation(value = "改变园区状态")
+    public Result<String> changePark(@PathVariable("id") String id){
+        return sysParkService.changePark(id);
+    }
+
+    @PostMapping("/delete/{id}")
+    @RequiresPermissions("sysConfig:parkManage:deletePark")
+    @ApiOperation("删除园区")
     public Result<String> deletePark(@PathVariable("id") String id){
         return sysParkService.deletePark(id);
     }
-
 
 }

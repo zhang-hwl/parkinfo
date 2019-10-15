@@ -123,12 +123,33 @@ public class SysParkServiceImpl implements ISysParkService {
     }
 
     @Override
-    public Result<String> deletePark(String id) {
+    public Result<String> changePark(String id) {
         Optional<ParkInfo> byId = parkInfoRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(id);
+        if(!byId.isPresent()){
+            throw new NormalException("园区不存在");
+        }
         ParkInfo parkInfo = byId.get();
         Boolean available = parkInfo.getAvailable();
         parkInfo.setAvailable(!available);
         parkInfoRepository.save(parkInfo);
         return Result.<String>builder().success().data("改变状态成功").build();
+    }
+
+    @Override
+    public Result<String> deletePark(String id) {
+        Optional<ParkInfo> byId = parkInfoRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(id);
+        if(!byId.isPresent()){
+            throw new NormalException("园区不存在");
+        }
+        ParkInfo parkInfo = byId.get();
+        List<ParkUser> list = parkUserRepository.findByDeleteIsFalse();
+        list.forEach(temp -> {
+            if(temp.getParks().contains(parkInfo)){
+                throw new NormalException("该园区下还有用户，不能删除");
+            }
+        });
+        parkInfo.setDelete(true);
+        parkInfoRepository.save(parkInfo);
+        return Result.<String>builder().success().data("删除成功").build();
     }
 }
