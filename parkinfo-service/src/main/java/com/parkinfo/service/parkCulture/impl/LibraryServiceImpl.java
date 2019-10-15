@@ -101,6 +101,11 @@ public class LibraryServiceImpl implements ILibraryService {
             throw new NormalException("该图书不存在");
         }
         Book book = bookOptional.get();
+        if (book.getReadNum()==null){
+            book.setReadNum(0);
+        }
+        book.setReadNum(book.getReadNum()+1);
+        bookRepository.save(book);
         BookDetailResponse response = this.convertBookDetail(book);
         return Result.<BookDetailResponse>builder().success().data(response).build();
     }
@@ -544,7 +549,7 @@ public class LibraryServiceImpl implements ILibraryService {
     private List<ParkUserListResponse> convertParkUserList(List<ParkUser> parkUserList, String managerId) {
         List<ParkUserListResponse> responseList = Lists.newArrayList();
         parkUserList.forEach(parkUser -> {
-            if (managerId.equals(parkUser.getId())) {
+            if (StringUtils.isNotBlank(managerId)&&managerId.equals(parkUser.getId())) {
                 ParkUserListResponse response = new ParkUserListResponse();
                 BeanUtils.copyProperties(parkUser, response);
 //                response.setName(parkUser.getNickname());
@@ -553,7 +558,7 @@ public class LibraryServiceImpl implements ILibraryService {
             }
         });
         parkUserList.forEach(parkUser -> {
-            if (!managerId.equals(parkUser.getId())) {
+            if (StringUtils.isBlank(managerId)||!managerId.equals(parkUser.getId())) {
                 ParkUserListResponse response = new ParkUserListResponse();
                 BeanUtils.copyProperties(parkUser, response);
                 response.setName(parkUser.getNickname());

@@ -5,6 +5,7 @@ import com.parkinfo.common.Result;
 import com.parkinfo.request.taskManage.AddPersonalWorkPlanRequest;
 import com.parkinfo.request.taskManage.AddSpecialTaskRequest;
 import com.parkinfo.request.taskManage.QuerySpecialTaskRequest;
+import com.parkinfo.request.taskManage.SetTaskExecutedRequest;
 import com.parkinfo.response.taskManage.SpecialTaskDetailResponse;
 import com.parkinfo.response.taskManage.SpecialTaskListResponse;
 import org.springframework.data.domain.Page;
@@ -38,4 +39,11 @@ public interface ISpecialTaskService {
      * @return
      */
     Result deleteTask(String taskId);
+
+    /**
+     * 设置专项任务完成情况
+     * @param request
+     * @return
+     */
+    Result setTaskExecuted(SetTaskExecutedRequest request);
 }

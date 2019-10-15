@@ -13,6 +13,8 @@ import com.parkinfo.repository.taskManage.SpecialTaskRepository;
 import com.parkinfo.repository.userConfig.ParkUserRepository;
 import com.parkinfo.request.taskManage.AddSpecialTaskRequest;
 import com.parkinfo.request.taskManage.QuerySpecialTaskRequest;
+import com.parkinfo.request.taskManage.SetTaskExecutedRequest;
+import com.parkinfo.response.taskManage.ExecutiveListResponse;
 import com.parkinfo.response.taskManage.ReceiverListResponse;
 import com.parkinfo.response.taskManage.SpecialTaskDetailResponse;
 import com.parkinfo.response.taskManage.SpecialTaskListResponse;
@@ -30,6 +32,7 @@ import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * When I wrote this, only God and I understood what I was doing
@@ -135,6 +138,24 @@ public class SpecialTaskServiceImpl implements ISpecialTaskService {
         return Result.builder().success().message("删除成功").build();
     }
 
+    @Override
+    public Result setTaskExecuted(SetTaskExecutedRequest request) {
+        SpecialTask specialTask = this.checkSpecialTask(request.getTaskId());
+        ParkUser currentUser = tokenUtils.getLoginUser();
+        List<ParkUser> executiveList = specialTask.getExecutive();
+        //任务已完成  并且完成列表中没有该用户
+        if (!executiveList.stream().map(ParkUser::getId).collect(Collectors.toList()).contains(currentUser.getId())&&request.getExecuted()){
+            executiveList.removeIf(parkUser -> parkUser.getId().equals(currentUser.getId()));
+        }
+        //任务未完成  并且完成列表中有该用户
+        if (executiveList.stream().map(ParkUser::getId).collect(Collectors.toList()).contains(currentUser.getId())&&!request.getExecuted()){
+            executiveList.add(currentUser);
+        }
+        specialTask.setExecutive(executiveList);
+        specialTaskRepository.save(specialTask);
+        return Result.builder().message("成功").build();
+    }
+
     private Page<SpecialTaskListResponse> convertSpecialTaskList(Page<SpecialTask> specialTaskPage) {
         List<SpecialTaskListResponse> content = Lists.newArrayList();
         specialTaskPage.forEach(specialTask -> {
@@ -157,6 +178,18 @@ public class SpecialTaskServiceImpl implements ISpecialTaskService {
                     receiverList.add(receiverListResponse);
                 });
                 response.setReceivers(receiverList);
+            }
+            if (specialTask.getExecutive() != null) {
+                List<ExecutiveListResponse> executiveList = Lists.newArrayList();
+                specialTask.getExecutive().forEach(executive -> {
+                    ExecutiveListResponse executiveListResponse = new ExecutiveListResponse();
+                    executiveListResponse.setId(executive.getId());
+                    executiveListResponse.setName(executive.getNickname());
+                    Optional<ParkInfo> parkInfoOptional = executive.getParks().stream().findFirst();
+                    parkInfoOptional.ifPresent(parkInfo -> executiveListResponse.setParkId(parkInfo.getId()));
+                    executiveList.add(executiveListResponse);
+                });
+                response.setExecutives(executiveList);
             }
             content.add(response);
         });
@@ -183,6 +216,18 @@ public class SpecialTaskServiceImpl implements ISpecialTaskService {
                 receiverList.add(receiverListResponse);
             });
             response.setReceivers(receiverList);
+        }
+        if (specialTask.getExecutive() != null) {
+            List<ExecutiveListResponse> executiveList = Lists.newArrayList();
+            specialTask.getExecutive().forEach(executive -> {
+                ExecutiveListResponse executiveListResponse = new ExecutiveListResponse();
+                executiveListResponse.setId(executive.getId());
+                executiveListResponse.setName(executive.getNickname());
+                Optional<ParkInfo> parkInfoOptional = executive.getParks().stream().findFirst();
+                parkInfoOptional.ifPresent(parkInfo -> executiveListResponse.setParkId(parkInfo.getId()));
+                executiveList.add(executiveListResponse);
+            });
+            response.setExecutives(executiveList);
         }
         return response;
     }

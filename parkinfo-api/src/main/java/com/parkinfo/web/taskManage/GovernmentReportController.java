@@ -3,10 +3,12 @@ package com.parkinfo.web.taskManage;
 import com.parkinfo.common.Result;
 import com.parkinfo.request.taskManage.AddGovernmentReportRequest;
 import com.parkinfo.request.taskManage.QueryGovernmentReportRequest;
+import com.parkinfo.request.taskManage.SetTaskExecutedRequest;
 import com.parkinfo.response.login.ParkInfoListResponse;
 import com.parkinfo.response.login.ParkUserListResponse;
 import com.parkinfo.response.taskManage.GovernmentReportDetailResponse;
 import com.parkinfo.response.taskManage.GovernmentReportListResponse;
+import com.parkinfo.response.taskManage.ManagementTaskListResponse;
 import com.parkinfo.service.parkCulture.ILibraryService;
 import com.parkinfo.service.taskManage.IGovernmentReportService;
 import io.swagger.annotations.Api;
@@ -106,5 +108,16 @@ public class GovernmentReportController {
     @RequiresPermissions("taskManage:governmentReport:governmentReport_add")
     public Result<List<ParkUserListResponse>> getUserList(@PathVariable("parkId") String parkId){
         return libraryService.getUserList(parkId);
+    }
+
+    @PostMapping("/setTaskExecuted/")
+    @ApiOperation(value = "设置政府工作汇报任务完成情况")
+    public Result setTaskExecuted(@Valid @RequestBody SetTaskExecutedRequest request, BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError error:result.getAllErrors()) {
+                return Result.builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
+        return governmentReportService.setTaskExecuted(request);
     }
 }

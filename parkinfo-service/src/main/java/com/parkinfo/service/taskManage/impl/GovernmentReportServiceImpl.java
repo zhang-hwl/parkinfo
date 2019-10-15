@@ -14,6 +14,8 @@ import com.parkinfo.repository.taskManage.GovernmentReportRepository;
 import com.parkinfo.repository.userConfig.ParkUserRepository;
 import com.parkinfo.request.taskManage.AddGovernmentReportRequest;
 import com.parkinfo.request.taskManage.QueryGovernmentReportRequest;
+import com.parkinfo.request.taskManage.SetTaskExecutedRequest;
+import com.parkinfo.response.taskManage.ExecutiveListResponse;
 import com.parkinfo.response.taskManage.GovernmentReportDetailResponse;
 import com.parkinfo.response.taskManage.GovernmentReportListResponse;
 import com.parkinfo.response.taskManage.ReceiverListResponse;
@@ -31,6 +33,7 @@ import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * When I wrote this, only God and I understood what I was doing
@@ -131,6 +134,24 @@ public class GovernmentReportServiceImpl implements IGovernmentReportService {
         return Result.builder().success().message("删除成功").build();
     }
 
+    @Override
+    public Result setTaskExecuted(SetTaskExecutedRequest request) {
+        GovernmentReport governmentReport = this.checkGovernmentReport(request.getTaskId());
+        ParkUser currentUser = tokenUtils.getLoginUser();
+        List<ParkUser> executiveList = governmentReport.getExecutive();
+        //任务已完成  并且完成列表中没有该用户
+        if (!executiveList.stream().map(ParkUser::getId).collect(Collectors.toList()).contains(currentUser.getId())&&request.getExecuted()){
+            executiveList.removeIf(parkUser -> parkUser.getId().equals(currentUser.getId()));
+        }
+        //任务未完成  并且完成列表中有该用户
+        if (executiveList.stream().map(ParkUser::getId).collect(Collectors.toList()).contains(currentUser.getId())&&!request.getExecuted()){
+            executiveList.add(currentUser);
+        }
+        governmentReport.setExecutive(executiveList);
+        governmentReportRepository.save(governmentReport);
+        return Result.builder().message("成功").build();
+    }
+
     private Page<GovernmentReportListResponse> convertGovernmentReportList(Page<GovernmentReport> governmentReportPage) {
         List<GovernmentReportListResponse> content = Lists.newArrayList();
         governmentReportPage.forEach(governmentReport -> {
@@ -153,6 +174,18 @@ public class GovernmentReportServiceImpl implements IGovernmentReportService {
                     receiverList.add(receiverListResponse);
                 });
                 response.setReceivers(receiverList);
+            }
+            if (governmentReport.getExecutive() != null) {
+                List<ExecutiveListResponse> executiveList = Lists.newArrayList();
+                governmentReport.getExecutive().forEach(executive -> {
+                    ExecutiveListResponse executiveListResponse = new ExecutiveListResponse();
+                    executiveListResponse.setId(executive.getId());
+                    executiveListResponse.setName(executive.getNickname());
+                    Optional<ParkInfo> parkInfoOptional = executive.getParks().stream().findFirst();
+                    parkInfoOptional.ifPresent(parkInfo -> executiveListResponse.setParkId(parkInfo.getId()));
+                    executiveList.add(executiveListResponse);
+                });
+                response.setExecutives(executiveList);
             }
             content.add(response);
         });
@@ -179,6 +212,18 @@ public class GovernmentReportServiceImpl implements IGovernmentReportService {
                 receiverList.add(receiverListResponse);
             });
             response.setReceivers(receiverList);
+        }
+        if (governmentReport.getExecutive() != null) {
+            List<ExecutiveListResponse> executiveList = Lists.newArrayList();
+            governmentReport.getExecutive().forEach(executive -> {
+                ExecutiveListResponse executiveListResponse = new ExecutiveListResponse();
+                executiveListResponse.setId(executive.getId());
+                executiveListResponse.setName(executive.getNickname());
+                Optional<ParkInfo> parkInfoOptional = executive.getParks().stream().findFirst();
+                parkInfoOptional.ifPresent(parkInfo -> executiveListResponse.setParkId(parkInfo.getId()));
+                executiveList.add(executiveListResponse);
+            });
+            response.setExecutives(executiveList);
         }
         return response;
     }

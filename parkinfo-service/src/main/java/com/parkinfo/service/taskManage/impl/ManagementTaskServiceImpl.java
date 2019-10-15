@@ -15,6 +15,7 @@ import com.parkinfo.repository.taskManage.ManagementTaskRepository;
 import com.parkinfo.repository.userConfig.ParkUserRepository;
 import com.parkinfo.request.taskManage.AddManagementTaskRequest;
 import com.parkinfo.request.taskManage.QueryManagementTaskRequest;
+import com.parkinfo.request.taskManage.SetTaskExecutedRequest;
 import com.parkinfo.response.taskManage.*;
 import com.parkinfo.response.taskManage.ManagementTaskListResponse;
 import com.parkinfo.service.taskManage.IManagementTaskService;
@@ -31,6 +32,7 @@ import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * When I wrote this, only God and I understood what I was doing
@@ -130,6 +132,25 @@ public class ManagementTaskServiceImpl implements IManagementTaskService {
         return Result.builder().success().message("删除成功").build();
     }
 
+    @Override
+    public Result setTaskExecuted(SetTaskExecutedRequest request) {
+        ManagementTask managementTask = this.checkManagementTask(request.getTaskId());
+        ParkUser currentUser = tokenUtils.getLoginUser();
+        List<ParkUser> executiveList = managementTask.getExecutive();
+        //任务已完成  并且完成列表中没有该用户
+        if (!executiveList.stream().map(ParkUser::getId).collect(Collectors.toList()).contains(currentUser.getId())&&request.getExecuted()){
+            executiveList.removeIf(parkUser -> parkUser.getId().equals(currentUser.getId()));
+        }
+        //任务未完成  并且完成列表中有该用户
+        if (executiveList.stream().map(ParkUser::getId).collect(Collectors.toList()).contains(currentUser.getId())&&!request.getExecuted()){
+            executiveList.add(currentUser);
+        }
+        managementTask.setExecutive(executiveList);
+        managementTaskRepository.save(managementTask);
+        return Result.builder().message("成功").build();
+
+    }
+
     private Page<ManagementTaskListResponse> convertManagementTaskList(Page<ManagementTask> managementTaskPage) {
         List<ManagementTaskListResponse> content = Lists.newArrayList();
         managementTaskPage.forEach(managementTask -> {
@@ -154,6 +175,18 @@ public class ManagementTaskServiceImpl implements IManagementTaskService {
                     receiverList.add(receiverListResponse);
                 });
                 response.setReceivers(receiverList);
+            }
+            if (managementTask.getExecutive() != null) {
+                List<ExecutiveListResponse> executiveList = Lists.newArrayList();
+                managementTask.getExecutive().forEach(executive -> {
+                    ExecutiveListResponse executiveListResponse = new ExecutiveListResponse();
+                    executiveListResponse.setId(executive.getId());
+                    executiveListResponse.setName(executive.getNickname());
+                    Optional<ParkInfo> parkInfoOptional = executive.getParks().stream().findFirst();
+                    parkInfoOptional.ifPresent(parkInfo -> executiveListResponse.setParkId(parkInfo.getId()));
+                    executiveList.add(executiveListResponse);
+                });
+                response.setExecutives(executiveList);
             }
             content.add(response);
         });

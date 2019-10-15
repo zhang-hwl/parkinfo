@@ -60,6 +60,12 @@ public class SpecialTaskListResponse {
     private List<ReceiverListResponse> receivers;
 
     /**
+     * 完成人
+     */
+    @ApiModelProperty(value = "完成人")
+    private List<ExecutiveListResponse> executives;
+
+    /**
      * 进度
      */
     @ApiModelProperty(value = "进度")
