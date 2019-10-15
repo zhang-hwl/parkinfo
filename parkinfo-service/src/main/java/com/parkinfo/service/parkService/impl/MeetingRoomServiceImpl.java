@@ -169,6 +169,7 @@ public class MeetingRoomServiceImpl implements IMeetingRoomService {
                     meetingRoomReserveResponseList.add(meetingRoomReserveResponse);
                 });
             }
+            meetingRoomResponse.setCreateTime(meetingRoom.getCreateTime());
             meetingRoomResponse.setReserveResponse(meetingRoomReserveResponseList);
             response.add(meetingRoomResponse);
         });

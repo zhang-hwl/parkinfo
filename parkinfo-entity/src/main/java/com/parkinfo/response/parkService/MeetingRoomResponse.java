@@ -3,8 +3,8 @@ package com.parkinfo.response.parkService;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.apache.poi.hpsf.Date;
 
+import java.util.Date;
 import java.util.List;
 
 @Data

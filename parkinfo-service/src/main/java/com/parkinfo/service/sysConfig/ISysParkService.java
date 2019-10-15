@@ -18,6 +18,8 @@ public interface ISysParkService {
 
     Result<String> editPark(String id, AddSysParkRequest request);
 
+    Result<String> changePark(String id);
+
     Result<String> deletePark(String id);
 
 
