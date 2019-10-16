@@ -49,21 +49,18 @@ public class CompanyTypeController {
 
     @PostMapping("/find/kind/{id}")
     @ApiOperation(value = "获取大类下的所有小类，路径加大类id")
-    @RequiresPermissions("company:type:search")
     public Result<List<CompanyTypeDetailResponse>> findAllKind(@PathVariable("id") String id){
         return companyTypeService.findAllKind(id);
     }
 
     @PostMapping("/find/general")
     @ApiOperation(value = "获取所有大类(不带小类)")
-    @RequiresPermissions("company:type:search")
     public Result<List<CompanyTypeDetailResponse>> findAllGeneral(){
         return companyTypeService.findAllGeneral();
     }
 
     @PostMapping("/add/general")
     @ApiOperation(value = "新增大类")
-    @RequiresPermissions("company:type:add")
     public Result<String> addGeneral(@Valid @RequestBody AddGeneralRequest request, BindingResult result){
         if (result.hasErrors()) {
             for (ObjectError error : result.getAllErrors()) {
@@ -75,7 +72,6 @@ public class CompanyTypeController {
 
     @PostMapping("/add/kind")
     @ApiOperation(value = "新增小类")
-    @RequiresPermissions("company:type:add")
     public Result<String> addKind(@Valid @RequestBody AddKindTypeRequest request, BindingResult result){
         if (result.hasErrors()) {
             for (ObjectError error : result.getAllErrors()) {
@@ -87,7 +83,6 @@ public class CompanyTypeController {
 
     @PostMapping("/edit/kind")
     @ApiOperation(value = "编辑类型，传入修改的类型名称")
-    @RequiresPermissions("company:type:edit")
     public Result<String> editGeneral(@Valid @RequestBody EditTypeRequest request, BindingResult result){
         if (result.hasErrors()) {
             for (ObjectError error : result.getAllErrors()) {
@@ -99,7 +94,6 @@ public class CompanyTypeController {
 
     @PostMapping("/delete/{id}")
     @ApiOperation(value = "删除类型")
-    @RequiresPermissions("company:type:delete")
     public Result<String> deleteGeneral(@PathVariable("id") String id){
         return companyTypeService.deleteGeneral(id);
     }
