@@ -44,6 +44,11 @@ public class AnswerSheet extends BaseEntity {
     private Boolean start;
 
     /**
+     * 是否交卷
+     */
+    private Boolean commit;
+
+    /**
      * 开始时间
      */
     private Date startTime;
