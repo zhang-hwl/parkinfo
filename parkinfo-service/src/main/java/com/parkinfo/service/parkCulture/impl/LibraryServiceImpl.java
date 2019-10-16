@@ -8,6 +8,7 @@ import com.parkinfo.entity.parkCulture.BookCategory;
 import com.parkinfo.entity.parkCulture.BookComment;
 import com.parkinfo.entity.parkCulture.ReadProcess;
 import com.parkinfo.entity.userConfig.ParkInfo;
+import com.parkinfo.entity.userConfig.ParkRole;
 import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.enums.ParkRoleEnum;
 import com.parkinfo.exception.NormalException;
@@ -558,14 +559,46 @@ public class LibraryServiceImpl implements ILibraryService {
             }
         });
         parkUserList.forEach(parkUser -> {
-            if (StringUtils.isBlank(managerId)||!managerId.equals(parkUser.getId())) {
+            List<String> roleList = new ArrayList<>(parkUser.getRoles()).stream().map(ParkRole::getName).collect(Collectors.toList());
+            if (roleList.contains(ParkRoleEnum.AREA_MANAGER.toString())) {
                 ParkUserListResponse response = new ParkUserListResponse();
                 BeanUtils.copyProperties(parkUser, response);
-                response.setName(parkUser.getNickname());
+                response.setName(parkUser.getNickname()+"(区域管理员)");
 //                response.setName(parkUser.getNickname()+"(园区管理员)");
                 responseList.add(response);
             }
         });
+        parkUserList.forEach(parkUser -> {
+            List<String> roleList = new ArrayList<>(parkUser.getRoles()).stream().map(ParkRole::getName).collect(Collectors.toList());
+            if (roleList.contains(ParkRoleEnum.PARK_USER.toString())) {
+                ParkUserListResponse response = new ParkUserListResponse();
+                BeanUtils.copyProperties(parkUser, response);
+                response.setName(parkUser.getNickname()+"(园区员工用户)");
+//                response.setName(parkUser.getNickname()+"(园区管理员)");
+                responseList.add(response);
+            }
+        });
+        parkUserList.forEach(parkUser -> {
+            List<String> roleList = new ArrayList<>(parkUser.getRoles()).stream().map(ParkRole::getName).collect(Collectors.toList());
+            if (roleList.contains(ParkRoleEnum.OFFICER.toString())) {
+                ParkUserListResponse response = new ParkUserListResponse();
+                BeanUtils.copyProperties(parkUser, response);
+                response.setName(parkUser.getNickname()+"(政府用户)");
+//                response.setName(parkUser.getNickname()+"(园区管理员)");
+                responseList.add(response);
+            }
+        });
+        parkUserList.forEach(parkUser -> {
+            List<String> roleList = new ArrayList<>(parkUser.getRoles()).stream().map(ParkRole::getName).collect(Collectors.toList());
+            if (roleList.contains(ParkRoleEnum.HR_USER.toString())) {
+                ParkUserListResponse response = new ParkUserListResponse();
+                BeanUtils.copyProperties(parkUser, response);
+                response.setName(parkUser.getNickname()+"(企业HR用户)");
+//                response.setName(parkUser.getNickname()+"(园区管理员)");
+                responseList.add(response);
+            }
+        });
+
         return responseList;
     }
 

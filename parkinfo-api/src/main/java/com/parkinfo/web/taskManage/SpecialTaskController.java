@@ -110,7 +110,7 @@ public class SpecialTaskController {
         return libraryService.getUserList(parkId);
     }
 
-    @PostMapping("/setTaskExecuted/")
+    @PostMapping("/setTaskExecuted")
     @ApiOperation(value = "设置专项任务完成情况")
     public Result setTaskExecuted(@Valid @RequestBody SetTaskExecutedRequest request, BindingResult result){
         if (result.hasErrors()){

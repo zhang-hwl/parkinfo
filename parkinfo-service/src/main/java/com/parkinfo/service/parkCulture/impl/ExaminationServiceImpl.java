@@ -164,7 +164,7 @@ public class ExaminationServiceImpl implements IExaminationService {
         examination.setDelete(false);
         request.getQuestions().forEach(generateQuestionRequest -> {
             Long total = questionRepository.countByCategory_IdAndQuestionTypeAndAvailableIsTrueAndDeleteIsFalse(generateQuestionRequest.getCategoryId(), generateQuestionRequest.getQuestionType());
-            if (generateQuestionRequest.getCount() < total) {
+            if (generateQuestionRequest.getCount() > total) {
                 throw new NormalException("设置题目数量超出题库总数");
             }
             List<Question> questionList = questionRepository.queryIdsByCategory(generateQuestionRequest.getCategoryId(), generateQuestionRequest.getQuestionType().getIndex(), generateQuestionRequest.getCount());
@@ -276,11 +276,15 @@ public class ExaminationServiceImpl implements IExaminationService {
         if (answerSheet.getEndTime() != null && current.compareTo(answerSheet.getEndTime()) > 0) {
             throw new NormalException("本场考试已经结束");
         }
+        if (answerSheet.getCommit()){
+            throw new NormalException("您已交卷");
+        }
         if (!answerSheet.getStart()) {
             throw new NormalException("请先开始考试");
         }
         answerSheet.setCorrectNum(0);
         answerSheet.setWrongNum(0);
+        answerSheet.setCommit(request.getCommit());
         Map<String, String> answers = request.getAnswers();
         answers.forEach((questionId, answer) -> {
             Question question = this.checkQuestion(questionId);
@@ -290,7 +294,7 @@ public class ExaminationServiceImpl implements IExaminationService {
                 answerSheet.setWrongNum(answerSheet.getWrongNum() + 1);
             }
         });
-        answerSheet.setAnswers(request.getAnswersJsonString());
+        answerSheet.setAnswers(request.convertAnswersToJsonString());
         answerSheetRepository.save(answerSheet);
         return Result.builder().success().message("提交答卷成功").build();
     }
@@ -386,9 +390,13 @@ public class ExaminationServiceImpl implements IExaminationService {
             if (answerSheet.getExamination() != null) {
                 response.setName(answerSheet.getExamination().getName());
             }
-            if (answerSheet.getEndTime() == null || new Date().compareTo(answerSheet.getEndTime()) < 0) {
-                response.setWrongNum(null);
-                response.setCorrectNum(null);
+            //未交卷
+            if (!answerSheet.getCommit()){
+                //尚未开始考试或者考试还没结束
+                if (answerSheet.getEndTime() == null || new Date().compareTo(answerSheet.getEndTime()) < 0) {
+                    response.setWrongNum(null);
+                    response.setCorrectNum(null);
+                }
             }
             if (answerSheet.getParkUser()!=null){
                 response.setNickname(answerSheet.getParkUser().getNickname() );

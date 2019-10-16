@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.Map;
 
@@ -17,17 +18,21 @@ import java.util.Map;
  **/
 @Data
 public class CommitAnswerRequest {
-    @ApiModelProperty(hidden = true)
-    ObjectMapper objectMapper = new ObjectMapper();
+
 
     @ApiModelProperty(value = "答卷id")
     private String answerSheetId;
 
+    @ApiModelProperty(value = "是否交卷")
+    @NotNull(message = "是否交卷不能为空")
+    private Boolean commit;
+
     @ApiModelProperty(value = "k为题目id,v为答案（判断为T/F）")
     private Map<String,String> answers;
 
-    @ApiModelProperty(hidden = true)
-    public String getAnswersJsonString() {
+//    @ApiModelProperty(hidden = true)
+    public String convertAnswersToJsonString() {
+        ObjectMapper objectMapper = new ObjectMapper();
         if (answers.size() > 0) {
             try {
                 return objectMapper.writeValueAsString(getAnswers());
@@ -40,7 +45,8 @@ public class CommitAnswerRequest {
         }
     }
 
-    public void setAnswersJsonString(String json) {
+    public void convertAnswersFromJsonString(String json) {
+        ObjectMapper objectMapper = new ObjectMapper();
         if (StringUtils.isNotBlank(json)) {
             try {
                 @SuppressWarnings("unchecked")

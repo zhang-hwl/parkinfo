@@ -139,11 +139,11 @@ public class ManagementTaskServiceImpl implements IManagementTaskService {
         List<ParkUser> executiveList = managementTask.getExecutive();
         //任务已完成  并且完成列表中没有该用户
         if (!executiveList.stream().map(ParkUser::getId).collect(Collectors.toList()).contains(currentUser.getId())&&request.getExecuted()){
-            executiveList.removeIf(parkUser -> parkUser.getId().equals(currentUser.getId()));
+            executiveList.add(currentUser);
         }
         //任务未完成  并且完成列表中有该用户
         if (executiveList.stream().map(ParkUser::getId).collect(Collectors.toList()).contains(currentUser.getId())&&!request.getExecuted()){
-            executiveList.add(currentUser);
+            executiveList.removeIf(parkUser -> parkUser.getId().equals(currentUser.getId()));
         }
         managementTask.setExecutive(executiveList);
         managementTaskRepository.save(managementTask);
