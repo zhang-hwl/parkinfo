@@ -46,21 +46,21 @@ public class PersonalCloudController {
 
     @PostMapping("/delete/{id}")
     @ApiOperation("删除文件")
-    @RequiresPermissions("personalDisk:myDisk:delete")
+//    @RequiresPermissions("personalDisk:myDisk:delete")
     public Result<String> delete(@PathVariable("id") String id) {
         return personalCloudService.delete(id);
     }
 
     @PostMapping("/update")
     @ApiOperation("文件重命名")
-    @RequiresPermissions("personalDisk:myDisk:set")
+//    @RequiresPermissions("personalDisk:myDisk:set")
     public Result<String> set(@RequestBody SetPersonalCloudRequest request) {
         return personalCloudService.set(request);
     }
 
     @PostMapping("/delete")
     @ApiOperation("批量删除文件")
-    @RequiresPermissions("personalDisk:myDisk:deleteAll")
+//    @RequiresPermissions("personalDisk:myDisk:deleteAll")
     public Result deleteAll(@RequestBody DeletePersonalCloudRequest request) {
         return personalCloudService.deleteAll(request);
     }
