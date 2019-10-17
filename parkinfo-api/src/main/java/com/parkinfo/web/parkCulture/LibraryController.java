@@ -85,14 +85,14 @@ public class LibraryController{
 
     @PostMapping("/readProcess/get/{bookId}")
     @ApiOperation(value = "查看某本书的阅读进度")
-    @RequiresPermissions("parkCulture:library:progress_get")
+    @RequiresPermissions("parkCulture:library:book_detail")
     public Result<ReadProcessResponse> getReadProcess(@PathVariable("bookId") String bookId){
         return libraryService.getReadProcess(bookId);
     }
 
     @PostMapping("/readProcess/set")
     @ApiOperation(value = "设置图书阅读进度")
-    @RequiresPermissions("parkCulture:library:progress_set")
+    @RequiresPermissions("parkCulture:library:book_detail")
     public Result setReadProcess(@Valid @RequestBody SetReadProcessRequest request,BindingResult result){
         return libraryService.setReadProcess(request);
     }

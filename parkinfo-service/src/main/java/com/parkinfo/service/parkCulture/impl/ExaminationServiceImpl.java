@@ -183,6 +183,7 @@ public class ExaminationServiceImpl implements IExaminationService {
                 answerSheet.setWrongNum(0);
                 answerSheet.setExamination(examination);
                 answerSheet.setParkUser(parkUserOptional.get());
+                answerSheet.setCommit(false);
                 answerSheet.setAvailable(true);
                 answerSheet.setDelete(false);
                 answerSheet.setCreator(currentUser);

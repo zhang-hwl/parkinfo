@@ -9,13 +9,16 @@ import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.userConfig.ParkInfoRepository;
 import com.parkinfo.repository.userConfig.ParkUserRepository;
+import com.parkinfo.request.login.ChangePasswordRequest;
 import com.parkinfo.request.login.LoginRequest;
 import com.parkinfo.request.login.QueryUserByParkRequest;
+import com.parkinfo.request.login.SetUserInfoRequest;
 import com.parkinfo.response.login.LoginResponse;
 import com.parkinfo.response.login.ParkInfoListResponse;
 import com.parkinfo.response.login.ParkUserResponse;
 import com.parkinfo.service.login.ILoginService;
 import com.parkinfo.token.TokenUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.crypto.hash.SimpleHash;
@@ -118,6 +121,28 @@ public class LoginServiceImpl implements ILoginService {
         List<ParkUserPermissionDTO> collect = parkUserDTO.getPermissions().stream().sorted(Comparator.comparing(ParkUserPermissionDTO::getPriority)).collect(Collectors.toList());
         parkUserDTO.setPermissions(collect);
         return Result.<ParkUserDTO>builder().success().data(parkUserDTO).build();
+    }
+
+    @Override
+    public Result changePassword(ChangePasswordRequest request) {
+        ParkUserDTO parkUserDTO = tokenUtils.getLoginUserDTO();
+        ParkUser parkUser = this.checkParkUser(parkUserDTO.getId());
+        String salt = RandomStringUtils.randomAlphanumeric(6);
+        parkUser.setSalt(salt);
+        String newPass = new SimpleHash("MD5",request.getPassword(),parkUser.getSalt(),1024).toHex();
+        parkUser.setPassword(newPass);
+        parkUserRepository.save(parkUser);
+        return Result.builder().success().message("修改密码成功").build();
+    }
+
+    @Override
+    public Result setUserInfo(SetUserInfoRequest request) {
+        ParkUserDTO parkUserDTO = tokenUtils.getLoginUserDTO();
+        ParkUser parkUser = this.checkParkUser(parkUserDTO.getId());
+        BeanUtils.copyProperties(request,parkUser);
+        parkUserRepository.save(parkUser);
+        tokenUtils.refreshUserInfo(parkUser);
+        return Result.builder().success().message("修改个人信息成功").build();
     }
 
     private ParkUser checkParkUser(String id){
