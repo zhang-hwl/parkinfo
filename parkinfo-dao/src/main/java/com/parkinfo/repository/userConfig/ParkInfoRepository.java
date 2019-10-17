@@ -18,5 +18,7 @@ public interface ParkInfoRepository extends JpaRepository<ParkInfo,String>, JpaS
 
     Optional<ParkInfo> findByIdAndDeleteIsFalseAndAvailableIsTrue(String id);
 
+    Optional<ParkInfo> findByIdAndDeleteIsFalseAndAvailableIsTrueAndManagerIsNull(String id);
+
     Optional<ParkInfo> findByNameAndDeleteIsFalseAndAvailableIsTrue(String name);
 }

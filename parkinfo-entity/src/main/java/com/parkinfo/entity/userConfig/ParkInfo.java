@@ -9,6 +9,7 @@ import com.parkinfo.entity.parkService.meetingRoom.MeetingRoom;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.Table;
 
 import javax.persistence.*;
@@ -26,6 +27,7 @@ import java.util.Set;
  **/
 @EqualsAndHashCode(callSuper = true,exclude = {"manager","users","meetingRooms","companyDetails", "companyDemands"})
 @Data
+@ToString(exclude = {"manager","users","meetingRooms","companyDetails", "companyDemands"})
 @Entity(name = "c_park_info")
 @Table(appliesTo = "c_park_info",comment = "园区信息表")
 @JsonIgnoreProperties(value={"hibernateLazyInitializer","handler","fieldHandler"})
