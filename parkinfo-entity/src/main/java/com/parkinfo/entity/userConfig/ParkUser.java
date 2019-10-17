@@ -10,6 +10,7 @@ import com.parkinfo.entity.personalCloud.CloudDisk;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -27,6 +28,7 @@ import java.util.Set;
  **/
 @EqualsAndHashCode(callSuper = true, exclude = {"roles","parks","meetingRooms","meetingRoomReserves","cloudDisks","companyDetail"})
 @Data
+@ToString(exclude = {"roles","parks","meetingRooms","meetingRoomReserves","cloudDisks","companyDetail"})
 @Entity(name = "c_park_user")
 @org.hibernate.annotations.Table(appliesTo = "c_park_user",comment = "园区用户表")
 @JsonIgnoreProperties(value={"hibernateLazyInitializer","handler","fieldHandler"})

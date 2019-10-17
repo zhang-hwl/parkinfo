@@ -217,10 +217,15 @@ public class SysUserServiceImpl implements ISysUserService {
                     throw new NormalException("园区不能为空");
                 }
                 request.getParkIds().forEach(id ->{
-                    Optional<ParkInfo> byPardId = parkInfoRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(id);
-                    if(byPardId.isPresent()){
-                        ParkInfo parkInfo = byPardId.get();
+                    Optional<ParkInfo> byParkId = parkInfoRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(id);
+                    if(byParkId.isPresent()){
+                        ParkInfo parkInfo = byParkId.get();
+                        if(parkInfo.getManager() != null && StringUtils.isNotBlank(parkInfo.getManager().getId()) && !parkInfo.getManager().getId().equals(newData.getId())){
+                            throw new NormalException("该园区已存在负责人");
+                        }
                         parkInfos.add(parkInfo);
+                        parkInfo.setManager(newData);
+                        parkInfoRepository.save(parkInfo);
                     }
                 });
             }
