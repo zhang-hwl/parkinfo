@@ -3,6 +3,7 @@ package com.parkinfo.web.companyManage;
 import com.parkinfo.common.Result;
 import com.parkinfo.enums.TemplateEnum;
 import com.parkinfo.request.compayManage.AddCompanyInfoRequest;
+import com.parkinfo.request.compayManage.ExportIdsRequest;
 import com.parkinfo.request.compayManage.QueryCompanyRequest;
 import com.parkinfo.request.compayManage.SetCompanyInfoRequest;
 import com.parkinfo.response.companyManage.CompanyDemandResponse;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/companyManage/companyDetail")
@@ -38,6 +40,13 @@ public class CompanyDemandController {
     @RequiresPermissions("companyManage:companyInfo:info_import")
     public Result companyImport(@RequestBody MultipartFile file) {
         return companyDemandService.companyImport(file);
+    }
+
+    @PostMapping("/company/export")
+    @ApiOperation("导出需求信息")
+    @RequiresPermissions("companyManage:companyInfo:info_export")
+    public Result<String> companyExport(@RequestBody ExportIdsRequest request, HttpServletResponse response) {
+        return companyDemandService.companyExport(request.getIds(), response);
     }
 
     @GetMapping("/companyExport")

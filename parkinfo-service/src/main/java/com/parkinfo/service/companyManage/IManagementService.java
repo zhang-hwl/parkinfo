@@ -21,6 +21,8 @@ public interface IManagementService {
      */
     Result investImport(MultipartFile file);
 
+    Result<String> investExport(List<String> ids, HttpServletResponse response);
+
     /**
      * 导出招商信息
      *

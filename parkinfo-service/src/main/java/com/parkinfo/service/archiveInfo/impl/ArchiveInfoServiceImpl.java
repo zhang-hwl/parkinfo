@@ -95,6 +95,9 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
 
     @Override
     public Result<String> addArchiveInfo(AddArchiveInfoRequest request) {
+        if(StringUtils.isBlank(request.getFileAddress())){
+            throw new NormalException("请上传附件");
+        }
         ParkUserDTO loginUserDTO = tokenUtils.getLoginUserDTO();
         if(loginUserDTO == null){
             throw new NormalException("token过期或不存在");
@@ -126,6 +129,7 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
         archiveInfo.setDelete(false);
         archiveInfo.setAvailable(true);
         archiveInfo.setConvertStatus(ConvertStatus.WAITING);
+        archiveInfo.setFileType(request.getFileType().toLowerCase());
         ArchiveInfo save = archiveInfoRepository.save(archiveInfo);
         if(fileAddress.endsWith("docx") || fileAddress.endsWith("doc") || fileAddress.endsWith("ppt") || fileAddress.endsWith("pptx") || fileAddress.endsWith("xlsx") || fileAddress.endsWith("xls")){
             sender.send(save.getId());

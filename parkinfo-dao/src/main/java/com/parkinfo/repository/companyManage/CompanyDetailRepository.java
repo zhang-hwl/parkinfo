@@ -37,4 +37,6 @@ public interface CompanyDetailRepository extends JpaRepository<CompanyDetail,Str
 
     List<CompanyDetail> findAllByDeleteIsFalseAndAvailableIsTrueAndParkInfo_Id(String parkId);
 
+    List<CompanyDetail> findAllByDeleteIsFalseAndAvailableIsTrueAndIdIn(List<String> ids);
+
 }

@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 public interface ICompanyDemandService {
 
@@ -19,6 +20,8 @@ public interface ICompanyDemandService {
      * @return
      */
     Result companyImport(MultipartFile file);
+
+    Result<String> companyExport(List<String> ids, HttpServletResponse response);
 
     /**
      * 导出公司信息
