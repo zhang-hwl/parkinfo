@@ -37,6 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class CompanyEnterServiceImpl implements ICompanyEnterService {
@@ -169,6 +170,14 @@ public class CompanyEnterServiceImpl implements ICompanyEnterService {
         companyDetailPage.getContent().forEach(companyDetail -> {
             EnterResponse response = new EnterResponse();
             BeanUtils.copyProperties(companyDetail, response);
+            Integer number = 0;
+            Set<EnteredInfo> enteredInfos = companyDetail.getEnteredInfos();
+            for(EnteredInfo enteredInfo: enteredInfos){
+                if(enteredInfo.getDelete() == false){
+                    number++;
+                }
+            }
+            response.setNumber(number);
             content.add(response);
         });
         return new PageImpl<>(content, companyDetailPage.getPageable(), companyDetailPage.getTotalElements());

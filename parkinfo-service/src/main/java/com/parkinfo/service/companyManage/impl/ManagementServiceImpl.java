@@ -3,12 +3,14 @@ package com.parkinfo.service.companyManage.impl;
 import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
 import com.parkinfo.dto.ParkUserDTO;
+import com.parkinfo.entity.companyManage.CompanyDemand;
 import com.parkinfo.entity.companyManage.CompanyDetail;
 import com.parkinfo.entity.companyManage.CompanyType;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.enums.DiscussStatus;
 import com.parkinfo.enums.EnterStatus;
+import com.parkinfo.enums.ParkRoleEnum;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.companyManage.CompanyDetailRepository;
 import com.parkinfo.repository.companyManage.CompanyTypeRepository;
@@ -32,6 +34,7 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.*;
 
 @Service
@@ -73,6 +76,35 @@ public class ManagementServiceImpl implements IManagementService {
             throw new NormalException("上传失败");
         }
         return Result.builder().message("上传成功").build();
+    }
+
+    @Override
+    public Result<String> investExport(List<String> ids, HttpServletResponse httpServletResponse) {
+        ParkUserDTO currentUser = tokenUtils.getLoginUserDTO();
+        if(ids == null || ids.size() == 0){
+            throw new NormalException("请选择文件");
+        }
+        List<CompanyDetail> allByIds = companyDetailRepository.findAllByDeleteIsFalseAndAvailableIsTrueAndIdIn(ids);
+        List<ManagementResponse> content = new ArrayList<>();
+        allByIds.forEach(companyDetail -> {
+            ManagementResponse response = new ManagementResponse();
+            BeanUtils.copyProperties(companyDetail, response);
+            Optional<ParkUser> optionalParkUser = parkUserRepository.findByCompanyDetail_IdAndDeleteIsFalseAndAvailableIsTrue(companyDetail.getId());
+            if (!optionalParkUser.isPresent()) {
+                content.add(response);
+            }else {
+                ParkUser user = optionalParkUser.get();
+                response.setManId(user.getId());
+                response.setNickname(user.getNickname());
+                content.add(response);
+            }
+        });
+        try {
+            ExcelUtils.exportExcel(content, "需求详情", "需求详情", ManagementResponse.class, "xuqiu", httpServletResponse);
+        } catch (IOException e) {
+            throw new NormalException("需求详情导出失败");
+        }
+        return Result.<String>builder().success().data("导出成功").build();
     }
 
     @Override
@@ -133,8 +165,8 @@ public class ManagementServiceImpl implements IManagementService {
             predicates.add(criteriaBuilder.equal(root.get("parkInfo").get("id").as(String.class), tokenUtils.getCurrentParkInfo().getId()));
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
             predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
-            predicates.add(criteriaBuilder.equal(root.get("entered").as(Boolean.class), Boolean.FALSE));
-            predicates.add(criteriaBuilder.equal(root.get("enterStatus").as(Integer.class), EnterStatus.WAITING.ordinal()));
+//            predicates.add(criteriaBuilder.equal(root.get("entered").as(Boolean.class), Boolean.FALSE));
+//            predicates.add(criteriaBuilder.equal(root.get("enterStatus").as(Integer.class), EnterStatus.WAITING.ordinal()));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
         Page<CompanyDetail> companyDetailPage = companyDetailRepository.findAll(specification, pageable);

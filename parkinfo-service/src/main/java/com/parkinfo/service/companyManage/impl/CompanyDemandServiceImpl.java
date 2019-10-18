@@ -1,5 +1,6 @@
 package com.parkinfo.service.companyManage.impl;
 
+import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
 import com.parkinfo.dto.ParkUserDTO;
 import com.parkinfo.entity.companyManage.CompanyDemand;
@@ -32,6 +33,7 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -71,6 +73,21 @@ public class CompanyDemandServiceImpl implements ICompanyDemandService {
             throw new NormalException("上传失败");
         }
         return Result.builder().message("上传成功").build();
+    }
+
+    @Override
+    public Result<String> companyExport(List<String> ids, HttpServletResponse response) {
+        ParkUserDTO currentUser = tokenUtils.getLoginUserDTO();
+        if(ids == null || ids.size() == 0){
+            throw new NormalException("请选择文件");
+        }
+        List<CompanyDemand> all = companyDemandRepository.findAllByDeleteIsFalseAndAvailableIsTrueAndIdIn(ids);
+        try {
+            ExcelUtils.exportExcel(all, "需求详情", "需求详情", CompanyDemand.class, "xuqiu", response);
+        } catch (IOException e) {
+            throw new NormalException("需求详情导出失败");
+        }
+        return Result.<String>builder().success().data("导出成功").build();
     }
 
     @Override
