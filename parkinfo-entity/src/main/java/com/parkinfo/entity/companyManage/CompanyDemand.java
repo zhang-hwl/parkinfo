@@ -32,29 +32,29 @@ public class CompanyDemand extends BaseEntity {
     @ApiModelProperty(value = "公司地址")
     private String companyAddress;
 
+    @Excel(name = "主要业务", width = 15)
+    @ApiModelProperty(value = "主要业务")
+    private String mainBusiness;
+
     @Excel(name = "联系人", width = 15)
     @ApiModelProperty(value = "联系人")
     private String linkMan;
-
-    @Excel(name = "联系电话", width = 15)
-    @ApiModelProperty(value = "联系电话")
-    private String phone;
 
     @Excel(name = "职位", width = 15)
     @ApiModelProperty(value = "职位")
     private String position;
 
-    @Excel(name = "主要业务", width = 15)
-    @ApiModelProperty(value = "主要业务")
-    private String mainBusiness;
+    @Excel(name = "联系电话", width = 15)
+    @ApiModelProperty(value = "联系电话")
+    private String phone;
 
     @Excel(name = "需求类型", width = 15)
     @ApiModelProperty(value = "需求类型")
     private String requireType;
 
-    @Excel(name = "需求面积", width = 15)
-    @ApiModelProperty(value = "需求面积")
-    private String requireArea;
+    @Excel(name = "需求详情", width = 30)
+    @ApiModelProperty(value = "需求详情")
+    private String requireDetail;
 
     @Excel(name = "需求时间", width = 15)
     @ApiModelProperty(value = "需求时间")
@@ -69,9 +69,10 @@ public class CompanyDemand extends BaseEntity {
     @ApiModelProperty(value = "对接人")
     private String connectMan;
 
-    @Excel(name = "需求详情", width = 30)
-    @ApiModelProperty(value = "需求详情")
-    private String requireDetail;
+    @ApiModelProperty(value = "需求面积")
+    private String requireArea;
+
+
 
     @ApiModelProperty(value = "审核状态")
     @Enumerated(EnumType.ORDINAL)//APPLYING,AGREE,REFUSE 申请中,同意,拒绝
