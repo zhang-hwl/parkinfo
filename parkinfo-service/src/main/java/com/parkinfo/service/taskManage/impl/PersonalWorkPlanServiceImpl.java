@@ -124,9 +124,10 @@ public class PersonalWorkPlanServiceImpl implements IPersonalWorkPlanService {
     public Result setTask(SetPersonalWorkPlanRequest request) {
         PersonalWorkPlan personalWorkPlan = this.checkPersonalWorkPlan(request.getId());
         if (request.getAgree()) {
-            personalWorkPlan.setStep(personalWorkPlan.getStep() + 1);
-            if (personalWorkPlan.getStep() == 2) {
+            if (personalWorkPlan.getStep() == 4) {
                 personalWorkPlan.setFinished(true);
+            }else {
+                personalWorkPlan.setStep(personalWorkPlan.getStep() + 1);
             }
         } else {
             personalWorkPlan.setStep(personalWorkPlan.getStep() - 1);
@@ -136,10 +137,14 @@ public class PersonalWorkPlanServiceImpl implements IPersonalWorkPlanService {
             WorkPlanDetail workPlanDetail;
             if (StringUtils.isNotBlank(workPlanDetailRequest.getId())) {
                 workPlanDetail = this.checkWorkPlanDetail(workPlanDetailRequest.getId());
+                BeanUtils.copyProperties(workPlanDetailRequest, workPlanDetail);
             } else {
                 workPlanDetail = new WorkPlanDetail();
+                BeanUtils.copyProperties(workPlanDetailRequest, workPlanDetail);
+                workPlanDetail.setDelete(false);
+                workPlanDetail.setAvailable(true);
             }
-            BeanUtils.copyProperties(workPlanDetailRequest, workPlanDetail);
+            workPlanDetail.setPersonalWorkPlan(personalWorkPlan);
             workPlanDetailRepository.save(workPlanDetail);
         });
         return Result.builder().success().message("任务修改成功").build();
@@ -204,7 +209,7 @@ public class PersonalWorkPlanServiceImpl implements IPersonalWorkPlanService {
             response.setParkName(personalWorkPlan.getPark().getName());
         }
         List<WorkPlanDetail> detailList = workPlanDetailRepository.findByPersonalWorkPlan_IdAndDeleteIsFalseAndAvailableIsTrue(response.getId());
-        response.setWorkPlanDetails(detailList);
+        response.setWorkPlanDetailList(detailList);
         return response;
     }
 

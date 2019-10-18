@@ -5,8 +5,10 @@ import com.parkinfo.request.taskManage.AddParkWorkPlanRequest;
 import com.parkinfo.request.taskManage.ExportWorkPlanRequest;
 import com.parkinfo.request.taskManage.QueryWorkPlanListRequest;
 import com.parkinfo.request.taskManage.SetParkWorkPlanRequest;
+import com.parkinfo.response.login.ParkInfoListResponse;
 import com.parkinfo.response.taskManage.ParkWorkPlanDetailResponse;
 import com.parkinfo.response.taskManage.ParkWorkPlanListResponse;
+import com.parkinfo.service.parkCulture.ILibraryService;
 import com.parkinfo.service.taskManage.IParkWorkPlanService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * When I wrote this, only God and I understood what I was doing
@@ -34,6 +37,9 @@ public class ParkWorkPlanController {
 
     @Autowired
     private IParkWorkPlanService parkWorkPlanService;
+
+    @Autowired
+    private ILibraryService libraryService;
 
     @PostMapping("/search")
     @ApiOperation(value = "查询园区工作计划及小节")
@@ -89,5 +95,12 @@ public class ParkWorkPlanController {
     @ApiOperation(value = "导出园区工作计划及小节详情")
     public void exportWorkPlan(@RequestBody ExportWorkPlanRequest request, HttpServletResponse response){
         parkWorkPlanService.exportWorkPlan(request,response);
+    }
+
+    @PostMapping("/park/list")
+    @ApiOperation(value = "获取园区列表")
+    @RequiresPermissions("taskManage:parkWorkPlan:parkWorkPlan_search")
+    public Result<List<ParkInfoListResponse>> getParkList(){
+        return libraryService.getParkList();
     }
 }

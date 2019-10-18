@@ -18,8 +18,11 @@ import java.util.List;
 @Data
 public class ParkWorkPlanDetailResponse extends ParkWorkPlanListResponse {
 
-    @ApiModelProperty(value = "反馈")
+    @ApiModelProperty(value = "意见反馈")
     private String feedback;
+
+    @ApiModelProperty(value = "结果反馈")
+    private String resultFeedback;
 
     private List<WorkPlanDetail> workPlanDetailList;
 }

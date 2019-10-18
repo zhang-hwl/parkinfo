@@ -77,8 +77,8 @@ public class ParkWorkPlanServiceImpl implements IParkWorkPlanService {
             }
             if (currentUser.getRole().contains(ParkRoleEnum.PARK_MANAGER.toString())) { //园区管理员
                 predicates.add(criteriaBuilder.equal(root.get("park").get("id").as(String.class), currentUser.getCurrentParkId()));
-            }else {  //总裁
-                if (StringUtils.isNotBlank(request.getParkId())){
+            } else {  //总裁
+                if (StringUtils.isNotBlank(request.getParkId())) {
                     predicates.add(criteriaBuilder.equal(root.get("park").get("id").as(String.class), request.getParkId()));
                 }
             }
@@ -129,9 +129,10 @@ public class ParkWorkPlanServiceImpl implements IParkWorkPlanService {
     public Result setTask(SetParkWorkPlanRequest request) {
         ParkWorkPlan parkWorkPlan = this.checkParkWorkPlan(request.getId());
         if (request.getAgree()) {
-            parkWorkPlan.setStep(parkWorkPlan.getStep() + 1);
             if (parkWorkPlan.getStep() == 4) {
                 parkWorkPlan.setFinished(true);
+            } else {
+                parkWorkPlan.setStep(parkWorkPlan.getStep() + 1);
             }
         } else {
             parkWorkPlan.setStep(parkWorkPlan.getStep() - 1);
@@ -141,10 +142,13 @@ public class ParkWorkPlanServiceImpl implements IParkWorkPlanService {
             WorkPlanDetail workPlanDetail;
             if (StringUtils.isNotBlank(workPlanDetailRequest.getId())) {
                 workPlanDetail = this.checkWorkPlanDetail(workPlanDetailRequest.getId());
+                BeanUtils.copyProperties(workPlanDetailRequest, workPlanDetail);
             } else {
                 workPlanDetail = new WorkPlanDetail();
+                BeanUtils.copyProperties(workPlanDetailRequest, workPlanDetail);
+                workPlanDetail.setDelete(false);
+                workPlanDetail.setAvailable(true);
             }
-            BeanUtils.copyProperties(workPlanDetailRequest, workPlanDetail);
             workPlanDetail.setParkWorkPlan(parkWorkPlan);
             workPlanDetailRepository.save(workPlanDetail);
         });
@@ -216,8 +220,8 @@ public class ParkWorkPlanServiceImpl implements IParkWorkPlanService {
         List<ExportWorkPlanDetailResponse> responseList = Lists.newArrayList();
         workPlanDetailList.forEach(workPlanDetail -> {
             ExportWorkPlanDetailResponse response = new ExportWorkPlanDetailResponse();
-            BeanUtils.copyProperties(workPlanDetail,response);
-            if (workPlanDetail.getParkWorkPlan()!=null){
+            BeanUtils.copyProperties(workPlanDetail, response);
+            if (workPlanDetail.getParkWorkPlan() != null) {
                 response.setName(workPlanDetail.getParkWorkPlan().getName());
             }
             responseList.add(response);
