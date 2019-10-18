@@ -268,10 +268,10 @@ public class SysUserServiceImpl implements ISysUserService {
     @Override
     public Result changePass(ChangePassRequest request) {
         ParkUser parkUser = this.checkUser(request.getId());
-        String oldPass = new SimpleHash("MD5",request.getOldPass(),parkUser.getSalt(),1024).toHex();
-        if (!oldPass.equals(parkUser.getPassword())){
-            throw new NormalException("原密码不正确");
-        }
+//        String oldPass = new SimpleHash("MD5",request.getOldPass(),parkUser.getSalt(),1024).toHex();
+//        if (!oldPass.equals(parkUser.getPassword())){
+//            throw new NormalException("原密码不正确");
+//        }
         String newPass = new SimpleHash("MD5",request.getNewPass(),parkUser.getSalt(),1024).toHex();
         parkUser.setPassword(newPass);
         parkUserRepository.save(parkUser);

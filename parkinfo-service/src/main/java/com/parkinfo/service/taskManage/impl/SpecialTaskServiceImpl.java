@@ -72,10 +72,12 @@ public class SpecialTaskServiceImpl implements ISpecialTaskService {
             if (request.getTaskType().equals(TaskType.sender)) {  //发起的
                 if (currentUser.getRole().contains(ParkRoleEnum.PARK_MANAGER.toString())) { //园区管理员
                     predicates.add(criteriaBuilder.equal(root.get("park").get("id").as(String.class), currentUser.getCurrentParkId()));
-                } else {  //总裁
+                } else  if (currentUser.getRole().contains(ParkRoleEnum.PRESIDENT.toString())||currentUser.getRole().contains(ParkRoleEnum.GENERAL_MANAGER.toString())) {  //总裁
                     if (StringUtils.isNotBlank(request.getParkId())) {
                         predicates.add(criteriaBuilder.equal(root.get("park").get("id").as(String.class), request.getParkId()));
                     }
+                }else {  //普通人
+                    predicates.add(criteriaBuilder.equal(root.get("park").get("id").as(String.class), "00000000000000000000000000000000"));
                 }
             } else {
 //                Path<Object> path = root.get("receivers");  //接收的

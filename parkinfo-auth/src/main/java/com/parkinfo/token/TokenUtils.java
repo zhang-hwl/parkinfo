@@ -190,6 +190,16 @@ public class TokenUtils {
         return token;
     }
 
+    public void refreshUserInfo(ParkUser parkUser) {
+        ParkUserDTO currentUserDTO = this.getLoginUserDTO();
+        ParkUserDTO newUserDTO = this.convertParkUser(parkUser);
+        newUserDTO.setCurrentParkId(currentUserDTO.getCurrentParkId());
+        String token = SecurityUtils.getSubject().getPrincipal().toString();
+        redisCacheTemplate.opsForValue().set(TOKEN_PREFIX + token, newUserDTO);
+        redisCacheTemplate.expire(TOKEN_PREFIX + token, 6, TimeUnit.HOURS);
+        redisCacheTemplate.opsForValue().set(USER_SURVIVE + newUserDTO.getId(), TOKEN_PREFIX + token);  //存活的token更新
+    }
+
     /**
      * 设置token过期
      */
@@ -250,4 +260,6 @@ public class TokenUtils {
         }
         return parkUserPermissionDTO;
     }
+
+
 }

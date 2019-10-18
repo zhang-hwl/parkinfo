@@ -4,8 +4,11 @@ import com.parkinfo.common.Result;
 import com.parkinfo.dto.ParkUserDTO;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.entity.userConfig.ParkUser;
+import com.parkinfo.request.login.ChangePasswordRequest;
 import com.parkinfo.request.login.LoginRequest;
 import com.parkinfo.request.login.QueryUserByParkRequest;
+import com.parkinfo.request.login.SetUserInfoRequest;
+import com.parkinfo.request.sysConfig.ChangePassRequest;
 import com.parkinfo.response.login.LoginResponse;
 import com.parkinfo.response.login.ParkUserResponse;
 import com.parkinfo.service.login.ILoginService;
@@ -64,5 +67,27 @@ public class LoginController {
     @ApiOperation(value = "获取用户信息")
     public Result<ParkUserDTO> getUserInfo(){
         return loginService.getUserInfo();
+    }
+
+    @PostMapping("/changePass")
+    @ApiOperation(value = "修改用户密码")
+    public Result changePass(@Valid @RequestBody ChangePasswordRequest request, BindingResult result) {
+        if (result.hasErrors()) {
+            for (ObjectError error : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
+        return loginService.changePassword(request);
+    }
+
+    @PostMapping("/setUserInfo")
+    @ApiOperation(value = "修改用户个人信息")
+    public Result setUserInfo(@Valid @RequestBody SetUserInfoRequest request, BindingResult result) {
+        if (result.hasErrors()) {
+            for (ObjectError error : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
+        return loginService.setUserInfo(request);
     }
 }
