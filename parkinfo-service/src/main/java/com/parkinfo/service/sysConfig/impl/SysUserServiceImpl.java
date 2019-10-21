@@ -124,17 +124,6 @@ public class SysUserServiceImpl implements ISysUserService {
         };
         Page<ParkUser> parkUserPage = parkUserRepository.findAll(specification, pageable);
         List<SysUserResponse> list = Lists.newArrayList();
-        boolean isManager = true;
-        if(StringUtils.isNotBlank(request.getRoleId())){
-            Optional<ParkRole> byId = parkRoleRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(request.getRoleId());
-            if(!byId.isPresent()){
-                throw new NormalException("角色不存在");
-            }
-            ParkRole parkRole = byId.get();
-            if(parkRole.getName().equals(ParkRoleEnum.PARK_MANAGER.name())){
-                isManager = false;
-            }
-        }
         for(ParkUser temp : parkUserPage.getContent()) {
             SysUserResponse sysUserResponse = new SysUserResponse();
             BeanUtils.copyProperties(temp, sysUserResponse);
@@ -142,11 +131,7 @@ public class SysUserServiceImpl implements ISysUserService {
                 sysUserResponse.setCompanyId(temp.getCompanyDetail().getId());
             }
             List<SysRoleResponse> roleResponses = Lists.newArrayList();
-            boolean isAder = true;
             for(ParkRole tempRole : temp.getRoles()) {
-                if(tempRole.getName().equals(ParkRoleEnum.AREA_MANAGER.name())){
-                    isAder = false;
-                }
                 SysRoleResponse sysRoleResponse = new SysRoleResponse();
                 BeanUtils.copyProperties(tempRole, sysRoleResponse);
                 roleResponses.add(sysRoleResponse);
@@ -161,10 +146,6 @@ public class SysUserServiceImpl implements ISysUserService {
                 parkInfoListResponses.add(parkInfoListResponse);
             });
             sysUserResponse.setParkInfoListResponses(parkInfoListResponses);
-            List<SysRoleResponse> role = sysUserResponse.getRoleResponses();
-            if(isManager == false && isAder == false){
-                break;
-            }
             list.add(sysUserResponse);
         }
         Page<SysUserResponse> result = new PageImpl<>(list, parkUserPage.getPageable(), parkUserPage.getTotalElements());
