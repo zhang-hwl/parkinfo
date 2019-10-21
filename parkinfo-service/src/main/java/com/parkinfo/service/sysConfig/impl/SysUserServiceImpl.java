@@ -75,6 +75,16 @@ public class SysUserServiceImpl implements ISysUserService {
             if (StringUtils.isNotBlank(request.getRoleId())){
                 SetJoin<ParkUser, ParkRole> setJoin = root.join(root.getModel().getSet("roles",ParkRole.class), JoinType.LEFT);
                 predicates.add(criteriaBuilder.equal(setJoin.get("id").as(String.class),request.getRoleId()));
+                Optional<ParkRole> areaManageOptional = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.AREA_MANAGER.toString());
+                Optional<ParkRole> parkManageOptional = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PARK_MANAGER.toString());
+                if (areaManageOptional.isPresent() && parkManageOptional.isPresent()){
+                    if (request.getRoleId().equals(parkManageOptional.get().getId())){
+                        List<String> ids = parkUserRepository.findIds(areaManageOptional.get().getId());
+                        ids.forEach(id ->{
+                            predicates.add(criteriaBuilder.notEqual(root.get("id").as(String.class),id));
+                        });
+                    }
+                }
             }
             if (StringUtils.isNotBlank(request.getAccount())){
                 predicates.add(criteriaBuilder.like(root.get("account").as(String.class),"%"+request.getAccount()+"%"));
