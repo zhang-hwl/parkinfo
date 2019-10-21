@@ -16,6 +16,8 @@ public interface ISystemNoticeService {
 
     Result<String> addNotice(SystemNotice systemNotice);
 
+    Result<String> editNotice(SystemNotice systemNotice);
+
     Result<Page<SystemNotice>> findAll(QueryNoticeRequest request);
 
     Result<String> deleteById(String id);

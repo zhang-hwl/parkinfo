@@ -28,6 +28,7 @@ public class SysUserController {
     private ISysUserService sysUserService;
 
     @PostMapping("/search")
+    @RequiresPermissions("sysConfig:sysUser:user_search")
     @ApiOperation(value = "分页查询用户列表",notes = "起始页为0")
     public Result<Page<SysUserResponse>> searchUser(@RequestBody QuerySysUserRequest request) {
         return sysUserService.searchUser(request);
@@ -40,6 +41,7 @@ public class SysUserController {
     }
 
     @PostMapping("/add")
+    @RequiresPermissions("sysConfig:sysUser:user_add")
     @ApiOperation(value = "添加用户")
     public Result addUser(@Valid @RequestBody AddUserRequest request, BindingResult result) {
         if (result.hasErrors()) {
@@ -52,6 +54,7 @@ public class SysUserController {
 
     @PostMapping("/changePass")
     @ApiOperation(value = "修改用户密码")
+    @RequiresPermissions("sysConfig:sysUser:changePass")
     public Result changePass(@Valid @RequestBody ChangePassRequest request, BindingResult result) {
         if (result.hasErrors()) {
             for (ObjectError error : result.getAllErrors()) {
@@ -62,6 +65,7 @@ public class SysUserController {
     }
 
     @PostMapping("/set")
+    @RequiresPermissions("sysConfig:sysUser:user_set")
     @ApiOperation(value = "编辑用户")
     public Result setUser(@Valid @RequestBody SetUserRequest request,BindingResult result) {
         if (result.hasErrors()) {

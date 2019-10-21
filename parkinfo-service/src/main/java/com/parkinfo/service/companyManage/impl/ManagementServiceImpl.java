@@ -69,6 +69,7 @@ public class ManagementServiceImpl implements IManagementService {
                     companyDetail.setDeleteEnter(false);
                     companyDetail.setEntered(false);
                     companyDetail.setEnterStatus(EnterStatus.WAITING);
+                    companyDetail.setDiscussStatus(DiscussStatus.WAIT_LOOK);
                     companyDetailRepository.save(companyDetail);
                 });
             }
@@ -141,6 +142,7 @@ public class ManagementServiceImpl implements IManagementService {
         companyDetail.setEntered(false);
         companyDetail.setCompanyType(type);
         companyDetail.setEnterStatus(EnterStatus.WAITING);
+        companyDetail.setDiscussStatus(DiscussStatus.LOOKED);
         companyDetailRepository.save(companyDetail);
         return Result.builder().success().message("添加成功").build();
     }

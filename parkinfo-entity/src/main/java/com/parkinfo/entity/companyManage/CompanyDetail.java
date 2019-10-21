@@ -77,9 +77,9 @@ public class CompanyDetail extends BaseEntity{
     @ApiModelProperty(value = "对接方式")
     private String connectWay;
 
-    @ApiModelProperty(value = "洽谈内容")
+    @ApiModelProperty(value = "洽谈情况")
     @Column(columnDefinition = "text")
-    @Excel(name = "对接方式", width = 15, fixedIndex = 13)
+    @Excel(name = "洽谈情况", width = 15, fixedIndex = 13)
     private String content;
 
     @Excel(name = "需求面积", width = 15, fixedIndex = 14)

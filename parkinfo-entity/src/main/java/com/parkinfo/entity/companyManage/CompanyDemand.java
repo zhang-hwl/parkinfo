@@ -72,8 +72,6 @@ public class CompanyDemand extends BaseEntity {
     @ApiModelProperty(value = "需求面积")
     private String requireArea;
 
-
-
     @ApiModelProperty(value = "审核状态")
     @Enumerated(EnumType.ORDINAL)//APPLYING,AGREE,REFUSE 申请中,同意,拒绝
     private CheckStatus checkStatus;

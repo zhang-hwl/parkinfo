@@ -87,11 +87,11 @@ public class BigEventService extends ArchiveInfoServiceImpl {
                     }
                     if(roles.contains(ParkRoleEnum.OFFICER.name())){
                         list.add(cb.equal(root.get("government").as(Boolean.class), true));
-                        list.add(cb.equal(root.get("parkInfo").get("id").as(String.class), parkId));
+                        predicates.add(cb.and(cb.equal(root.get("parkInfo").get("id").as(String.class), parkId)));
                     }
                     if(roles.contains(ParkRoleEnum.HR_USER.name())){
                         list.add(cb.equal(root.get("hrOrgan").as(Boolean.class), true));
-                        list.add(cb.equal(root.get("parkInfo").get("id").as(String.class), parkId));
+                        predicates.add(cb.and(cb.equal(root.get("parkInfo").get("id").as(String.class), parkId)));
                     }
                     if(roles.contains(ParkRoleEnum.PARK_USER.name())){
                         //本园区员工可见
