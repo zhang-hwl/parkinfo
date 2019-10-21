@@ -26,7 +26,7 @@ public class AddBookRequest {
      * 封面
      */
     @ApiModelProperty(value = "封面")
-    @NotBlank(message = "封面不能为空")
+//    @NotBlank(message = "封面不能为空")
     private String cover;
 
     /**
