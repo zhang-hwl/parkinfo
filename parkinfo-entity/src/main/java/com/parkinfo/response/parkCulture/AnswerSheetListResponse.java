@@ -28,6 +28,9 @@ public class AnswerSheetListResponse {
     @ApiModelProperty(value = "是否开始")
     private Boolean start;
 
+    @ApiModelProperty(value = "是否交卷")
+    private Boolean commit;
+
     @ApiModelProperty(value = "答题时间（分钟）")
     private Integer time;
 
