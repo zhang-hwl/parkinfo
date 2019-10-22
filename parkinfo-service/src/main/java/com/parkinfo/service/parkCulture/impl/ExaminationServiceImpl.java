@@ -265,6 +265,7 @@ public class ExaminationServiceImpl implements IExaminationService {
         });
         response.setRadioQuestionList(radioQuestionList);
         response.setJudgeQuestionList(judgeQuestionList);
+        response.setCurrentTime(new Date());
         return Result.<AnswerSheetDetailResponse>builder().success().data(response).build();
     }
 

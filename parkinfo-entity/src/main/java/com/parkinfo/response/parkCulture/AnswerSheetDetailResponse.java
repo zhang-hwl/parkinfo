@@ -1,9 +1,11 @@
 package com.parkinfo.response.parkCulture;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -15,11 +17,15 @@ import java.util.List;
  **/
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class AnswerSheetDetailResponse extends AnswerSheetListResponse{
+public class AnswerSheetDetailResponse extends AnswerSheetListResponse {
 
     @ApiModelProperty(value = "单选试题")
     private List<QuestionDetailListResponse> radioQuestionList;
 
     @ApiModelProperty(value = "判断试题")
     private List<QuestionDetailListResponse> judgeQuestionList;
+
+    @ApiModelProperty(value = "当前服务端时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date currentTime;
 }
