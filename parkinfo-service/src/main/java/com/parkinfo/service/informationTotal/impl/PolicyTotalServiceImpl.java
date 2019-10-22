@@ -70,7 +70,7 @@ public class PolicyTotalServiceImpl implements IPolicyTotalService {
     @Override
     public Result<String> editPolicyTotal(PolicyTotalRequest request) {
         Optional<PolicyTotal> byId = policyTotalRepository.findByIdAndDeleteIsFalse(request.getId());
-        if(byId.isPresent()){
+        if(!byId.isPresent()){
             throw new NormalException("文件不存在");
         }
         PolicyTotal total = byId.get();
