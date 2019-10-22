@@ -26,12 +26,14 @@ public class SysParkController {
     private ISysParkService sysParkService;
 
     @PostMapping("/findAll")
+    @RequiresPermissions("sysConfig:parkManage:search")
     @ApiOperation(value = "获取所有园区")
     public Result<Page<SysParkInfoResponse>> findAll(@RequestBody QuerySysParkRequest request){
         return sysParkService.findAll(request);
     }
 
     @PostMapping("/add")
+    @RequiresPermissions("sysConfig:parkManage:add")
     @ApiOperation(value = "新增园区")
     public Result<String> addPark(@Valid @RequestBody AddSysParkRequest request, BindingResult result){
         if (result.hasErrors()){
@@ -43,6 +45,7 @@ public class SysParkController {
     }
 
     @PostMapping("/edit/{id}")
+    @RequiresPermissions("sysConfig:parkManage:edit")
     @ApiOperation(value = "编辑园区")
     public Result<String> editPark(@PathVariable("id") String parkId, @Valid @RequestBody AddSysParkRequest request, BindingResult result){
         if (result.hasErrors()){

@@ -46,7 +46,7 @@ public class RoomInfoRequest{
     @ApiModelProperty(value = "备注")
     private String remark;
 
-    @ApiModelProperty(value = "关联园区")
-    private ParkInfoResponse parkInfoResponse;
+//    @ApiModelProperty(value = "关联园区")
+//    private ParkInfoResponse parkInfoResponse;
 
 }

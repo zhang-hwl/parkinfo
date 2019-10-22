@@ -60,11 +60,10 @@ public class InfoEquipment extends BaseEntity {
     @ApiModelProperty(value = "负责人")
     private String head;
 
-    @Excel(name = "照片", width = 15, fixedIndex = 8)
     @ApiModelProperty(value = "照片")
     private String img;
 
-    @Excel(name = "备注", width = 30, fixedIndex = 9)
+    @Excel(name = "备注", width = 30, fixedIndex = 8)
     @ApiModelProperty(value = "备注")
     private String remark;
 

@@ -51,7 +51,7 @@ public class RoomInfoServiceImpl implements IRoomInfoService {
     public Result<String> add(RoomInfoRequest request) {
         RoomInfo roomInfo = new RoomInfo();
         BeanUtils.copyProperties(request, roomInfo);
-        String parkId = request.getParkInfoResponse().getId();
+        String parkId = tokenUtils.getCurrentParkInfo().getId();
         Optional<ParkInfo> byIdAndDeleteIsFalse = parkInfoRepository.findByIdAndDeleteIsFalse(parkId);
         if(!byIdAndDeleteIsFalse.isPresent()){
             throw new NormalException("该园区不存在");
@@ -99,7 +99,6 @@ public class RoomInfoServiceImpl implements IRoomInfoService {
             ParkInfoResponse parkInfoResponse = new ParkInfoResponse();
             parkInfoResponse.setId(temp.getParkInfo().getId());
             parkInfoResponse.setName(temp.getParkInfo().getName());
-            response.setParkInfoResponse(parkInfoResponse);
             list.add(response);
         });
         Page<RoomInfoRequest> result = new PageImpl<>(list, all.getPageable(), all.getTotalElements());
@@ -109,7 +108,7 @@ public class RoomInfoServiceImpl implements IRoomInfoService {
     @Override
     public Result<String> myImport(UploadAndVersionRequest request) {
         MultipartFile file = request.getMultipartFile();
-        String parkId = request.getParkId();
+        String parkId = tokenUtils.getCurrentParkInfo().getId();
         Optional<ParkInfo> byIdAndDeleteIsFalse = parkInfoRepository.findByIdAndDeleteIsFalse(parkId);
         if(!byIdAndDeleteIsFalse.isPresent()){
             throw new NormalException("该园区不存在");

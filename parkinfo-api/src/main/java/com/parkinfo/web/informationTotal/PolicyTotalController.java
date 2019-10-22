@@ -8,6 +8,9 @@ import com.parkinfo.request.infoTotalRequest.QueryByVersionRequest;
 import com.parkinfo.request.infoTotalRequest.PolicyTotalRequest;
 import com.parkinfo.request.infoTotalRequest.UploadAndVersionRequest;
 import com.parkinfo.request.personalCloud.UploadFileRequest;
+import com.parkinfo.request.sysConfig.QuerySysParkRequest;
+import com.parkinfo.response.sysConfig.SimpleParkResponse;
+import com.parkinfo.response.sysConfig.SysParkInfoResponse;
 import com.parkinfo.service.informationTotal.IInfoTotalTemplateService;
 import com.parkinfo.service.informationTotal.IInfoVersionService;
 import com.parkinfo.service.informationTotal.IPolicyTotalService;
@@ -123,5 +126,10 @@ public class PolicyTotalController {
         return Result.<List<String>>builder().success().data(list).build();
     }
 
+    @PostMapping("/find/park")
+    @ApiOperation(value = "获取所有园区(园区管理员只获取本园区)")
+    public Result<List<SimpleParkResponse>> findAll(){
+        return policyTotalService.findAll();
+    }
 
 }

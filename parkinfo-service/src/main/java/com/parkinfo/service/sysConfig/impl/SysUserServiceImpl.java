@@ -75,6 +75,16 @@ public class SysUserServiceImpl implements ISysUserService {
             if (StringUtils.isNotBlank(request.getRoleId())){
                 SetJoin<ParkUser, ParkRole> setJoin = root.join(root.getModel().getSet("roles",ParkRole.class), JoinType.LEFT);
                 predicates.add(criteriaBuilder.equal(setJoin.get("id").as(String.class),request.getRoleId()));
+                Optional<ParkRole> areaManageOptional = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.AREA_MANAGER.toString());
+                Optional<ParkRole> parkManageOptional = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(ParkRoleEnum.PARK_MANAGER.toString());
+                if (areaManageOptional.isPresent() && parkManageOptional.isPresent()){
+                    if (request.getRoleId().equals(parkManageOptional.get().getId())){
+                        List<String> ids = parkUserRepository.findIds(areaManageOptional.get().getId());
+                        ids.forEach(id ->{
+                            predicates.add(criteriaBuilder.notEqual(root.get("id").as(String.class),id));
+                        });
+                    }
+                }
             }
             if (StringUtils.isNotBlank(request.getAccount())){
                 predicates.add(criteriaBuilder.like(root.get("account").as(String.class),"%"+request.getAccount()+"%"));
@@ -124,18 +134,18 @@ public class SysUserServiceImpl implements ISysUserService {
         };
         Page<ParkUser> parkUserPage = parkUserRepository.findAll(specification, pageable);
         List<SysUserResponse> list = Lists.newArrayList();
-        parkUserPage.getContent().forEach(temp -> {
+        for(ParkUser temp : parkUserPage.getContent()) {
             SysUserResponse sysUserResponse = new SysUserResponse();
             BeanUtils.copyProperties(temp, sysUserResponse);
             if(temp.getCompanyDetail() != null){
                 sysUserResponse.setCompanyId(temp.getCompanyDetail().getId());
             }
             List<SysRoleResponse> roleResponses = Lists.newArrayList();
-            temp.getRoles().forEach(tempRole -> {
+            for(ParkRole tempRole : temp.getRoles()) {
                 SysRoleResponse sysRoleResponse = new SysRoleResponse();
                 BeanUtils.copyProperties(tempRole, sysRoleResponse);
                 roleResponses.add(sysRoleResponse);
-            });
+            }
             sysUserResponse.setRoleResponses(roleResponses);
             Set<ParkInfo> parks = temp.getParks();
             List<ParkInfoListResponse>  parkInfoListResponses = Lists.newArrayList();
@@ -147,7 +157,7 @@ public class SysUserServiceImpl implements ISysUserService {
             });
             sysUserResponse.setParkInfoListResponses(parkInfoListResponses);
             list.add(sysUserResponse);
-        });
+        }
         Page<SysUserResponse> result = new PageImpl<>(list, parkUserPage.getPageable(), parkUserPage.getTotalElements());
         return Result.<Page<SysUserResponse>>builder().success().data(result).build();
     }

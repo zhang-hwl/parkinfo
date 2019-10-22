@@ -3,12 +3,15 @@ package com.parkinfo.service.sysConfig.impl;
 import com.google.common.collect.Lists;
 import com.parkinfo.common.Result;
 import com.parkinfo.entity.userConfig.ParkInfo;
+import com.parkinfo.entity.userConfig.ParkPermission;
 import com.parkinfo.entity.userConfig.ParkRole;
 import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.enums.DefaultEnum;
 import com.parkinfo.enums.ParkRoleEnum;
 import com.parkinfo.exception.NormalException;
+import com.parkinfo.initPermission.InitPermissionConfiguration;
 import com.parkinfo.repository.userConfig.ParkInfoRepository;
+import com.parkinfo.repository.userConfig.ParkPermissionRepository;
 import com.parkinfo.repository.userConfig.ParkRoleRepository;
 import com.parkinfo.repository.userConfig.ParkUserRepository;
 import com.parkinfo.request.sysConfig.AddSysParkRequest;
@@ -27,8 +30,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class SysParkServiceImpl implements ISysParkService {
@@ -39,6 +41,10 @@ public class SysParkServiceImpl implements ISysParkService {
     private ParkUserRepository parkUserRepository;
     @Autowired
     private ParkRoleRepository parkRoleRepository;
+    @Autowired
+    private ParkPermissionRepository parkPermissionRepository;
+    @Autowired
+    private InitPermissionConfiguration initPermissionConfiguration;
 
     @Override
     public Result<Page<SysParkInfoResponse>> findAll(QuerySysParkRequest request) {
@@ -82,6 +88,7 @@ public class SysParkServiceImpl implements ISysParkService {
         parkInfo.setName(request.getParkName());
         ParkInfo save = parkInfoRepository.save(parkInfo);
         ParkRoleEnum [] roleNames = {ParkRoleEnum.PARK_USER,ParkRoleEnum.HR_USER,ParkRoleEnum.OFFICER};
+        Map<String, List<String>> stringListMap = initPermissionConfiguration.initPermission();
         for(int i = 0; i < 3; i++){
             ParkRole parkRole = new ParkRole();
             parkRole.setParkId(save.getId());
@@ -90,8 +97,12 @@ public class SysParkServiceImpl implements ISysParkService {
             parkRole.setName(roleNames[i].name());
             parkRole.setRemark(roleNames[i].getName());
             parkRole.setParkId(save.getId());
+            List<String> strings = stringListMap.get(roleNames[i].name());
+            List<ParkPermission> parkPermissionList = parkPermissionRepository.findAllById(strings);
+            parkRole.setPermissions(new HashSet<>(parkPermissionList));
             parkRoleRepository.save(parkRole);
         }
+
         return Result.<String>builder().success().data("新增成功").build();
     }
 

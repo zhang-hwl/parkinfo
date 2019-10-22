@@ -63,11 +63,10 @@ public class RoomInfoController {
     @PostMapping("/import")
     @ApiOperation(value = "导入本园区房间统计")
     @RequiresPermissions(value = "infoTotal:room:add")
-    public Result<String> myImport(@RequestParam("version") String version , @RequestParam("multipartFile") MultipartFile multipartFile, @RequestParam("parkId") String parkId){
+    public Result<String> myImport(@RequestParam("version") String version , @RequestParam("multipartFile") MultipartFile multipartFile){
         UploadAndVersionRequest request = new UploadAndVersionRequest();
         request.setMultipartFile(multipartFile);
         request.setVersion(version);
-        request.setParkId(parkId);
         return roomInfoService.myImport(request);
     }
 

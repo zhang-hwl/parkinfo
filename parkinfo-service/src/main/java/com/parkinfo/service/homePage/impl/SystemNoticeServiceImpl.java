@@ -48,6 +48,18 @@ public class SystemNoticeServiceImpl implements ISystemNoticeService {
     }
 
     @Override
+    public Result<String> editNotice(SystemNotice systemNotice) {
+        Optional<SystemNoticeEntity> byId = systemNoticeRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(systemNotice.getId());
+        if(!byId.isPresent()){
+            throw new NormalException("公告不存在");
+        }
+        SystemNoticeEntity entity = byId.get();
+        BeanUtils.copyProperties(systemNotice, entity);
+        systemNoticeRepository.save(entity);
+        return Result.<String>builder().success().data("编辑成功").build();
+    }
+
+    @Override
     public Result<Page<SystemNotice>> findAll(QueryNoticeRequest request) {
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
         Specification<SystemNoticeEntity> specification = new Specification<SystemNoticeEntity>() {

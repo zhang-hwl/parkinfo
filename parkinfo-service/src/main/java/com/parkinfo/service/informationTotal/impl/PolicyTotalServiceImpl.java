@@ -19,6 +19,7 @@ import com.parkinfo.request.infoTotalRequest.PolicyTotalRequest;
 import com.parkinfo.request.infoTotalRequest.QueryByVersionRequest;
 import com.parkinfo.request.infoTotalRequest.UploadAndVersionRequest;
 import com.parkinfo.response.login.ParkInfoResponse;
+import com.parkinfo.response.sysConfig.SimpleParkResponse;
 import com.parkinfo.service.informationTotal.IPolicyTotalService;
 import com.parkinfo.token.TokenUtils;
 import com.parkinfo.util.ExcelUtils;
@@ -181,6 +182,34 @@ public class PolicyTotalServiceImpl implements IPolicyTotalService {
         } catch (Exception e) {
             throw new NormalException("下载失败");
         }
+    }
+
+    @Override
+    public Result<List<SimpleParkResponse>> findAll() {
+        List<String> roles = tokenUtils.getLoginUserDTO().getRole();
+        boolean flag = false;   //false返回本园区
+        for(String temp : roles){
+            if(temp.equals(ParkRoleEnum.ADMIN.name()) || temp.equals(ParkRoleEnum.PRESIDENT.name()) || temp.equals(ParkRoleEnum.GENERAL_MANAGER.name())){
+                //超级管理员，总裁，总裁办获取所有园区
+                flag = true;
+            }
+        }
+        List<SimpleParkResponse> list = Lists.newArrayList();
+        if(flag == false){
+            ParkInfo currentParkInfo = tokenUtils.getCurrentParkInfo();
+            SimpleParkResponse response = new SimpleParkResponse();
+            BeanUtils.copyProperties(currentParkInfo, response);
+            list.add(response);
+        }
+        else {
+            List<ParkInfo> all = parkInfoRepository.findAllByDeleteIsFalseAndAvailableIsTrue();
+            for(ParkInfo parkInfo : all){
+                SimpleParkResponse response = new SimpleParkResponse();
+                BeanUtils.copyProperties(parkInfo, response);
+                list.add(response);
+            }
+        }
+        return Result.<List<SimpleParkResponse>>builder().success().data(list).build();
     }
 
     //判断权限，1为有权限，0为仅本园区

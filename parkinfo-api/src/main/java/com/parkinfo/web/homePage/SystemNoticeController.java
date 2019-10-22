@@ -48,4 +48,11 @@ public class SystemNoticeController {
         return systemNoticeService.findByLimit(count);
     }
 
+    @PostMapping("/edit")
+    @ApiOperation(value = "编辑公告")
+    @RequiresPermissions("sysConfig:news:edit")
+    public Result<String> editNotice(@RequestBody SystemNotice systemNotice){
+        return systemNoticeService.editNotice(systemNotice);
+    }
+
 }
