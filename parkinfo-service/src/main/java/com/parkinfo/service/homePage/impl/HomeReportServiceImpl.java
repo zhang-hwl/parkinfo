@@ -69,11 +69,11 @@ public class HomeReportServiceImpl implements IHomeRepostService {
                     map.put(month, 1);
                 }
             }
-            for(int i = 1; i <= 12; i++){
-                int test = (int)(Math.random()*1000);
-                map.put(i, test);            //测试数据
-                enterCount += test;
-            }
+//            for(int i = 1; i <= 12; i++){
+//                int test = (int)(Math.random()*1000);
+//                map.put(i, test);            //测试数据
+//                enterCount += test;
+//            }
             map.keySet().forEach(key -> {
                 Integer count = map.get(key);
                 BaseReportResponse baseReportResponse = new BaseReportResponse();
@@ -117,9 +117,9 @@ public class HomeReportServiceImpl implements IHomeRepostService {
                     }
                 }
             }
-            //测试数据
-            taxCount = new BigDecimal((int)(Math.random()*1000));
-            //
+//            //测试数据
+//            taxCount = new BigDecimal((int)(Math.random()*1000));
+//            //
             allTaxCount = allTaxCount.add(taxCount);    //加本园区税收合计
             baseReportResponse.setValue(String.valueOf(taxCount));
             list.add(baseReportResponse);
@@ -167,9 +167,9 @@ public class HomeReportServiceImpl implements IHomeRepostService {
                     }
                 }
             }
-            //测试数据
-            taxCount = new BigDecimal((int)(Math.random()*1000));
-            //
+//            //测试数据
+//            taxCount = new BigDecimal((int)(Math.random()*1000));
+//            //
             allTaxCount = allTaxCount.add(taxCount);    //加本园区税收合计
             baseReportResponse.setValue(String.valueOf(taxCount));
             list.add(baseReportResponse);
@@ -212,7 +212,7 @@ public class HomeReportServiceImpl implements IHomeRepostService {
             }
             taxCount.setScale(0, BigDecimal.ROUND_HALF_UP);
             response.setValue(String.valueOf(taxCount));    //纵坐标--税收合计
-            response.setValue((int)(Math.random()*100)+"");    //测试数据
+//            response.setValue((int)(Math.random()*100)+"");    //测试数据
             result.add(response);
         });
         return Result.<List<BaseReportResponse>>builder().success().data(result).build();
