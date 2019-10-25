@@ -119,7 +119,7 @@ public class HonorPaperService extends ArchiveInfoServiceImpl {
 
     public List<ArchiveInfo> findAllActivity(){
         List<ArchiveInfo> list = Lists.newArrayList();
-        Optional<ArchiveInfoType> byId = archiveInfoTypeRepository.findByTypeAndDeleteIsFalseAndAvailableIsTrue("活动类材料");
+        Optional<ArchiveInfoType> byId = archiveInfoTypeRepository.findByTypeAndDeleteIsFalseAndAvailableIsTrue("荣誉证书");
         if(byId.isPresent()){
             list = archiveInfoRepository.findAllByGeneralIdAndDeleteIsFalse(byId.get().getId());
         }
@@ -128,7 +128,7 @@ public class HonorPaperService extends ArchiveInfoServiceImpl {
 
     public List<ArchiveInfo> findAllActivityByPark(String parkId){
         List<ArchiveInfo> list = Lists.newArrayList();
-        Optional<ArchiveInfoType> byId = archiveInfoTypeRepository.findByTypeAndDeleteIsFalseAndAvailableIsTrue("活动类材料");
+        Optional<ArchiveInfoType> byId = archiveInfoTypeRepository.findByTypeAndDeleteIsFalseAndAvailableIsTrue("荣誉证书");
         if(byId.isPresent()){
             list = archiveInfoRepository.findAllByGeneralIdAndDeleteIsFalseAndParkInfo_Id(byId.get().getId(), parkId);
         }
