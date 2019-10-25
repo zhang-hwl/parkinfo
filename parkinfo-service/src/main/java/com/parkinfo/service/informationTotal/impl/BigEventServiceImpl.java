@@ -199,7 +199,7 @@ public class BigEventServiceImpl implements IBigEventService {
                 //总裁，总裁办
                 return 1;
             }
-            else if(role.equals(ParkRoleEnum.PARK_MANAGER.name()) || role.equals(ParkRoleEnum.OFFICER.name()) || role.equals(ParkRoleEnum.HR_USER.name())){
+            else if(role.equals(ParkRoleEnum.PARK_MANAGER.name()) || role.equals(ParkRoleEnum.AREA_MANAGER.name()) || role.equals(ParkRoleEnum.OFFICER.name()) || role.equals(ParkRoleEnum.HR_USER.name())){
                 flag = 0;
             }
         }
@@ -223,7 +223,7 @@ public class BigEventServiceImpl implements IBigEventService {
                 //总裁，总裁办
                 return 1;
             }
-            else if(role.equals(ParkRoleEnum.PARK_MANAGER.name()) || role.equals(ParkRoleEnum.OFFICER.name()) || role.equals(ParkRoleEnum.HR_USER.name())){
+            else if(role.equals(ParkRoleEnum.PARK_MANAGER.name()) || role.equals(ParkRoleEnum.AREA_MANAGER.name()) || role.equals(ParkRoleEnum.OFFICER.name()) || role.equals(ParkRoleEnum.HR_USER.name())){
                 flag = 0;
             }
         }

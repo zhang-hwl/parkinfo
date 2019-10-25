@@ -187,7 +187,7 @@ public class CompeteGradenInfoServiceImpl implements ICompeteGradenInfoService {
             if (role.equals(ParkRoleEnum.PRESIDENT.name()) || role.equals(ParkRoleEnum.GENERAL_MANAGER.name())) {
                 //总裁，总裁办
                 return 1;
-            } else if (role.equals(ParkRoleEnum.PARK_MANAGER.name()) || role.equals(ParkRoleEnum.OFFICER.name()) || role.equals(ParkRoleEnum.PARK_USER.name())) {
+            } else if (role.equals(ParkRoleEnum.PARK_MANAGER.name()) || role.equals(ParkRoleEnum.AREA_MANAGER.name()) || role.equals(ParkRoleEnum.OFFICER.name()) || role.equals(ParkRoleEnum.PARK_USER.name())) {
                 flag = 0;
             }
         }
@@ -210,7 +210,7 @@ public class CompeteGradenInfoServiceImpl implements ICompeteGradenInfoService {
             if (role.equals(ParkRoleEnum.PRESIDENT.name()) || role.equals(ParkRoleEnum.GENERAL_MANAGER.name())) {
                 //总裁，总裁办
                 return 1;
-            } else if (role.equals(ParkRoleEnum.PARK_MANAGER.name()) || role.equals(ParkRoleEnum.OFFICER.name()) || role.equals(ParkRoleEnum.PARK_USER.name())) {
+            } else if (role.equals(ParkRoleEnum.PARK_MANAGER.name()) || role.equals(ParkRoleEnum.AREA_MANAGER.name()) || role.equals(ParkRoleEnum.OFFICER.name()) || role.equals(ParkRoleEnum.PARK_USER.name())) {
                 flag = 0;
             }
         }
