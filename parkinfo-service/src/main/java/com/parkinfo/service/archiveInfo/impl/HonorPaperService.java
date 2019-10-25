@@ -126,4 +126,13 @@ public class HonorPaperService extends ArchiveInfoServiceImpl {
         return list;
     }
 
+    public List<ArchiveInfo> findAllActivityByPark(String parkId){
+        List<ArchiveInfo> list = Lists.newArrayList();
+        Optional<ArchiveInfoType> byId = archiveInfoTypeRepository.findByTypeAndDeleteIsFalseAndAvailableIsTrue("活动类材料");
+        if(byId.isPresent()){
+            list = archiveInfoRepository.findAllByGeneralIdAndDeleteIsFalseAndParkInfo_Id(byId.get().getId(), parkId);
+        }
+        return list;
+    }
+
 }

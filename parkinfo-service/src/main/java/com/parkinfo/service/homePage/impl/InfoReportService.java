@@ -226,7 +226,7 @@ public class InfoReportService {
         parkInfoResponses.forEach(temp -> {
             BaseReportResponse baseReportResponse = new BaseReportResponse();
             baseReportResponse.setKey(temp.getName());
-            List<ArchiveInfo> allActivity = activityPaperService.findAllActivity();
+            List<ArchiveInfo> allActivity = activityPaperService.findAllActivityByPark(temp.getId());
             Integer count = 0;
             if(allActivity != null){
                 count = allActivity.size();
@@ -248,7 +248,7 @@ public class InfoReportService {
         parkInfoResponses.forEach(temp -> {
             BaseReportResponse baseReportResponse = new BaseReportResponse();
             baseReportResponse.setKey(temp.getName());
-            List<ArchiveInfo> allActivity = honorPaperService.findAllActivity();
+            List<ArchiveInfo> allActivity = honorPaperService.findAllActivityByPark(temp.getId());
             Integer count = 0;
             if(allActivity != null){
                 count = allActivity.size();
