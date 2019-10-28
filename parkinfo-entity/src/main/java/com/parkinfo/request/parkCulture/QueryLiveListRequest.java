@@ -33,4 +33,5 @@ public class QueryLiveListRequest extends PageRequest {
     @ApiModelProperty(value = "直播开始日期 - 止",example = "2019-06-28")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date liveStartTimeTo;
+
 }
