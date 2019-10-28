@@ -81,7 +81,7 @@ public class ActivityPaperService extends ArchiveInfoServiceImpl {
                 predicates.add(cb.equal(root.get("delete").as(Boolean.class), false));  //没有被删除
                 predicates.add(cb.equal(root.get("available").as(Boolean.class), true));  //可用
                 List<Predicate> list = Lists.newArrayList();
-                if(!roles.contains(ParkRoleEnum.PRESIDENT.name()) && !roles.contains(ParkRoleEnum.GENERAL_MANAGER.name()) && !roles.contains(ParkRoleEnum.PARK_MANAGER.name())){
+                if(!roles.contains(ParkRoleEnum.PRESIDENT.name()) && !roles.contains(ParkRoleEnum.GENERAL_MANAGER.name()) && !roles.contains(ParkRoleEnum.AREA_MANAGER.name()) && !roles.contains(ParkRoleEnum.PARK_MANAGER.name())){
                     if(roles.contains(ParkRoleEnum.OFFICER.name())){
                         list.add(cb.equal(root.get("government").as(Boolean.class), true));
                         predicates.add(cb.and(cb.equal(root.get("parkInfo").get("id").as(String.class), parkId)));
@@ -120,6 +120,15 @@ public class ActivityPaperService extends ArchiveInfoServiceImpl {
         Optional<ArchiveInfoType> byId = archiveInfoTypeRepository.findByTypeAndDeleteIsFalseAndAvailableIsTrue("活动类材料");
         if(byId.isPresent()){
             list = archiveInfoRepository.findAllByGeneralIdAndDeleteIsFalse(byId.get().getId());
+        }
+        return list;
+    }
+
+    public List<ArchiveInfo> findAllActivityByPark(String parkId){
+        List<ArchiveInfo> list = Lists.newArrayList();
+        Optional<ArchiveInfoType> byId = archiveInfoTypeRepository.findByTypeAndDeleteIsFalseAndAvailableIsTrue("活动类材料");
+        if(byId.isPresent()){
+            list = archiveInfoRepository.findAllByGeneralIdAndDeleteIsFalseAndParkInfo_Id(byId.get().getId(), parkId);
         }
         return list;
     }

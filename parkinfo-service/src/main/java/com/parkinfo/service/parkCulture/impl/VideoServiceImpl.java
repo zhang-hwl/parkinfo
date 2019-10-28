@@ -223,7 +223,7 @@ public class VideoServiceImpl implements IVideoService {
 
     @Override
     public Result setVideo(SetVideoRequest request) {
-        Video video = this.checkVideo(request.getVideoId());
+        Video video = this.checkVideo(request.getId());
         BeanUtils.copyProperties(request, video);
         videoRepository.save(video);
         return Result.builder().success().message("保存视频成功").build();

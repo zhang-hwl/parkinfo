@@ -54,7 +54,7 @@ public class SysParkServiceImpl implements ISysParkService {
             public Predicate toPredicate(Root<ParkInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> predicates = Lists.newArrayList();
                 if(StringUtils.isNotBlank(request.getParkName())){
-                    predicates.add(criteriaBuilder.like(root.get("name").as(String.class), request.getParkName()));
+                    predicates.add(criteriaBuilder.like(root.get("name").as(String.class), "%"+request.getParkName()+"%"));
                 }
                 predicates.add(criteriaBuilder.notEqual(root.get("id").as(String.class), DefaultEnum.CEO_PARK.getDefaultValue()));
                 predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class),Boolean.FALSE));

@@ -110,4 +110,17 @@ public class SystemNoticeServiceImpl implements ISystemNoticeService {
         });
         return Result.<List<SystemNotice>>builder().success().data(result).build();
     }
+
+    @Override
+    public Result<SystemNotice> detail(String id) {
+        Optional<SystemNoticeEntity> byId = systemNoticeRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(id);
+        if(!byId.isPresent()){
+            throw new NormalException("公告不存在");
+        }
+        SystemNoticeEntity entity = byId.get();
+        SystemNotice notice = new SystemNotice();
+        BeanUtils.copyProperties(entity, notice);
+        notice.setUploadTime(entity.getCreateTime());
+        return Result.<SystemNotice>builder().success().data(notice).build();
+    }
 }

@@ -84,7 +84,7 @@ public class PactPaperService extends ArchiveInfoServiceImpl {
                 predicates.add(cb.equal(root.get("available").as(Boolean.class), true));  //可用
                 List<Predicate> list = Lists.newArrayList();
                 if(!roles.contains(ParkRoleEnum.PRESIDENT.name()) && !roles.contains(ParkRoleEnum.GENERAL_MANAGER.name())){
-                    if(roles.contains(ParkRoleEnum.PARK_MANAGER.name())){
+                    if(roles.contains(ParkRoleEnum.PARK_MANAGER.name()) || roles.contains(ParkRoleEnum.AREA_MANAGER.name())){
                         list.add(cb.and(cb.equal(root.get("parkInfo").get("id").as(String.class), parkId)));
                     }
                     if(roles.contains(ParkRoleEnum.OFFICER.name())){

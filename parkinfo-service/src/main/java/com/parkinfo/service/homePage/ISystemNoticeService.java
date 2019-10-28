@@ -24,4 +24,6 @@ public interface ISystemNoticeService {
 
     Result<List<SystemNotice>> findByLimit(Integer count);
 
+    Result<SystemNotice> detail(String id);
+
 }

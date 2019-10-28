@@ -30,6 +30,7 @@ public class SystemNoticeController {
     }
 
     @PostMapping("/findAll")
+    @RequiresPermissions("sysConfig:news:search")
     @ApiOperation(value = "查询公告")
     public Result<Page<SystemNotice>> findAll(@RequestBody QueryNoticeRequest request){
         return systemNoticeService.findAll(request);
@@ -43,6 +44,7 @@ public class SystemNoticeController {
     }
 
     @PostMapping("/find/{count}")
+    @RequiresPermissions("sysConfig:news:search")
     @ApiOperation(value = "返回count条最新公告")
     public Result<List<SystemNotice>> findByLimit(@PathVariable("count") Integer count){
         return systemNoticeService.findByLimit(count);
@@ -53,6 +55,13 @@ public class SystemNoticeController {
     @RequiresPermissions("sysConfig:news:edit")
     public Result<String> editNotice(@RequestBody SystemNotice systemNotice){
         return systemNoticeService.editNotice(systemNotice);
+    }
+
+    @PostMapping("/detail/{id}")
+    @ApiOperation(value = "查看公告")
+    @RequiresPermissions("sysConfig:news:detail")
+    public Result<SystemNotice> detail(@PathVariable("id") String id){
+        return systemNoticeService.detail(id);
     }
 
 }

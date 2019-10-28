@@ -70,7 +70,7 @@ public class PolicyTotalServiceImpl implements IPolicyTotalService {
     @Override
     public Result<String> editPolicyTotal(PolicyTotalRequest request) {
         Optional<PolicyTotal> byId = policyTotalRepository.findByIdAndDeleteIsFalse(request.getId());
-        if(byId.isPresent()){
+        if(!byId.isPresent()){
             throw new NormalException("文件不存在");
         }
         PolicyTotal total = byId.get();
@@ -221,7 +221,7 @@ public class PolicyTotalServiceImpl implements IPolicyTotalService {
                 //总裁，总裁办
                 return 1;
             }
-            else if(role.equals(ParkRoleEnum.PARK_MANAGER.name()) || role.equals(ParkRoleEnum.OFFICER.name())){
+            else if(role.equals(ParkRoleEnum.PARK_MANAGER.name()) || role.equals(ParkRoleEnum.AREA_MANAGER.name()) || role.equals(ParkRoleEnum.OFFICER.name())){
                 flag = 0;
             }
         }
