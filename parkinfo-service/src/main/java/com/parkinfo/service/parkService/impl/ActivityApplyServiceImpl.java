@@ -9,6 +9,7 @@ import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.entity.userConfig.ParkUser;
 import com.parkinfo.exception.NormalException;
 import com.parkinfo.repository.parkService.ActivityApplyRepository;
+import com.parkinfo.repository.userConfig.ParkUserRepository;
 import com.parkinfo.request.parkService.activityApply.AddActivityApplyRequest;
 import com.parkinfo.request.parkService.activityApply.EditActivityApplyRequest;
 import com.parkinfo.request.parkService.activityApply.SearchActivityApplyRequest;
@@ -35,6 +36,8 @@ public class ActivityApplyServiceImpl implements IActivityApplyService {
     private ActivityApplyRepository activityApplyRepository;
     @Autowired
     private TokenUtils tokenUtils;
+    @Autowired
+    private ParkUserRepository parkUserRepository;
 
     @Override
     public Result<Page<ActivityApplyResponse>> searchActivityApply(SearchActivityApplyRequest request) {
@@ -72,8 +75,13 @@ public class ActivityApplyServiceImpl implements IActivityApplyService {
         ParkUser loginUser = tokenUtils.getLoginUser();
         ActivityApply activityApply = new ActivityApply();
         BeanUtils.copyProperties(request,activityApply);
-        if (loginUser.getCompanyDetail() != null){
-            activityApply.setCompanyDetail(loginUser.getCompanyDetail());
+//        if (loginUser.getCompanyDetail() != null){
+//            activityApply.setCompanyDetail(loginUser.getCompanyDetail());
+//        }
+        Optional<ParkUser> byId = parkUserRepository.findByIdAndAvailableIsTrueAndDeleteIsFalse(loginUser.getId());
+        if(byId.isPresent()){
+            ParkUser parkUser = byId.get();
+            activityApply.setCompanyDetail(parkUser.getCompanyDetail());
         }
         activityApply.setParkInfo(tokenUtils.getCurrentParkInfo());
         activityApply.setDelete(Boolean.FALSE);

@@ -107,9 +107,16 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
         String fileAddress = request.getFileAddress();
         ArchiveInfo archiveInfo = new ArchiveInfo();
         BeanUtils.copyProperties(request, archiveInfo);
-        if(!fileAddress.endsWith("docx") && !fileAddress.endsWith("doc") && !fileAddress.endsWith("ppt") && !fileAddress.endsWith("pptx") && !fileAddress.endsWith("xlsx") && !fileAddress.endsWith("xls")){
+        if(!fileAddress.endsWith("docx") && !fileAddress.endsWith("doc") && !fileAddress.endsWith("ppt") && !fileAddress.endsWith("pptx") && !fileAddress.endsWith("xlsx") && !fileAddress.endsWith("xls") && !fileAddress.endsWith("pdf")){
+            archiveInfo.setConvertStatus(ConvertStatus.FAILED);
+            archiveInfo.setPdfAddress(request.getFileAddress());
+        }
+        else if(fileAddress.endsWith("pdf")){
             archiveInfo.setConvertStatus(ConvertStatus.SUCCESS);
             archiveInfo.setPdfAddress(request.getFileAddress());
+        }
+        else{
+            archiveInfo.setConvertStatus(ConvertStatus.WAITING);
         }
         Optional<ParkInfo> byIdAndDeleteIsFalse = parkInfoRepository.findByIdAndDeleteIsFalse(parkId);
         if(!byIdAndDeleteIsFalse.isPresent()){
@@ -128,7 +135,6 @@ public class ArchiveInfoServiceImpl implements IArchiveInfoService {
         archiveInfo.setUploadTime(new Date());
         archiveInfo.setDelete(false);
         archiveInfo.setAvailable(true);
-        archiveInfo.setConvertStatus(ConvertStatus.WAITING);
         archiveInfo.setFileType(request.getFileType().toLowerCase());
         ArchiveInfo save = archiveInfoRepository.save(archiveInfo);
         if(fileAddress.endsWith("docx") || fileAddress.endsWith("doc") || fileAddress.endsWith("ppt") || fileAddress.endsWith("pptx") || fileAddress.endsWith("xlsx") || fileAddress.endsWith("xls")){
