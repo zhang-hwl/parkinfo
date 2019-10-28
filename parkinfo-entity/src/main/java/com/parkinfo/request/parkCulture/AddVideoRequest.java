@@ -27,6 +27,10 @@ public class AddVideoRequest {
     @NotBlank(message = "视频名称不能为空")
     private String name;
 
+    @ApiModelProperty(value = "视频原文件名称")
+    @NotBlank(message = "视频原文件名称不能为空")
+    private String fileName;
+
     @ApiModelProperty(value = "videoId")
     @NotBlank(message = "videoId不能为空")
     private String videoId;
