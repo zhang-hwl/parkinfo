@@ -55,7 +55,12 @@ public class PactPaperController {
     @PostMapping("/add")
     @RequiresPermissions(value = "archiveInfo:pact:add")
     @ApiOperation(value = "新增文件")
-    public Result<String> add(@RequestBody AddArchiveInfoRequest request){
+    public Result<String> add(@Valid @RequestBody AddArchiveInfoRequest request, BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError allError : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(allError.getDefaultMessage()).build();
+            }
+        }
         request.setGeneral("合同协议");
         return archiveInfoService.addArchiveInfo(request);
     }
@@ -63,7 +68,12 @@ public class PactPaperController {
     @PostMapping("/edit/{id}")
     @RequiresPermissions(value = "archiveInfo:pact:edit")
     @ApiOperation(value = "编辑文件")
-    public Result<String> edit(@PathVariable("id")String id, @RequestBody AddArchiveInfoRequest request){
+    public Result<String> edit(@PathVariable("id")String id, @Valid @RequestBody AddArchiveInfoRequest request, BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError allError : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(allError.getDefaultMessage()).build();
+            }
+        }
         return archiveInfoService.editArchiveInfo(id, request);
     }
 

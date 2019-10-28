@@ -16,12 +16,14 @@ public class AddArchiveInfoRequest {
     private String general;
 
     @ApiModelProperty(value = "文件种类")
+    @NotBlank(message = "文件分类不能为空")
     private String kind;
 
     @ApiModelProperty(value = "文件名称")
     private String fileName;
 
     @ApiModelProperty(value = "文件地址")
+    @NotBlank(message = "文件不能为空")
     private String fileAddress;
 
     @ApiModelProperty(value = "备注")

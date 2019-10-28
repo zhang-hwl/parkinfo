@@ -17,10 +17,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -40,14 +43,24 @@ public class CompeteGradenInfoController {
     @PostMapping("/add")
     @ApiOperation(value = "新增竞争园区信息")
     @RequiresPermissions(value = "infoTotal:compete:add")
-    public Result<String> addCompeteGradenInfo(@RequestBody CompeteGradenInfoRequest request){
+    public Result<String> addCompeteGradenInfo(@Valid @RequestBody CompeteGradenInfoRequest request, BindingResult result){
+        if (result.hasErrors()) {
+            for (ObjectError error : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
         return competeGradenInfoService.addCompeteGradenInfo(request);
     }
 
     @PostMapping("/edit")
     @ApiOperation(value = "编辑竞争园区信息")
     @RequiresPermissions(value = "infoTotal:compete:edit")
-    public Result<String> editCompeteGradenInfo(@RequestBody CompeteGradenInfoRequest request){
+    public Result<String> editCompeteGradenInfo(@Valid @RequestBody CompeteGradenInfoRequest request, BindingResult result){
+        if (result.hasErrors()) {
+            for (ObjectError error : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
         return competeGradenInfoService.editCompeteGradenInfo(request);
     }
 

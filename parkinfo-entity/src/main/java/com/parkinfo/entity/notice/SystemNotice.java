@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class SystemNotice {
     private String cover;
 
     @ApiModelProperty(value = "标题")
+    @NotBlank(message = "标题不能为空")
     private String title;
 
     @ApiModelProperty(value = "概要")

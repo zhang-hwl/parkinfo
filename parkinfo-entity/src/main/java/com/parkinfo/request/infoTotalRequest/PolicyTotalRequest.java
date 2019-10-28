@@ -7,6 +7,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.NotBlank;
+
 @Data
 public class PolicyTotalRequest{
 
@@ -14,12 +16,15 @@ public class PolicyTotalRequest{
     private String id;
 
     @ApiModelProperty(value = "版本标签")
+    @NotBlank(message = "版本标签不能为空")
     private String version;
 
     @ApiModelProperty(value = "类型")
+    @NotBlank(message = "类型不能为空")
     private String type;
 
     @ApiModelProperty(value = "项目")
+    @NotBlank(message = "项目不能为空")
     private String project;
 
     @ApiModelProperty(value = "地方留存比例")

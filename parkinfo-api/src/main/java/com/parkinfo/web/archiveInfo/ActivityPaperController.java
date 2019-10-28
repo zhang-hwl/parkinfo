@@ -10,6 +10,7 @@ import com.parkinfo.request.archiveInfo.QueryArchiveInfoRequest;
 import com.parkinfo.response.archiveInfo.ArchiveInfoCommentResponse;
 import com.parkinfo.response.archiveInfo.ArchiveInfoResponse;
 import com.parkinfo.response.archiveInfo.ArchiveInfoTypeResponse;
+import com.parkinfo.response.parkCulture.QuestionListResponse;
 import com.parkinfo.service.archiveInfo.impl.ActivityPaperService;
 import com.parkinfo.service.archiveInfo.impl.PolicyPaperService;
 import io.swagger.annotations.Api;
@@ -56,7 +57,12 @@ public class ActivityPaperController {
     @PostMapping("/add")
     @RequiresPermissions(value = "archiveInfo:activity:add")
     @ApiOperation(value = "新增文件")
-    public Result<String> add(@RequestBody AddArchiveInfoRequest request){
+    public Result<String> add(@Valid @RequestBody AddArchiveInfoRequest request, BindingResult result){
+        if (result.hasErrors()) {
+            for (ObjectError error : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
         request.setGeneral("活动类材料");
         return archiveInfoService.addArchiveInfo(request);
     }
@@ -64,7 +70,12 @@ public class ActivityPaperController {
     @PostMapping("/edit/{id}")
     @RequiresPermissions(value = "archiveInfo:activity:edit")
     @ApiOperation(value = "编辑文件")
-    public Result<String> edit(@PathVariable("id")String id, @RequestBody AddArchiveInfoRequest request){
+    public Result<String> edit(@PathVariable("id")String id, @Valid @RequestBody AddArchiveInfoRequest request, BindingResult result){
+        if (result.hasErrors()) {
+            for (ObjectError error : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
         return archiveInfoService.editArchiveInfo(id, request);
     }
 

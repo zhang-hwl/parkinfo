@@ -55,7 +55,12 @@ public class PublicityPaperController {
     @PostMapping("/add")
     @RequiresPermissions(value = "archiveInfo:publicity:add")
     @ApiOperation(value = "新增文件")
-    public Result<String> add(@RequestBody AddArchiveInfoRequest request){
+    public Result<String> add(@Valid @RequestBody AddArchiveInfoRequest request, BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError allError : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(allError.getDefaultMessage()).build();
+            }
+        }
         request.setGeneral("宣传类材料");
         return archiveInfoService.addArchiveInfo(request);
     }
@@ -63,7 +68,12 @@ public class PublicityPaperController {
     @PostMapping("/edit/{id}")
     @RequiresPermissions(value = "archiveInfo:publicity:edit")
     @ApiOperation(value = "编辑文件")
-    public Result<String> edit(@PathVariable("id")String id, @RequestBody AddArchiveInfoRequest request){
+    public Result<String> edit(@PathVariable("id")String id, @Valid @RequestBody AddArchiveInfoRequest request, BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError allError : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(allError.getDefaultMessage()).build();
+            }
+        }
         return archiveInfoService.editArchiveInfo(id, request);
     }
 

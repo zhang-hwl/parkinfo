@@ -7,6 +7,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.NotBlank;
+
 @Data
 public class CompeteGradenInfoRequest {
 
@@ -14,14 +16,17 @@ public class CompeteGradenInfoRequest {
     private String id;
 
     @ApiModelProperty(value = "版本标签")
+    @NotBlank(message = "版本标签不能为空")
     private String version;
 
     @Excel(name = "类型", width = 15)
     @ApiModelProperty(value = "类型")
+    @NotBlank(message = "类型不能为空")
     private String type;
 
     @Excel(name = "项目", width = 15)
     @ApiModelProperty(value = "项目")
+    @NotBlank(message = "项目不能为空")
     private String project;
 
     @Excel(name = "地方留存比例(%)", width = 15)

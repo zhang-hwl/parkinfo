@@ -14,10 +14,13 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -35,14 +38,24 @@ public class InfoEquipmentController {
     @PostMapping("/add")
     @ApiOperation(value = "新增信息化设备")
     @RequiresPermissions(value = "infoTotal:info:add")
-    public Result<String> addPolicyTotal(@RequestBody InfoEquipmentRequest request){
+    public Result<String> addPolicyTotal(@Valid @RequestBody InfoEquipmentRequest request, BindingResult result){
+        if (result.hasErrors()) {
+            for (ObjectError error : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
         return infoEquipmentService.add(request);
     }
 
     @PostMapping("/edit")
     @ApiOperation(value = "编辑信息化设备")
     @RequiresPermissions(value = "infoTotal:info:edit")
-    public Result<String> editPolicyTotal(@RequestBody InfoEquipmentRequest request){
+    public Result<String> editPolicyTotal(@Valid @RequestBody InfoEquipmentRequest request, BindingResult result){
+        if (result.hasErrors()) {
+            for (ObjectError error : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
         return infoEquipmentService.edit(request);
     }
 

@@ -22,10 +22,13 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -45,14 +48,24 @@ public class PolicyTotalController {
     @PostMapping("/add")
     @ApiOperation(value = "新增政策统计")
     @RequiresPermissions(value = "infoTotal:policy:add")
-    public Result<String> addPolicyTotal(@RequestBody PolicyTotalRequest request){
+    public Result<String> addPolicyTotal(@Valid @RequestBody PolicyTotalRequest request, BindingResult result){
+        if (result.hasErrors()) {
+            for (ObjectError error : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
         return policyTotalService.addPolicyTotal(request);
     }
 
     @PostMapping("/edit")
     @ApiOperation(value = "编辑政策统计")
     @RequiresPermissions(value = "infoTotal:policy:edit")
-    public Result<String> editPolicyTotal(@RequestBody PolicyTotalRequest request){
+    public Result<String> editPolicyTotal(@Valid @RequestBody PolicyTotalRequest request, BindingResult result){
+        if (result.hasErrors()) {
+            for (ObjectError error : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
         return policyTotalService.editPolicyTotal(request);
     }
 

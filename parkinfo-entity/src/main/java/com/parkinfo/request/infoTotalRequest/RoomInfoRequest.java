@@ -7,6 +7,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.NotBlank;
+
 @Data
 public class RoomInfoRequest{
 
@@ -14,9 +16,11 @@ public class RoomInfoRequest{
     private String id;
 
     @ApiModelProperty(value = "版本标签")
+    @NotBlank(message = "版本标签不能为空")
     private String version;
 
     @ApiModelProperty(value = "房间号")
+    @NotBlank(message = "房间号不能为空")
     private String roomId;
 
     @ApiModelProperty(value = "产权面积")

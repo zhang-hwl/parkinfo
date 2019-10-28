@@ -11,8 +11,11 @@ import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -26,7 +29,12 @@ public class SystemNoticeController {
     @PostMapping("/add")
     @ApiOperation(value = "新增公告")
     @RequiresPermissions("sysConfig:news:add")
-    public Result<String> addNotice(@RequestBody SystemNotice systemNotice){
+    public Result<String> addNotice(@Valid @RequestBody SystemNotice systemNotice, BindingResult result){
+        if (result.hasErrors()) {
+            for (ObjectError error : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
         return systemNoticeService.addNotice(systemNotice);
     }
 
@@ -54,7 +62,12 @@ public class SystemNoticeController {
     @PostMapping("/edit")
     @ApiOperation(value = "编辑公告")
     @RequiresPermissions("sysConfig:news:edit")
-    public Result<String> editNotice(@RequestBody SystemNotice systemNotice){
+    public Result<String> editNotice(@Valid @RequestBody SystemNotice systemNotice, BindingResult result){
+        if (result.hasErrors()) {
+            for (ObjectError error : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
         return systemNoticeService.editNotice(systemNotice);
     }
 

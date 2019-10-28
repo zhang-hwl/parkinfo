@@ -7,6 +7,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.NotBlank;
+
 @Data
 public class BigEventRequest {
 
@@ -14,18 +16,23 @@ public class BigEventRequest {
     private String id;
 
     @ApiModelProperty(value = "版本标签")
+    @NotBlank(message = "版本标签不能为空")
     private String version;
 
     @ApiModelProperty(value = "类型")
+    @NotBlank(message = "类型不能为空")
     private String type;
 
     @ApiModelProperty(value = "名称")
+    @NotBlank(message = "名称不能为空")
     private String name;
 
     @ApiModelProperty(value = "年份")
+    @NotBlank(message = "年份不能为空")
     private String year;
 
     @ApiModelProperty(value = "月份")
+    @NotBlank(message = "月份不能为空")
     private String month;
 
     @ApiModelProperty(value = "内容")

@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 @Data
@@ -17,9 +18,11 @@ public class CheckRecordRequest {
     private String id;
 
     @ApiModelProperty(value = "版本标签")
+    @NotBlank(message = "版本标签不能为空")
     private String version;
 
     @ApiModelProperty(value = "分类")
+    @NotBlank(message = "分类不能为空")
     private String classification;
 
     @ApiModelProperty(value = "运营标准事项")

@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 @Data
@@ -17,18 +18,21 @@ public class InfoEquipmentRequest {
     private String id;
 
     @ApiModelProperty(value = "版本标签")
+    @NotBlank(message = "版本标签不能为空")
     private String version;
 
     @ApiModelProperty(value = "编号")
     private String serialNumber;
 
     @ApiModelProperty(value = "设备名称")
+    @NotBlank(message = "设备名称不能为空")
     private String equipmentName;
 
     @ApiModelProperty(value = "基本参数")
     private String basicParam;
 
     @ApiModelProperty(value = "数量")
+    @NotBlank(message = "数量不能为空")
     private String number;
 
     @ApiModelProperty(value = "购买时间")
@@ -36,6 +40,7 @@ public class InfoEquipmentRequest {
     private Date buyTime;
 
     @ApiModelProperty(value = "目前状态")
+    @NotBlank(message = "目前状态不能为空")
     private String status;
 
     @ApiModelProperty(value = "保管人")
