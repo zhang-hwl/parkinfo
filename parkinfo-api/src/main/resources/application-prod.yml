@@ -60,6 +60,6 @@ logging:
     com:
       hhsj:
         mybatis: DEBUG
-  file: /developer/logs/parkinfo-web/parkinfo-web.log
+  file: /home/offer/developer/logs/parkinfo-web/parkinfo-web.log
   pattern:
     file: '%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{15} - %msg%n'
