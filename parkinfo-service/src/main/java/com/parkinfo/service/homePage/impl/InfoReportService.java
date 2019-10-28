@@ -90,8 +90,8 @@ public class InfoReportService {
                 }
             }
             reportResponse.setValue(String.valueOf(count));
-            BigDecimal test = new BigDecimal(Math.random()*1000).setScale(0, BigDecimal.ROUND_HALF_UP);
-            reportResponse.setValue(String.valueOf(test));  //测试数据
+//            BigDecimal test = new BigDecimal(Math.random()*1000).setScale(0, BigDecimal.ROUND_HALF_UP);
+//            reportResponse.setValue(String.valueOf(test));  //测试数据
             list.add(reportResponse);
         });
         response.setBaseReportResponses(list);
@@ -114,8 +114,8 @@ public class InfoReportService {
                 }
             }
             reportResponse.setValue(String.valueOf(count));
-            BigDecimal test = new BigDecimal(Math.random()*1000).setScale(0, BigDecimal.ROUND_HALF_UP);
-            reportResponse.setValue(String.valueOf(test));  //测试数据
+//            BigDecimal test = new BigDecimal(Math.random()*1000).setScale(0, BigDecimal.ROUND_HALF_UP);
+//            reportResponse.setValue(String.valueOf(test));  //测试数据
             list.add(reportResponse);
         });
         response.setBaseReportResponses(list);
@@ -138,8 +138,8 @@ public class InfoReportService {
                 }
             }
             reportResponse.setValue(String.valueOf(count));
-            BigDecimal test = new BigDecimal(Math.random()*1000).setScale(0, BigDecimal.ROUND_HALF_UP);
-            reportResponse.setValue(String.valueOf(test));  //测试数据
+//            BigDecimal test = new BigDecimal(Math.random()*1000).setScale(0, BigDecimal.ROUND_HALF_UP);
+//            reportResponse.setValue(String.valueOf(test));  //测试数据
             list.add(reportResponse);
         });
         response.setBaseReportResponses(list);
@@ -163,8 +163,8 @@ public class InfoReportService {
                 }
             }
             reportResponse.setValue(String.valueOf(count));
-            BigDecimal test = new BigDecimal(Math.random()*1000).setScale(0, BigDecimal.ROUND_HALF_UP);
-            reportResponse.setValue(String.valueOf(test));  //测试数据
+//            BigDecimal test = new BigDecimal(Math.random()*1000).setScale(0, BigDecimal.ROUND_HALF_UP);
+//            reportResponse.setValue(String.valueOf(test));  //测试数据
             list.add(reportResponse);
         });
         response.setBaseReportResponses(list);
@@ -188,8 +188,8 @@ public class InfoReportService {
                 }
             }
             reportResponse.setValue(String.valueOf(count));
-            BigDecimal test = new BigDecimal(Math.random()*1000).setScale(0, BigDecimal.ROUND_HALF_UP);
-            reportResponse.setValue(String.valueOf(test));  //测试数据
+//            BigDecimal test = new BigDecimal(Math.random()*1000).setScale(0, BigDecimal.ROUND_HALF_UP);
+//            reportResponse.setValue(String.valueOf(test));  //测试数据
             list.add(reportResponse);
         });
         response.setBaseReportResponses(list);
@@ -210,8 +210,8 @@ public class InfoReportService {
                  count = byId.size();
             }
             baseReportResponse.setValue(String.valueOf(count));
-            BigDecimal test = new BigDecimal(Math.random()*1000).setScale(0, BigDecimal.ROUND_HALF_UP);
-            baseReportResponse.setValue(String.valueOf(test));  //测试数据
+//            BigDecimal test = new BigDecimal(Math.random()*1000).setScale(0, BigDecimal.ROUND_HALF_UP);
+//            baseReportResponse.setValue(String.valueOf(test));  //测试数据
             list.add(baseReportResponse);
         });
         response.setBaseReportResponses(list);
@@ -226,14 +226,14 @@ public class InfoReportService {
         parkInfoResponses.forEach(temp -> {
             BaseReportResponse baseReportResponse = new BaseReportResponse();
             baseReportResponse.setKey(temp.getName());
-            List<ArchiveInfo> allActivity = activityPaperService.findAllActivity();
+            List<ArchiveInfo> allActivity = activityPaperService.findAllActivityByPark(temp.getId());
             Integer count = 0;
             if(allActivity != null){
                 count = allActivity.size();
             }
             baseReportResponse.setValue(String.valueOf(count));
-            BigDecimal test = new BigDecimal(Math.random()*1100).setScale(0, BigDecimal.ROUND_HALF_UP);
-            baseReportResponse.setValue(String.valueOf(test));  //测试数据
+//            BigDecimal test = new BigDecimal(Math.random()*1100).setScale(0, BigDecimal.ROUND_HALF_UP);
+//            baseReportResponse.setValue(String.valueOf(test));  //测试数据
             list.add(baseReportResponse);
         });
         response.setBaseReportResponses(list);
@@ -248,14 +248,14 @@ public class InfoReportService {
         parkInfoResponses.forEach(temp -> {
             BaseReportResponse baseReportResponse = new BaseReportResponse();
             baseReportResponse.setKey(temp.getName());
-            List<ArchiveInfo> allActivity = honorPaperService.findAllActivity();
+            List<ArchiveInfo> allActivity = honorPaperService.findAllActivityByPark(temp.getId());
             Integer count = 0;
             if(allActivity != null){
                 count = allActivity.size();
             }
             baseReportResponse.setValue(String.valueOf(count));
-            BigDecimal test = new BigDecimal(Math.random()*1200).setScale(0, BigDecimal.ROUND_HALF_UP);
-            baseReportResponse.setValue(String.valueOf(test));  //测试数据
+//            BigDecimal test = new BigDecimal(Math.random()*1200).setScale(0, BigDecimal.ROUND_HALF_UP);
+//            baseReportResponse.setValue(String.valueOf(test));  //测试数据
             list.add(baseReportResponse);
         });
         response.setBaseReportResponses(list);

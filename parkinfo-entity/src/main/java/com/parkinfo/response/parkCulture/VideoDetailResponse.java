@@ -35,6 +35,9 @@ public class VideoDetailResponse {
     @ApiModelProperty(value = "视频id")
     private String videoId;
 
+    @ApiModelProperty(value = "视频原文件名称")
+    private String fileName;
+
     @ApiModelProperty(value = "一级分类id")
     private String firstCategoryId;
 

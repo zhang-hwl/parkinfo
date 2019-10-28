@@ -212,7 +212,6 @@ public class VideoServiceImpl implements IVideoService {
             } else if (StringUtils.isNotBlank(request.getFirstCategoryId())) {
                 predicates.add(criteriaBuilder.equal(root.get("category").get("parent").get("id").as(String.class), request.getSecondCategoryId()));
             }
-            predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
@@ -224,7 +223,7 @@ public class VideoServiceImpl implements IVideoService {
 
     @Override
     public Result setVideo(SetVideoRequest request) {
-        Video video = this.checkVideo(request.getVideoId());
+        Video video = this.checkVideo(request.getId());
         BeanUtils.copyProperties(request, video);
         videoRepository.save(video);
         return Result.builder().success().message("保存视频成功").build();

@@ -22,4 +22,6 @@ public interface ArchiveInfoRepository extends JpaRepository<ArchiveInfo, String
 
     List<ArchiveInfo> findAllByGeneralIdAndDeleteIsFalse(String id);
 
+    List<ArchiveInfo> findAllByGeneralIdAndDeleteIsFalseAndParkInfo_Id(String id, String parkId);
+
 }

@@ -104,7 +104,7 @@ public class BusinessAmuseController {
 
     @PostMapping("/type/search/serve")
     @ApiOperation(value = "查看周边服务商分类")
-    @RequiresPermissions("parkService:serviceFlow:businessAmuse:type:search")
+//    @RequiresPermissions("parkService:serviceFlow:businessAmuse:type:search")
     public Result<List<BusinessAmuseTypeResponse>> searchBusinessAmuseServeType(){
         return businessAmuseService.findAllBusinessAmuseTypeByServe();
     }
@@ -118,7 +118,7 @@ public class BusinessAmuseController {
 
     @PostMapping("/type/search/happy")
     @ApiOperation(value = "查看周边配套娱乐分类")
-    @RequiresPermissions("parkService:serviceFlow:businessAmuse:type:search")
+//    @RequiresPermissions("parkService:serviceFlow:businessAmuse:type:search")
     public Result<List<BusinessAmuseTypeResponse>> searchBusinessAmuseHappyType(){
         return businessAmuseService.findAllBusinessAmuseTypeByHappy();
     }

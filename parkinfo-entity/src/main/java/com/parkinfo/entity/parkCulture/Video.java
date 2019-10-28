@@ -53,6 +53,11 @@ public class Video extends BaseEntity {
     private String videoId;
 
     /**
+     * 视频名称
+     */
+    private String fileName;
+
+    /**
      * 备注
      */
     private String remark;

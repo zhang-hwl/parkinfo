@@ -66,6 +66,7 @@ public class LiveServiceImpl implements ILiveService {
             if (request.getLiveStartTimeFrom() != null && request.getLiveStartTimeTo() != null) {
                 predicates.add(criteriaBuilder.between(root.get("liveStartTime"), request.getLiveStartTimeFrom(), request.getLiveStartTimeTo()));
             }
+            predicates.add(criteriaBuilder.equal(root.get("live").as(BroadcastType.class), BroadcastType.LIVE));
             predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));

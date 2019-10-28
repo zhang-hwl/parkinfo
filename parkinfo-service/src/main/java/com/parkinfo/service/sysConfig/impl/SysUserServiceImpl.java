@@ -222,7 +222,7 @@ public class SysUserServiceImpl implements ISysUserService {
             parkRoles.add(parkRole);
         }
         if(roles.contains(admin)){
-            if(parkRole.getName().equals(ParkRoleEnum.PARK_MANAGER.name()) || parkRole.getName().equals(ParkRoleEnum.AREA_MANAGER.name())){
+            if(parkRole.getName().equals(ParkRoleEnum.PARK_MANAGER.name())){
                 if(request.getParkIds() == null || request.getParkIds().size() == 0){
                     throw new NormalException("园区不能为空");
                 }
@@ -236,6 +236,18 @@ public class SysUserServiceImpl implements ISysUserService {
                         parkInfos.add(parkInfo);
                         parkInfo.setManager(newData);
                         parkInfoRepository.save(parkInfo);
+                    }
+                });
+            }
+            else if(parkRole.getName().equals(ParkRoleEnum.AREA_MANAGER.name())){
+                if(request.getParkIds() == null || request.getParkIds().size() == 0){
+                    throw new NormalException("园区不能为空");
+                }
+                request.getParkIds().forEach(id ->{
+                    Optional<ParkInfo> byParkId = parkInfoRepository.findByIdAndDeleteIsFalseAndAvailableIsTrue(id);
+                    if(byParkId.isPresent()){
+                        ParkInfo parkInfo = byParkId.get();
+                        parkInfos.add(parkInfo);
                     }
                 });
             }
