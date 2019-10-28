@@ -12,27 +12,25 @@ spring:
     default-encoding: UTF-8
   redis:
 #    host: 47.102.207.156
-    host: r-uf6z45ljpjufw6myqspd.redis.rds.aliyuncs.com
+#    外网host: r-uf6z45ljpjufw6myqspd.redis.rds.aliyuncs.com
+    host: r-uf6z45ljpjufw6myqs.redis.rds.aliyuncs.com
 #    database: 2
     database: 0
     port: 6379
     timeout: 5000
     lettuce:
       pool:
-        max-active: 20
-        max-idle: 8
+        max-active: 400
+        max-idle: 400
         max-wait: -1
         min-idle: 10
     password: Lynkbey888
   datasource:
-    url: jdbc:mysql://rm-uf642uoe0h9dx6p25xo.mysql.rds.aliyuncs.com/offer_ehrsip?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&failOverReadOnly=false&zeroDateTimeBehavior=convertToNull&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true
-#    url: jdbc:mysql://47.102.207.156:3306/parkinfo?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&failOverReadOnly=false&zeroDateTimeBehavior=convertToNull&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true
+    url: jdbc:mysql://rm-uf642uoe0h9dx6p25.mysql.rds.aliyuncs.com/offer_ehrsip?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&failOverReadOnly=false&zeroDateTimeBehavior=convertToNull&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true
+    #    外网url: jdbc:mysql://rm-uf642uoe0h9dx6p25xo.mysql.rds.aliyuncs.com/offer_ehrsip?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&failOverReadOnly=false&zeroDateTimeBehavior=convertToNull&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true
     username: ehrsip
     password: Password@123
     driver-class-name: com.mysql.cj.jdbc.Driver
-#    username: root
-#    password: Lynkbey888
-#    driver-class-name: net.sf.log4jdbc.DriverSpy
   jpa:
     database: mysql
     show-sql: true
@@ -62,6 +60,6 @@ logging:
     com:
       hhsj:
         mybatis: DEBUG
-  file: /developer/logs/lingouu-web/parkinfo-web.log
+  file: /developer/logs/parkinfo-web/parkinfo-web.log
   pattern:
     file: '%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{15} - %msg%n'
