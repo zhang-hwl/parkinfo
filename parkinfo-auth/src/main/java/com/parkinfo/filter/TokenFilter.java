@@ -96,6 +96,12 @@ public class TokenFilter extends BasicHttpAuthenticationFilter {
      */
     @Override
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
+        try {
+            String token = ((HttpServletRequest)request).getHeader("Token");
+            logger.info("--------token过期:{}--------",token);
+        }catch (Exception e){
+            logger.info("--------token不存在--------");
+        }
         this.responseError(response, "token已过期或不存在!");
         return Boolean.FALSE;
     }
