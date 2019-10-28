@@ -81,7 +81,7 @@ public class ProjectApplyController {
 
     @PostMapping("/changeStatus")
     @ApiOperation(value = "修改申报状态")
-    @RequiresPermissions("parkService:projectApply:projectApplyManage:changeStatus")
+    @RequiresPermissions("parkService:projectApply:projectApplyManage:searchApplyRecord")
     public Result<String> changeStatus(@Valid @RequestBody ChangeStatusRequest request,BindingResult result){
         if (result.hasErrors()){
             for (ObjectError error:result.getAllErrors()) {
@@ -91,19 +91,19 @@ public class ProjectApplyController {
         return projectApplyService.changeStatus(request);
     }
 
-    @PostMapping("/applyRecord/delete/{recordId}")
-    @ApiOperation(value = "删除企业申请记录")
-    @RequiresPermissions("parkService:projectApply:projectApplyManage:deleteApplyRecord")
-    public Result<String> deleteRecord(@PathVariable("recordId") String recordId){
-        return projectApplyService.deleteRecord(recordId);
-    }
+//    @PostMapping("/applyRecord/delete/{recordId}")
+//    @ApiOperation(value = "删除企业申请记录")
+//    @RequiresPermissions("parkService:projectApply:projectApplyManage:deleteApplyRecord")
+//    public Result<String> deleteRecord(@PathVariable("recordId") String recordId){
+//        return projectApplyService.deleteRecord(recordId);
+//    }
 
-    @PostMapping("/applyRecord/detail/{recordId}")
-    @ApiOperation(value = "查看企业申请记录详情")
-    @RequiresPermissions("parkService:projectApply:projectApplyManage:deleteApplyRecord")
-    public Result<ProjectApplyRecordResponse> detailRecord(@PathVariable("recordId") String recordId){
-        return projectApplyService.detailRecord(recordId);
-    }
+//    @PostMapping("/applyRecord/detail/{recordId}")
+//    @ApiOperation(value = "查看企业申请记录详情")
+//    @RequiresPermissions("parkService:projectApply:projectApplyManage:deleteApplyRecord")
+//    public Result<ProjectApplyRecordResponse> detailRecord(@PathVariable("recordId") String recordId){
+//        return projectApplyService.detailRecord(recordId);
+//    }
 
     @PostMapping("/find/type")
     @ApiOperation(value = "获取项目类型")

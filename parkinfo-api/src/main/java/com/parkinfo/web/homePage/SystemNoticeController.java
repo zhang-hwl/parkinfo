@@ -7,6 +7,7 @@ import com.parkinfo.request.notice.QueryNoticeRequest;
 import com.parkinfo.service.homePage.ISystemNoticeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -44,7 +45,7 @@ public class SystemNoticeController {
     }
 
     @PostMapping("/find/{count}")
-    @RequiresPermissions("sysConfig:news:search")
+    @RequiresPermissions(value = {"sysConfig:news:search", "HRhome:notice:search", "PERSONALhome:notice:search"}, logical = Logical.OR)
     @ApiOperation(value = "返回count条最新公告")
     public Result<List<SystemNotice>> findByLimit(@PathVariable("count") Integer count){
         return systemNoticeService.findByLimit(count);
