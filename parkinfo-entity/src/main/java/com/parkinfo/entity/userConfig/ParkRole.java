@@ -1,5 +1,6 @@
 package com.parkinfo.entity.userConfig;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.parkinfo.entity.base.BaseEntity;
 import lombok.Data;
@@ -42,4 +43,8 @@ public class ParkRole extends BaseEntity {
     @JsonIgnoreProperties(value = "permissions")
     private Set<ParkPermission> permissions = new HashSet<>();
 
+
+    @ManyToMany(mappedBy = "roles")
+    @JsonIgnore
+    private Set<ParkUser> users = new HashSet<>();
 }

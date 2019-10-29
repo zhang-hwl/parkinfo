@@ -115,6 +115,8 @@ public class SysRoleServiceImpl implements ISysRoleService {
         List<ParkPermission> parkPermissionList = parkPermissionRepository.findAllById(permissionIds);
         parkRole.setPermissions(new HashSet<>(parkPermissionList));
         parkRoleRepository.save(parkRole);
+        List<String> ids = parkRole.getUsers().stream().map(ParkUser::getId).collect(Collectors.toList());
+        tokenUtils.setExpired(ids);
         return Result.builder().success().message("设置权限成功").build();
     }
 
@@ -204,7 +206,7 @@ public class SysRoleServiceImpl implements ISysRoleService {
         if (parentParkPermission.getChildren() != null) {
             List<ParkPermission> childPermissionList = Lists.newArrayList();
             currentPermissionList.forEach(currentPermission -> {
-                if (currentPermission.getParent()!=null&&currentPermission.getParent().getId().equals(parentParkPermission.getId())) {
+                if (currentPermission.getParent() != null && currentPermission.getParent().getId().equals(parentParkPermission.getId())) {
                     this.convertTreePermission(currentPermissionList, currentPermission);
                     childPermissionList.add(currentPermission);
                 }
