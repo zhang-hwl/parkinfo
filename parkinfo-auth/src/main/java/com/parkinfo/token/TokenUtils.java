@@ -83,25 +83,24 @@ public class TokenUtils {
         }
     }
 
-    public ParkUser getLoginUser(){
+    public ParkUser getLoginUser() {
         ParkUserDTO parkUserDTO = this.getLoginUserDTO();
-        if (parkUserDTO!=null){
+        if (parkUserDTO != null) {
             return this.convertParkUserDTO(parkUserDTO);
         }
         return null;
     }
 
-    public ParkInfo getCurrentParkInfo(){
+    public ParkInfo getCurrentParkInfo() {
         ParkUserDTO loginUserDTO = this.getLoginUserDTO();
-        if (loginUserDTO != null){
+        if (loginUserDTO != null) {
             Optional<ParkInfo> parkInfoOptional = parkInfoRepository.findFirstByDeleteIsFalseAndAvailableIsTrueAndId(loginUserDTO.getCurrentParkId());
-            if (parkInfoOptional.isPresent()){
+            if (parkInfoOptional.isPresent()) {
                 return parkInfoOptional.get();
             }
         }
         return null;
     }
-
 
 
     public String getToken() {
@@ -124,6 +123,7 @@ public class TokenUtils {
 //        return (String) redisCacheTemplate.opsForValue().get(PHONE + phone);
 //    }
 //
+
     /**
      * 从数据库中查询
      *
@@ -147,7 +147,7 @@ public class TokenUtils {
      */
     public ParkUserDTO getUserInfo(String userId) {
         Optional<ParkUser> parkUserOptional = parkUserRepository.findById(userId);
-        if (!parkUserOptional.isPresent()){
+        if (!parkUserOptional.isPresent()) {
             return null;
         }
         ParkUser parkUser = parkUserOptional.get();
@@ -161,8 +161,8 @@ public class TokenUtils {
      * @param parkUser
      * @return
      */
-    public String generateTokeCode(ParkUser parkUser,String parkId) {
-        ParkUserDTO parkUserDTO = this.convertParkUser(parkUser,parkId);
+    public String generateTokeCode(ParkUser parkUser, String parkId) {
+        ParkUserDTO parkUserDTO = this.convertParkUser(parkUser, parkId);
         String value = System.currentTimeMillis() + new Random().nextInt() + "";
         //获取数据指纹，指纹是唯一的
         try {
@@ -180,7 +180,7 @@ public class TokenUtils {
         }
     }
 
-    public String refreshToken(String parkId){
+    public String refreshToken(String parkId) {
         ParkUserDTO parkUserDTO = this.getLoginUserDTO();
         String token = SecurityUtils.getSubject().getPrincipal().toString();
         parkUserDTO.setCurrentParkId(parkId);
@@ -207,18 +207,29 @@ public class TokenUtils {
         String token = SecurityUtils.getSubject().getPrincipal().toString();
         redisCacheTemplate.delete(token);
     }
-    private ParkUserDTO convertParkUser(ParkUser parkUser,String parkId){
+
+    /**
+     * 设置token过期
+     */
+    public void setExpired(List<String> ids) {
+        ids.forEach(id -> {
+            String token = (String) redisCacheTemplate.opsForValue().get(USER_SURVIVE + id);
+            redisCacheTemplate.delete(token);
+        });
+    }
+
+    private ParkUserDTO convertParkUser(ParkUser parkUser, String parkId) {
         ParkUserDTO parkUserDTO = this.convertParkUser(parkUser);
         parkUserDTO.setCurrentParkId(parkId);
         return parkUserDTO;
     }
 
-    private ParkUserDTO convertParkUser(ParkUser parkUser){
+    private ParkUserDTO convertParkUser(ParkUser parkUser) {
         ParkUserDTO parkUserDTO = new ParkUserDTO();
-        BeanUtils.copyProperties(parkUser,parkUserDTO);
+        BeanUtils.copyProperties(parkUser, parkUserDTO);
         List<ParkUserPermissionDTO> permissionDTOList = Lists.newArrayList();
         List<String> roleList = Lists.newArrayList();
-        if (parkUser.getRoles()!=null){
+        if (parkUser.getRoles() != null) {
             parkUser.getRoles().forEach(parkRole -> {
                 parkRole.getPermissions().forEach(parkPermission -> {
                     ParkUserPermissionDTO parkUserPermissionDTO = this.convertParkPermission(parkPermission);
@@ -232,17 +243,16 @@ public class TokenUtils {
         return parkUserDTO;
     }
 
-    private ParkUser convertParkUserDTO(ParkUserDTO parkUserDTO){
+    private ParkUser convertParkUserDTO(ParkUserDTO parkUserDTO) {
         ParkUser parkUser = new ParkUser();
-        BeanUtils.copyProperties(parkUserDTO,parkUser);
+        BeanUtils.copyProperties(parkUserDTO, parkUser);
         List<String> roleNames = parkUserDTO.getRole();
         Set<ParkRole> parkRoles = Sets.newHashSet();
         roleNames.forEach(temp -> {
-            if(temp.equals(ParkRoleEnum.HR_USER.toString()) || temp.equals(ParkRoleEnum.OFFICER.toString()) || temp.equals(ParkRoleEnum.PARK_USER.toString())){
+            if (temp.equals(ParkRoleEnum.HR_USER.toString()) || temp.equals(ParkRoleEnum.OFFICER.toString()) || temp.equals(ParkRoleEnum.PARK_USER.toString())) {
                 Optional<ParkRole> byName = parkRoleRepository.findByNameAndParkIdAndDeleteIsFalseAndAvailableIsTrue(temp, parkUserDTO.getCurrentParkId());
                 byName.ifPresent(parkRoles::add);
-            }
-            else{
+            } else {
                 Optional<ParkRole> byName = parkRoleRepository.findByNameAndDeleteIsFalseAndAvailableIsTrue(temp);
                 byName.ifPresent(parkRoles::add);
             }
@@ -251,11 +261,11 @@ public class TokenUtils {
         return parkUser;
     }
 
-    private ParkUserPermissionDTO convertParkPermission(ParkPermission parkPermission){
+    private ParkUserPermissionDTO convertParkPermission(ParkPermission parkPermission) {
         ParkUserPermissionDTO parkUserPermissionDTO = new ParkUserPermissionDTO();
-        BeanUtils.copyProperties(parkPermission,parkUserPermissionDTO);
+        BeanUtils.copyProperties(parkPermission, parkUserPermissionDTO);
         parkUserPermissionDTO.setPriority(parkPermission.getPriority());
-        if (parkPermission.getParent()!=null){
+        if (parkPermission.getParent() != null) {
             parkUserPermissionDTO.setParentId(parkPermission.getParent().getId());
         }
         return parkUserPermissionDTO;

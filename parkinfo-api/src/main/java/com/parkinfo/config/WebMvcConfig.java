@@ -19,6 +19,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowedHeaders("*")
                 .allowedMethods("*")
                 .allowedOrigins("*");
+//                .exposedHeaders("*");
     }
 
     @Override
