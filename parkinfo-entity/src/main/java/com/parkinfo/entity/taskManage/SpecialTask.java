@@ -1,5 +1,6 @@
 package com.parkinfo.entity.taskManage;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.parkinfo.entity.base.BaseEntity;
 import com.parkinfo.entity.userConfig.ParkInfo;
 import com.parkinfo.entity.userConfig.ParkPermission;
@@ -34,11 +35,13 @@ public class SpecialTask extends BaseEntity {
     /**
      * 开始时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date startTime;
 
     /**
      * 结束时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date endTime;
 
     /**
