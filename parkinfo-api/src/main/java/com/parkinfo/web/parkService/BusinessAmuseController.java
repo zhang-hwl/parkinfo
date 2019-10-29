@@ -46,7 +46,12 @@ public class BusinessAmuseController {
     @PostMapping("/add")
     @ApiOperation(value = "新增服务商")
     @RequiresPermissions("parkService:serviceFlow:businessAmuse:add")
-    public Result<String> addBusinessAmuse2(@RequestBody AddBusinessAmuseRequest request){
+    public Result<String> addBusinessAmuse2(@Valid @RequestBody AddBusinessAmuseRequest request, BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError allError : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(allError.getDefaultMessage()).build();
+            }
+        }
         return businessAmuseService.addBusinessAmuse(request);
     }
 
@@ -79,7 +84,12 @@ public class BusinessAmuseController {
     @PostMapping("/add/happy")
     @ApiOperation(value = "新增商务娱乐")
     @RequiresPermissions("parkService:serviceFlow:businessAmuse:happy:add")
-    public Result<String> addBusinessAmuse(@RequestBody AddBusinessAmuseRequest request){
+    public Result<String> addBusinessAmuse(@Valid @RequestBody AddBusinessAmuseRequest request, BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError allError : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(allError.getDefaultMessage()).build();
+            }
+        }
         return businessAmuseService.addBusinessAmuse(request);
     }
 
@@ -133,21 +143,36 @@ public class BusinessAmuseController {
     @PostMapping("/type/add/serve")
     @ApiOperation(value = "新增园区服务分类")
 //    @RequiresPermissions("parkService:serviceFlow:businessAmuse:type:add")
-    public Result<String> addBusinessAmuseServeType(@RequestBody AddBusinessAmuseTypeRequest request){
+    public Result<String> addBusinessAmuseServeType(@Valid @RequestBody AddBusinessAmuseTypeRequest request, BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError allError : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(allError.getDefaultMessage()).build();
+            }
+        }
         return businessAmuseService.addBusinessAmuseServeType(request);
     }
 
     @PostMapping("/type/add/happy")
     @ApiOperation(value = "新增园区配套娱乐分类")
 //    @RequiresPermissions("parkService:serviceFlow:businessAmuse:type:add")
-    public Result<String> addBusinessAmuseHappyType(@RequestBody AddBusinessAmuseTypeRequest request){
+    public Result<String> addBusinessAmuseHappyType(@Valid @RequestBody AddBusinessAmuseTypeRequest request, BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError allError : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(allError.getDefaultMessage()).build();
+            }
+        }
         return businessAmuseService.addBusinessAmuseHappyType(request);
     }
 
     @PostMapping("/type/edit")
     @ApiOperation(value = "编辑分类")
 //    @RequiresPermissions("parkService:serviceFlow:businessAmuse:type:edit")
-    public Result<String> editBusinessAmuseType(@RequestBody EditBusinessAmuseTypeRequest request){
+    public Result<String> editBusinessAmuseType(@Valid @RequestBody EditBusinessAmuseTypeRequest request, BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError allError : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(allError.getDefaultMessage()).build();
+            }
+        }
         return businessAmuseService.editBusinessAmuseType(request);
     }
 

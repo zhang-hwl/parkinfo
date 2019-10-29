@@ -21,6 +21,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
+import javax.naming.Binding;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -48,7 +49,12 @@ public class CommonServiceWindowController {
     @PostMapping("/add")
     @ApiOperation(value = "新增公共服务窗口")
     @RequiresPermissions("parkService:serviceFlow:commonServiceWindow:add")
-    public Result<String> addCommonServiceWindow(@RequestBody AddCommonServiceWindowRequest request){
+    public Result<String> addCommonServiceWindow(@Valid @RequestBody AddCommonServiceWindowRequest request, BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError allError : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(allError.getDefaultMessage()).build();
+            }
+        }
         return commonServiceWindowService.addCommonServiceWindow(request);
     }
 
@@ -91,7 +97,12 @@ public class CommonServiceWindowController {
 
     @PostMapping("/add/type")
     @ApiOperation(value = "新增公共服务窗口类型", notes = "小类名称为空时,新增大类")
-    public Result<String> addType(@RequestBody CommonServiceWindowTypeRequest request){
+    public Result<String> addType(@Valid @RequestBody CommonServiceWindowTypeRequest request, BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError allError : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(allError.getDefaultMessage()).build();
+            }
+        }
         return commonServiceWindowService.addType(request);
     }
 

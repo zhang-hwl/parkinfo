@@ -10,5 +10,6 @@ import javax.validation.constraints.NotBlank;
 public class AddBusinessAmuseTypeRequest {
 
     //类型
+    @NotBlank(message = "类型名称不能为空")
     private String type;
 }

@@ -55,7 +55,7 @@ public class MeetingRoomServiceImpl implements IMeetingRoomService {
                 predicates.add(criteriaBuilder.equal(root.get("id").as(String.class),request.getMeetingRoomId()));
             }
             if (StringUtils.isNotBlank(request.getName())){
-                predicates.add(criteriaBuilder.like(root.get("name").as(String.class),"%"+request.getName()+"%"));
+                predicates.add(criteriaBuilder.like(root.get("roomName").as(String.class),"%"+request.getName()+"%"));
             }
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class),Boolean.FALSE));
             predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class),Boolean.TRUE));

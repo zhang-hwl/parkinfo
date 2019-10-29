@@ -35,7 +35,12 @@ public class ProjectApplyController {
     @PostMapping("/add")
     @ApiOperation(value = "创建项目")
     @RequiresPermissions("parkService:projectApply:projectApply:add")
-    public Result<String> addProjectInfo(@RequestBody AddProjectInfoRequest request){
+    public Result<String> addProjectInfo(@Valid @RequestBody AddProjectInfoRequest request, BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError error:result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
         return projectApplyService.addProjectInfo(request);
     }
 

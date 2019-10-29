@@ -42,7 +42,12 @@ public class ActivityApplyController {
     @PostMapping("/add")
     @ApiOperation(value = "新增活动申请")
     @RequiresPermissions("parkService:serviceDemandInfo:activityApply:add")
-    public Result<String> addActivityApply(@RequestBody AddActivityApplyRequest request){
+    public Result<String> addActivityApply(@Valid @RequestBody AddActivityApplyRequest request, BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError allError : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(allError.getDefaultMessage()).build();
+            }
+        }
         return activityApplyService.addActivityApply(request);
     }
 

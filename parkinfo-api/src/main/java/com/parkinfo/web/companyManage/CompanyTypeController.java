@@ -42,7 +42,6 @@ public class CompanyTypeController {
 
     @PostMapping("/find")
     @ApiOperation(value = "查询分类")
-    @RequiresPermissions("company:type:search")
     public Result<List<CompanyTypeResponse>> findAll(){
         return companyTypeService.findAll();
     }

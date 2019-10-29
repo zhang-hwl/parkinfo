@@ -28,7 +28,12 @@ public class FeedbackController {
     @PostMapping("/add")
     @ApiOperation(value = "新增对运营方意见反馈")
     @RequiresPermissions("parkService:serviceDemandInfo:feedback:add")
-    public Result<String> addFeedback(@RequestBody AddFeedbackRequest request){
+    public Result<String> addFeedback(@Valid @RequestBody AddFeedbackRequest request, BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError allError : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(allError.getDefaultMessage()).build();
+            }
+        }
         return feedbackService.addFeedback(request);
     }
 
