@@ -42,7 +42,12 @@ public class LearningDataController {
     @PostMapping("/add")
     @ApiOperation(value = "新增学习资料")
     @RequiresPermissions("parkService:serviceFlow:learningData:add")
-    public Result<String> addLearningData(@RequestBody AddLearningDataRequest request){
+    public Result<String> addLearningData(@Valid @RequestBody AddLearningDataRequest request, BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError error:result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
         return learningDataService.addLearningData(request);
     }
 
