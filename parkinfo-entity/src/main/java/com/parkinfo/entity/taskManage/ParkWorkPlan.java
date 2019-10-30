@@ -58,6 +58,7 @@ public class ParkWorkPlan extends BaseEntity {
     /**
      * 反馈
      */
+    @Column(columnDefinition = "text")
     private String feedback;
 
     /**
@@ -73,5 +74,6 @@ public class ParkWorkPlan extends BaseEntity {
     /**
      * 结果反馈
      */
+    @Column(columnDefinition = "text")
     private String resultFeedback;
 }
