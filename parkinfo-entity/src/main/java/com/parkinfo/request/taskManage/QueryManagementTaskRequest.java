@@ -1,5 +1,6 @@
 package com.parkinfo.request.taskManage;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.parkinfo.enums.TaskType;
 import com.parkinfo.request.base.PageRequest;
 import io.swagger.annotations.ApiModelProperty;
@@ -21,9 +22,11 @@ import java.util.Date;
 public class QueryManagementTaskRequest extends PageRequest {
 
     @ApiModelProperty(value = "提交时间起")
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     private Date createTimeFrom;
 
     @ApiModelProperty(value = "提交时间止")
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     private Date createTimeTo;
 
 
