@@ -23,10 +23,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class EnterPaperService extends ArchiveInfoServiceImpl {
@@ -49,7 +46,7 @@ public class EnterPaperService extends ArchiveInfoServiceImpl {
         List<String> roles = loginUserDTO.getRole();
         ArchiveInfoType archiveInfoType = byType.get();
         String general = archiveInfoType.getId();
-        Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.DEFAULT_DIRECTION.DESC, "uploadTime");
+        Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "uploadTime");
         Specification<ArchiveInfo> specification = new Specification<ArchiveInfo>() {
             @Override
             public Predicate toPredicate(Root<ArchiveInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder cb) {
@@ -66,14 +63,11 @@ public class EnterPaperService extends ArchiveInfoServiceImpl {
                 if(StringUtils.isNotBlank(request.getFileName())){
                     predicates.add(cb.like(root.get("fileName").as(String.class), "%"+request.getFileName()+"%"));  //根据文件名模糊查询
                 }
-                if(request.getStartTime() != null){
-                    predicates.add(cb.greaterThanOrEqualTo(root.get("uploadTime").as(Date.class), request.getStartTime()));  //大于等于开始时间
-                }
-                if(request.getEndTime() != null){
-                    predicates.add(cb.lessThanOrEqualTo(root.get("uploadTime").as(Date.class), request.getEndTime())); //小于等于结束时间
-                }
-                if(StringUtils.isNotBlank(request.getRemark())){
-                    predicates.add(cb.like(root.get("remark").as(String.class), "%"+request.getRemark()+"%")); //文档说明
+                if(request.getStartTime() != null && request.getEndTime() != null){
+                    Calendar nextDay = new GregorianCalendar();
+                    nextDay.setTime(request.getStartTime());
+                    nextDay.add(Calendar.DATE,1);
+                    predicates.add(cb.between(root.get("uploadTime").as(Date.class), request.getStartTime(),nextDay.getTime()));  //大于等于开始时间
                 }
                 if(request.getExternal() != null){
                     predicates.add(cb.equal(root.get("external").as(Boolean.class), request.getExternal())); //是否对外

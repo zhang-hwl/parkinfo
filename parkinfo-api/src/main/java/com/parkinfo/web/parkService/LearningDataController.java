@@ -13,6 +13,7 @@ import com.parkinfo.response.parkService.LearnDataTypeResponse;
 import com.parkinfo.response.parkService.LearningDateResponse;
 import com.parkinfo.request.parkService.learningData.SearchLearningDateRequest;
 import com.parkinfo.service.parkService.ILearningDataService;
+import com.sun.org.apache.regexp.internal.RE;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -91,13 +92,23 @@ public class LearningDataController {
 
     @PostMapping("/add/type")
     @ApiOperation(value = "新增学习资料类型", notes = "小类名称为空时,新增大类")
-    public Result<String> addType(@RequestBody LearnDataTypeRequest request){
+    public Result<String> addType(@Valid @RequestBody LearnDataTypeRequest request,BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError allError : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(allError.getDefaultMessage()).build();
+            }
+        }
         return learningDataService.addType(request);
     }
 
     @PostMapping("/edit/type")
     @ApiOperation(value = "编辑学习资料类型",notes = "小类id为空时,大类")
-    public Result<String> editType(@RequestBody LearnDataTypeRequest request){
+    public Result<String> editType(@Valid @RequestBody LearnDataTypeRequest request,BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError allError : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(allError.getDefaultMessage()).build();
+            }
+        }
         return learningDataService.editType(request);
     }
 

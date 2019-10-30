@@ -63,7 +63,7 @@ public class PersonalCloudServiceImpl implements IPersonalCloudService {
     }
 
     @Override
-    public Result<String> uploadFile(HttpServletRequest servletRequest, UploadFileRequest request) {
+    public Result<CloudDisk> uploadFile(HttpServletRequest servletRequest, UploadFileRequest request) {
         ParkUser loginUser = tokenUtils.getLoginUser();
         if(loginUser == null){
             throw new NormalException("token不存在或已过期");
@@ -73,7 +73,6 @@ public class PersonalCloudServiceImpl implements IPersonalCloudService {
         CloudDisk cloudDisk = new CloudDisk();
         cloudDisk.setUploadTime(new Date());
         cloudDisk.setRemark(request.getRemark());
-        cloudDisk.setParkUser(loginUser);
         cloudDisk.setDelete(true);
         cloudDisk.setAvailable(true);
         cloudDisk.setFileName(filename);
@@ -98,8 +97,8 @@ public class PersonalCloudServiceImpl implements IPersonalCloudService {
         String path = "parkInfo/"+tokenUtils.getCurrentParkInfo().getId()+"/cloud/"+loginUser.getId();
         String url = ossService.MultipartFileUpload(servletRequest, path);
         cloudDisk.setFileUrl(url);
-        cloudDiskRepository.save(cloudDisk);
-        return Result.<String>builder().success().data(cloudDisk.getId()).build();
+//        cloudDiskRepository.save(cloudDisk);
+        return Result.<CloudDisk>builder().success().data(cloudDisk).build();
     }
 
     @Override
@@ -129,13 +128,14 @@ public class PersonalCloudServiceImpl implements IPersonalCloudService {
     }
 
     @Override
-    public Result<String> changeStatus(String id) {
-        Optional<CloudDisk> cloudDiskOptional = cloudDiskRepository.findById(id);
-        if (cloudDiskOptional.isPresent()){
-            CloudDisk cloudDisk = cloudDiskOptional.get();
-            cloudDisk.setDelete(Boolean.FALSE);
-            cloudDiskRepository.save(cloudDisk);
+    public Result<String> changeStatus(CloudDisk request) {
+        if (StringUtils.isBlank(request.getFileUrl())){
+            throw new NormalException("请上传文件");
         }
+        request.setParkUser(tokenUtils.getLoginUser());
+        request.setDelete(Boolean.FALSE);
+        request.setAvailable(Boolean.TRUE);
+        cloudDiskRepository.save(request);
         return Result.<String>builder().success().message("上传成功").build();
     }
 

@@ -1,6 +1,7 @@
 package com.parkinfo.service.personalCloud;
 
 import com.parkinfo.common.Result;
+import com.parkinfo.entity.personalCloud.CloudDisk;
 import com.parkinfo.request.personalCloud.*;
 import com.parkinfo.response.personalCloud.DownloadResponse;
 import com.parkinfo.response.personalCloud.PersonalCloudResponse;
@@ -19,7 +20,7 @@ public interface IPersonalCloudService {
      */
     Result<Page<PersonalCloudResponse>> findAll(QueryPersonalCloudRequest request);
 
-    Result<String> uploadFile(HttpServletRequest request, UploadFileRequest fileRequest);
+    Result<CloudDisk> uploadFile(HttpServletRequest request, UploadFileRequest fileRequest);
 
     Result<String> delete(String id);
 
@@ -39,8 +40,8 @@ public interface IPersonalCloudService {
 
     /**
      * 确认上传文件
-     * @param id
+     * @param request
      * @return
      */
-    Result<String> changeStatus(String id);
+    Result<String> changeStatus(CloudDisk request);
 }
