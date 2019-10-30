@@ -81,7 +81,8 @@ public class CheckRecordServiceImpl implements ICheckRecordService {
     public Result<Page<CheckRecordRequest>> findByVersion(QueryByVersionRequest request) {
         int flag = judgePremission();   //判断查看权限
         if(flag == -1){
-            return Result.<Page<CheckRecordRequest>>builder().success().data(null).build();
+            List<CheckRecordRequest> list = Lists.newArrayList();
+            return Result.<Page<CheckRecordRequest>>builder().success().data(new PageImpl<>(list)).build();
         }
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
         Specification<CheckRecord> specification = (Specification<CheckRecord>) (root, criteriaQuery, criteriaBuilder) -> {
@@ -94,7 +95,7 @@ public class CheckRecordServiceImpl implements ICheckRecordService {
             }
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
             predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
-            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
         Page<CheckRecord> all = checkRecordRepository.findAll(specification, pageable);
         List<CheckRecordRequest> list = Lists.newArrayList();

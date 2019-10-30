@@ -86,7 +86,8 @@ public class PolicyTotalServiceImpl implements IPolicyTotalService {
     public Result<Page<PolicyTotalRequest>> findByVersion(QueryByVersionRequest request) {
         int flag = judgePremission();   //判断查看权限
         if(flag == -1){
-            return Result.<Page<PolicyTotalRequest>>builder().success().data(null).build();
+            List<PolicyTotalRequest> list = Lists.newArrayList();
+            return Result.<Page<PolicyTotalRequest>>builder().success().data(new PageImpl<>(list)).build();
         }
 //        int flag = 1;
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");

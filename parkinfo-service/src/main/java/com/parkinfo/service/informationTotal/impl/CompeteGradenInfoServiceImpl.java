@@ -81,7 +81,8 @@ public class CompeteGradenInfoServiceImpl implements ICompeteGradenInfoService {
     public Result<Page<CompeteGradenInfoRequest>> findByVersion(QueryByVersionRequest request) {
         int flag = judgePremission();   //判断查看权限
         if (flag == -1) {
-            return Result.<Page<CompeteGradenInfoRequest>>builder().success().data(null).build();
+            List<CompeteGradenInfoRequest> list = new ArrayList<>();
+            return Result.<Page<CompeteGradenInfoRequest>>builder().success().data(new PageImpl<>(list)).build();
         }
 //        int flag = 1;
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
