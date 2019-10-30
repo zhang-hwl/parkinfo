@@ -8,10 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Table;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -31,12 +28,14 @@ public class WorkPlanDetail extends BaseEntity {
      * 工作内容
      */
     @ApiModelProperty(value = "工作内容")
+    @Column(columnDefinition = "text")
     private String workContent;
 
     /**
      * 解决方案
      */
     @ApiModelProperty(value = "解决方案")
+    @Column(columnDefinition = "text")
     private String solution;
 
     /**

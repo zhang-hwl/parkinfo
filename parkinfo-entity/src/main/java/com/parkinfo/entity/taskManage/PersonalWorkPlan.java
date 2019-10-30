@@ -51,6 +51,7 @@ public class PersonalWorkPlan extends BaseEntity {
     /**
      * 反馈
      */
+    @Column(columnDefinition = "text")
     private String feedback;
 
     /**
@@ -62,4 +63,10 @@ public class PersonalWorkPlan extends BaseEntity {
      * 是否完成
      */
     private Boolean finished;
+
+    /**
+     * 反馈
+     */
+    @Column(columnDefinition = "text")
+    private String resultFeedback;
 }
