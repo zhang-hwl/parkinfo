@@ -1,7 +1,9 @@
 package com.parkinfo.web.personalCloud;
 
 import com.parkinfo.common.Result;
+import com.parkinfo.entity.personalCloud.CloudDisk;
 import com.parkinfo.request.personalCloud.*;
+import com.parkinfo.response.login.LoginResponse;
 import com.parkinfo.response.personalCloud.PersonalCloudResponse;
 import com.parkinfo.service.personalCloud.IPersonalCloudService;
 import io.swagger.annotations.Api;
@@ -9,6 +11,8 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,17 +35,17 @@ public class PersonalCloudController {
 
     @PostMapping("/uploadFile")
     @ApiOperation("上传文件")
-    public Result<String> uploadFile(HttpServletRequest request, @RequestParam("remark") String remark, @RequestParam("multipartFile") MultipartFile multipartFile) {
+    public Result<CloudDisk> uploadFile(HttpServletRequest request, @RequestParam("remark") String remark, @RequestParam("multipartFile") MultipartFile multipartFile) {
         UploadFileRequest fileRequest = new UploadFileRequest();
         fileRequest.setRemark(remark);
         fileRequest.setMultipartFile(multipartFile);
         return personalCloudService.uploadFile(request, fileRequest);
     }
 
-    @PostMapping("/changeStatus/{id}")
+    @PostMapping("/changeStatus")
     @ApiOperation("确认上传文件")
-    public Result<String> changeStatus(@PathVariable("id") String id) {
-        return personalCloudService.changeStatus(id);
+    public Result<String> changeStatus(@RequestBody CloudDisk request) {
+        return personalCloudService.changeStatus(request);
     }
 
     @PostMapping("/delete/{id}")
