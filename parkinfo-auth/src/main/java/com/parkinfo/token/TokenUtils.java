@@ -214,7 +214,9 @@ public class TokenUtils {
     public void setExpired(List<String> ids) {
         ids.forEach(id -> {
             String token = (String) redisCacheTemplate.opsForValue().get(USER_SURVIVE + id);
-            redisCacheTemplate.delete(token);
+            if (token != null && this.getLoginUserDTO(token) != null){
+                redisCacheTemplate.delete(token);
+            }
         });
     }
 
