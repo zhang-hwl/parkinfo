@@ -3,6 +3,7 @@ package com.parkinfo.request.taskManage;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;
@@ -23,6 +24,8 @@ public class AddManagementTaskRequest {
      * 任务名称
      */
     @ApiModelProperty(value = "任务名称")
+    @Length(min = 0,max = 100,message = "任务名称不超过100个字")
+    @NotNull(message = "任务名称不能为空")
     private String name;
 
     /**
@@ -57,5 +60,6 @@ public class AddManagementTaskRequest {
      * 内容
      */
     @ApiModelProperty(value = "内容")
+    @Length(min = 0,max = 255,message = "内容不超过255个字")
     private String content;
 }

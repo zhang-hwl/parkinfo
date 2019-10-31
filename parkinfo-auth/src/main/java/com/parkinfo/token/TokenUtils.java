@@ -14,6 +14,7 @@ import com.parkinfo.repository.userConfig.ParkInfoRepository;
 import com.parkinfo.repository.userConfig.ParkRoleRepository;
 import com.parkinfo.repository.userConfig.ParkUserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -212,9 +213,8 @@ public class TokenUtils {
      * 设置token过期
      */
     public void setExpired(List<String> ids) {
-        ids.forEach(id -> {
-            String token = (String) redisCacheTemplate.opsForValue().get(USER_SURVIVE + id);
-            if (token != null && this.getLoginUserDTO(token) != null){
+        ids.stream().map(id -> (String) redisCacheTemplate.opsForValue().get(USER_SURVIVE + id)).forEach(token -> {
+            if (token != null&&redisCacheTemplate.hasKey(token)) {
                 redisCacheTemplate.delete(token);
             }
         });

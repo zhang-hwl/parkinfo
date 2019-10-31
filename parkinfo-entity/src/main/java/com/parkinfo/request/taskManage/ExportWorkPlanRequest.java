@@ -3,6 +3,7 @@ package com.parkinfo.request.taskManage;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -16,5 +17,6 @@ import java.util.List;
 public class ExportWorkPlanRequest {
 
     @ApiModelProperty(value = "任务id")
+    @NotNull(message = "导出任务不能为空")
     private List<String> ids;
 }

@@ -6,7 +6,9 @@ import com.parkinfo.request.base.PageRequest;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
@@ -21,6 +23,8 @@ import java.util.Date;
 public class QueryWorkPlanListRequest extends PageRequest {
 
     @ApiModelProperty(value = "任务名称")
+    @Length(min = 0,max = 100,message = "任务名称不超过100个字")
+    @NotNull(message = "任务名称不能为空")
     private String name;
 
     @ApiModelProperty(value = "类型")
