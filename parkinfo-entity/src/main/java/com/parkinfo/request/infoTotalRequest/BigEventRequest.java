@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
 public class BigEventRequest {
@@ -40,6 +41,6 @@ public class BigEventRequest {
     private String content;
 
     @ApiModelProperty(value = "关联园区")
-    @NotBlank(message = "所属园区不能为空")
+    @NotNull(message = "所属园区不能为空")
     private ParkInfoResponse parkInfoResponse;
 }

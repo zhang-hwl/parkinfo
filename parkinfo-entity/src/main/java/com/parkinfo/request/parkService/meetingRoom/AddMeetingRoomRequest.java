@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
 public class AddMeetingRoomRequest {
@@ -14,7 +15,7 @@ public class AddMeetingRoomRequest {
     private String roomName;
 
     @ApiModelProperty(value = "容纳人数")
-    @NotBlank(message = "容纳人数不能为空")
+    @NotNull(message = "容纳人数不能为空")
     private Integer capacity;
 
     @ApiModelProperty(value = "图片")

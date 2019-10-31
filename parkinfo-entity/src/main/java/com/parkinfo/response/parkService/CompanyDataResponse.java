@@ -57,7 +57,7 @@ public class CompanyDataResponse {
     private String localCompany;
 
     @ApiModelProperty(value = "公司成立日期")
-    @NotBlank(message = "公司成立日期不能为空")
+    @NotNull(message = "公司成立日期不能为空")
     private Date foundTime;
 
     @ApiModelProperty(value = "入驻状态,WAITING,ENTERED,LEAVE,未入驻,已入住,已离园")

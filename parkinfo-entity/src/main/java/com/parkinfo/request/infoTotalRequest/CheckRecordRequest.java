@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Data
@@ -43,11 +44,11 @@ public class CheckRecordRequest {
 
     @ApiModelProperty(value = "点检时间")
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
-    @NotBlank(message = "点检时间不能为空")
+    @NotNull(message = "点检时间不能为空")
     private Date checkDate;
 
     @ApiModelProperty(value = "关联园区")
-    @NotBlank(message = "所属园区不能为空")
+    @NotNull(message = "所属园区不能为空")
     private ParkInfoResponse parkInfoResponse;
 
 }
