@@ -21,7 +21,7 @@ public class UploadController {
     private IUploadService uploadService;
 
     @PostMapping("/")
-    @RequiresAuthentication
+//    @RequiresAuthentication
     @ApiOperation("文件上传")
     public Result<String> freightFileUpload(HttpServletRequest request){
         return uploadService.FileUpload(request);
