@@ -15,7 +15,7 @@ public class AddUserRequest {
     private String account;
 
     @ApiModelProperty(value = "昵称")
-
+    @NotBlank(message = "昵称不能为空")
     private String nickname;
 
     @ApiModelProperty(value = "头像url")
@@ -33,6 +33,7 @@ public class AddUserRequest {
 
     //身份证
     @ApiModelProperty("身份证")
+    @NotBlank(message = "身份证不能为空")
     private String idCard;
 
     //学位证书
@@ -45,10 +46,12 @@ public class AddUserRequest {
 
     //紧急联系人
     @ApiModelProperty("紧急联系人")
+    @NotBlank(message = "紧急联系人不能为空")
     private String urgencyContent;
 
     //紧急联系电话
     @ApiModelProperty("紧急联系电话")
+    @NotBlank(message = "紧急联系电话不能为空")
     private String urgencyPhone;
 
     @ApiModelProperty("企业id，角色为HR时必传")
