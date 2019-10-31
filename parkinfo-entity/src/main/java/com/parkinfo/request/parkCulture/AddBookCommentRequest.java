@@ -2,6 +2,7 @@ package com.parkinfo.request.parkCulture;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 
@@ -21,5 +22,6 @@ public class AddBookCommentRequest {
 
     @ApiModelProperty(value = "评论内容")
     @NotBlank(message = "评论不能为空")
+    @Length(min = 0,max = 255,message = "评论不能超过255个字符")
     private String comment;
 }

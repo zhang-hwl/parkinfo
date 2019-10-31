@@ -25,5 +25,6 @@ public class AddBookCategoryRequest {
     private String name;
 
     @ApiModelProperty(value = "分类描述")
+    @Length(min = 0,max = 255,message = "分类描述不能超过255个字符")
     private String intro;
 }

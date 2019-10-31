@@ -2,6 +2,7 @@ package com.parkinfo.request.parkCulture;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 
@@ -25,10 +26,12 @@ public class AddVideoRequest {
 
     @ApiModelProperty(value = "视频名称")
     @NotBlank(message = "视频名称不能为空")
+    @Length(min = 0,max = 100,message = "视频名称不能超过100个字符")
     private String name;
 
     @ApiModelProperty(value = "视频原文件名称")
     @NotBlank(message = "视频原文件名称不能为空")
+    @Length(min = 0,max = 100,message = "视频原文件名称不能超过100个字符")
     private String fileName;
 
     @ApiModelProperty(value = "videoId")
@@ -36,5 +39,6 @@ public class AddVideoRequest {
     private String videoId;
 
     @ApiModelProperty(value = "备注")
+    @Length(min = 0,max = 255,message = "视频备注不能超过255个字符")
     private String remark;
 }

@@ -5,6 +5,7 @@ import com.parkinfo.request.base.PageRequest;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.validator.constraints.Length;
 
 import java.util.Date;
 
@@ -26,6 +27,7 @@ public class QueryVideoListRequest extends PageRequest {
     private String secondCategoryId;
 
     @ApiModelProperty(value = "视频名称")
+    @Length(min = 0,max = 100,message = "视频名称不能超过100个字符")
     private String name;
 
     @ApiModelProperty(value = "创建时间起")

@@ -7,6 +7,7 @@ import com.parkinfo.enums.AnswerType;
 import com.parkinfo.enums.QuestionType;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -31,6 +32,7 @@ public class AddQuestionRequest {
     @ApiModelProperty(value = "问题")
     @NotBlank(message = "问题不能为空")
     @Excel(name = "问题")
+    @Length(min = 0,max = 100,message = "问题不能超过100个字符")
     private String question;
 
     @ApiModelProperty(value = "问题类型(选择，判断)")
@@ -43,6 +45,7 @@ public class AddQuestionRequest {
      */
     @ApiModelProperty(value = "A选项")
     @Excel(name = "A选项")
+    @Length(min = 0,max = 100,message = "A选项不能超过100个字符")
     private String optionA;
 
     /**
@@ -50,6 +53,7 @@ public class AddQuestionRequest {
      */
     @ApiModelProperty(value = "B选项")
     @Excel(name = "B选项")
+    @Length(min = 0,max = 100,message = "B选项不能超过100个字符")
     private String optionB;
 
     /**
@@ -57,6 +61,7 @@ public class AddQuestionRequest {
      */
     @ApiModelProperty(value = "C选项")
     @Excel(name = "C选项")
+    @Length(min = 0,max = 100,message = "C选项不能超过100个字符")
     private String optionC;
 
     /**
@@ -64,6 +69,7 @@ public class AddQuestionRequest {
      */
     @ApiModelProperty(value = "D选项")
     @Excel(name = "D选项")
+    @Length(min = 0,max = 100,message = "D选项不能超过100个字符")
     private String optionD;
 
     /**
@@ -71,6 +77,7 @@ public class AddQuestionRequest {
      */
     @ApiModelProperty(value = "T选项")
     @Excel(name = "T选项")
+    @Length(min = 0,max = 100,message = "T选项不能超过100个字符")
     private String optionT;
 
     /**
@@ -78,6 +85,7 @@ public class AddQuestionRequest {
      */
     @ApiModelProperty(value = "F选项")
     @Excel(name = "F选项")
+    @Length(min = 0,max = 100,message = "F选项不能超过100个字符")
     private String optionF;
 
     /**

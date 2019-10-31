@@ -6,6 +6,7 @@ import com.parkinfo.request.base.PageRequest;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.validator.constraints.Length;
 
 import java.util.Date;
 
@@ -21,6 +22,7 @@ import java.util.Date;
 public class QueryLiveListRequest extends PageRequest {
 
     @ApiModelProperty(value = "标题")
+    @Length(min = 0,max = 100,message = "直播标题不能超过100个字符")
     private String title;
 
     @ApiModelProperty(value = "直播状态")
