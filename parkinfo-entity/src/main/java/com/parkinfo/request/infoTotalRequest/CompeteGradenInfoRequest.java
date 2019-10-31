@@ -59,6 +59,7 @@ public class CompeteGradenInfoRequest {
     private String remark;
 
     @ApiModelProperty(value = "关联园区")
+    @NotBlank(message = "所属园区不能为空")
     private ParkInfoResponse parkInfoResponse;
 
 }

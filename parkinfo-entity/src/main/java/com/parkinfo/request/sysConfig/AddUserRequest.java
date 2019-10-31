@@ -15,6 +15,7 @@ public class AddUserRequest {
     private String account;
 
     @ApiModelProperty(value = "昵称")
+
     private String nickname;
 
     @ApiModelProperty(value = "头像url")

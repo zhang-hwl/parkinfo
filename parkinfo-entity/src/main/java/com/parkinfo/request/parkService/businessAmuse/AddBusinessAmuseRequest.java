@@ -15,15 +15,19 @@ public class AddBusinessAmuseRequest {
     private String companyName;
 
     @ApiModelProperty("联系地址")
+    @NotBlank(message = "联系地址不能为空")
     private String contactAddress;
 
     @ApiModelProperty("联系人")
+    @NotBlank(message = "联系人不能为空")
     private String contacts;
 
     @ApiModelProperty("联系方式")
+    @NotBlank(message = "联系人不能为空")
     private String contactNumber;
 
     @ApiModelProperty("营业时间")
+    @NotBlank(message = "联系人不能为空")
     private String businessHours;
 
     @ApiModelProperty("小类 id")

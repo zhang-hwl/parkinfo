@@ -11,8 +11,11 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -26,7 +29,12 @@ public class InfoVersionController {
     @PostMapping("/add")
     @ApiOperation(value = "新增版本标签")
     @RequiresPermissions("infoTotal:version:add")
-    public Result<String> addVersion(@RequestBody InfoVersionResponse response){
+    public Result<String> addVersion(@Valid @RequestBody InfoVersionResponse response, BindingResult result){
+        if (result.hasErrors()) {
+            for (ObjectError error : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
         return infoVersionService.add(response);
     }
 

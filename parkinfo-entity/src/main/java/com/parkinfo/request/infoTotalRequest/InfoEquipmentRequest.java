@@ -37,6 +37,7 @@ public class InfoEquipmentRequest {
 
     @ApiModelProperty(value = "购买时间")
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @NotBlank(message = "购买时间不能为空")
     private Date buyTime;
 
     @ApiModelProperty(value = "目前状态")
@@ -50,12 +51,14 @@ public class InfoEquipmentRequest {
     private String head;
 
     @ApiModelProperty(value = "照片")
+    @NotBlank(message = "照片不能为空")
     private String img;
 
     @ApiModelProperty(value = "备注")
     private String remark;
 
     @ApiModelProperty(value = "关联园区")
+    @NotBlank(message = "所属园区不能为空")
     private ParkInfoResponse parkInfoResponse;
 
 }

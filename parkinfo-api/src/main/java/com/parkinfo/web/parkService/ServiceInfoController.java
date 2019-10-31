@@ -33,7 +33,12 @@ public class ServiceInfoController {
     @PostMapping("/save")
     @ApiOperation(value = "保存服务需求信息详情")
     @RequiresPermissions("parkService:serviceDemandInfo:serviceInfo:save")
-    public Result<String> addCompanyDataResponse(@RequestBody CompanyDataResponse companyDataResponse){
+    public Result<String> addCompanyDataResponse(@Valid @RequestBody CompanyDataResponse companyDataResponse, BindingResult result){
+        if (result.hasErrors()){
+            for (ObjectError error:result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
         return serviceInfoService.addCompanyDataResponse(companyDataResponse);
     }
 }

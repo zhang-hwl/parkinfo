@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,22 +33,28 @@ public class ModifyCompanyRequest {
     private String position;
 
     @ApiModelProperty(value = "主要业务")
+    @NotBlank(message = "主要业务不能为空")
     private String mainBusiness;
 
     @ApiModelProperty(value = "公司成立日期")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @NotNull(message = "公司成立时间不能为空")
     private Date foundTime;
 
     @ApiModelProperty(value = "是否为百强企业")
+    @NotBlank(message = "是否为百强企业不能为空")
     private String hundredCompany;
 
     @ApiModelProperty(value = "是否为本地企业")
+    @NotBlank(message = "是否为本地企业不能为空")
     private String localCompany;
 
     @ApiModelProperty(value = "公司注册资金")
+    @NotBlank(message = "公司注册资金不能为空")
     private String registerMoney;
 
     @ApiModelProperty(value = "需求面积")
+    @NotBlank(message = "需求面积不能为空")
     private String requireArea;
 
     @ApiModelProperty(value = "入驻信息")

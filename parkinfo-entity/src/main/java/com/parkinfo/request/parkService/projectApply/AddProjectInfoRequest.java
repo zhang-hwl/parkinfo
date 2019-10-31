@@ -13,9 +13,11 @@ public class AddProjectInfoRequest {
     private String projectName;
 
     @ApiModelProperty("项目奖励")
+    @NotBlank(message = "项目名称不能为空")
     private String projectPraise;
 
     @ApiModelProperty("项目要求")
+    @NotBlank(message = "项目要求不能为空")
     private String projectRequire;
 
     @ApiModelProperty("分类id")

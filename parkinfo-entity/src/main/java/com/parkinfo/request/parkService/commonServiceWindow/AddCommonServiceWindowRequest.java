@@ -16,15 +16,19 @@ public class AddCommonServiceWindowRequest {
     private String serviceName;
 
     @ApiModelProperty("联系地址")
+    @NotBlank(message = "联系地址不能为空")
     private String contactAddress;
 
     @ApiModelProperty("联系方式")
+    @NotBlank(message = "联系方式不能为空")
     private String contactNumber;
 
     @ApiModelProperty("营业时间")
+    @NotBlank(message = "营业时间不能为空")
     private String businessHours;
 
     @ApiModelProperty("业务详情")
+    @NotBlank(message = "业务详情不能为空")
     private String businessDetails;
 
     @ApiModelProperty("小类 id")

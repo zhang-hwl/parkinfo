@@ -16,5 +16,6 @@ public class AddFeedbackRequest {
     private String questionDescription;
 
     @ApiModelProperty("图片地址")
+    @NotBlank(message = "凭证不能为空")
     private String imgPath;
 }

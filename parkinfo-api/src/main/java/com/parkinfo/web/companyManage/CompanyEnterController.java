@@ -10,9 +10,12 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/companyManage/enter")
@@ -37,7 +40,12 @@ public class CompanyEnterController {
     @PostMapping("/setCompany")
     @ApiOperation("修改入驻企业详情")
     @RequiresPermissions("companyManage:companyEnter:enter_setCompany")
-    public Result setCompany(@RequestBody ModifyCompanyRequest request) {
+    public Result setCompany(@Valid @RequestBody ModifyCompanyRequest request, BindingResult result) {
+        if (result.hasErrors()) {
+            for (ObjectError error : result.getAllErrors()) {
+                return Result.<String>builder().fail().code(500).message(error.getDefaultMessage()).build();
+            }
+        }
         return companyEnterService.setCompany(request);
     }
 

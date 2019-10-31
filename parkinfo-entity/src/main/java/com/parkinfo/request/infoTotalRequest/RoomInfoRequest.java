@@ -30,21 +30,26 @@ public class RoomInfoRequest{
     private String actualArea;
 
     @ApiModelProperty(value = "租金")
+    @NotBlank(message = "租金不能为空")
     private String rental;
 
     @ApiModelProperty(value = "物业费")
     private String property;
 
     @ApiModelProperty(value = "是否独立水表")
+    @NotBlank(message = "请选择是否独立水表")
     private String waterMeter;
 
     @ApiModelProperty(value = "是否独立电表")
+    @NotBlank(message = "请选择是否独立电表")
     private String ammeter;
 
     @ApiModelProperty(value = "是否有空调")
+    @NotBlank(message = "请选择是否有空调")
     private String airConditioner;
 
     @ApiModelProperty(value = "装修程度")
+    @NotBlank(message = "装修程度不能为空")
     private String decorate;
 
     @ApiModelProperty(value = "备注")

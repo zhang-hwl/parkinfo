@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.Date;
 
@@ -18,6 +19,7 @@ public class SetCompanyInfoRequest {
     private String companyName;
 
     @ApiModelProperty(value = "公司地址")
+    @NotBlank(message = "公司地址不能为空")
     private String companyAddress;
 
     @ApiModelProperty(value = "联系人")
@@ -33,6 +35,7 @@ public class SetCompanyInfoRequest {
     private String position;
 
     @ApiModelProperty(value = "主要业务")
+    @NotBlank(message = "主营业务不能为空")
     private String mainBusiness;
 
     @ApiModelProperty(value = "需求类型")
@@ -43,15 +46,19 @@ public class SetCompanyInfoRequest {
 
     @ApiModelProperty(value = "需求时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @NotNull(message = "需求时间不能为空")
     private Date requireTime;
 
     @ApiModelProperty(value = "需求位置")
+    @NotBlank(message = "需求地点不能为空")
     private String requireSite;
 
     @ApiModelProperty(value = "对接人")
+    @NotBlank(message = "我方对接人不能为空")
     private String connectMan;
 
     @ApiModelProperty(value = "需求详情")
+    @NotBlank(message = "需求详情不能为空")
     private String requireDetail;
 
     @ApiModelProperty(value = "类型id")

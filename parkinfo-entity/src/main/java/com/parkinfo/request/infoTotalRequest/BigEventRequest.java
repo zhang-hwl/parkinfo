@@ -36,8 +36,10 @@ public class BigEventRequest {
     private String month;
 
     @ApiModelProperty(value = "内容")
+    @NotBlank(message = "内容不能为空")
     private String content;
 
     @ApiModelProperty(value = "关联园区")
+    @NotBlank(message = "所属园区不能为空")
     private ParkInfoResponse parkInfoResponse;
 }
