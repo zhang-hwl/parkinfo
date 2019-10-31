@@ -91,7 +91,7 @@ public class CommonServiceWindowController {
 
     @PostMapping("/edit/type")
     @ApiOperation(value = "编辑公共服务窗口类型", notes = "小类名称为空时,新增大类")
-    public Result<String> editType(@Valid @RequestBody CommonServiceWindowTypeRequest request, BindingResult result){
+    public Result<String> editType(@Valid @RequestBody CommonServiceWindowTypeRequest request,BindingResult result){
         if (result.hasErrors()){
             for (ObjectError allError : result.getAllErrors()) {
                 return Result.<String>builder().fail().code(500).message(allError.getDefaultMessage()).build();

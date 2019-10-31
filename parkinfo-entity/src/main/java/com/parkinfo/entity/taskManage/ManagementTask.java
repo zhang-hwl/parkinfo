@@ -56,11 +56,13 @@ public class ManagementTask extends BaseEntity {
     /**
      * 附件
      */
+    @Column(columnDefinition = "text")
     private String fileList;
 
     /**
      * 内容
      */
+    @Column(columnDefinition = "text")
     private String content;
 
 

@@ -61,11 +61,13 @@ public class SpecialTask extends BaseEntity {
     /**
      * 附件
      */
+    @Column(columnDefinition = "text")
     private String fileList;
 
     /**
      * 内容
      */
+    @Column(columnDefinition = "text")
     private String content;
 
 

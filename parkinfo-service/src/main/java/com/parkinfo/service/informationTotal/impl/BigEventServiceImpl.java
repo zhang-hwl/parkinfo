@@ -89,9 +89,10 @@ public class BigEventServiceImpl implements IBigEventService {
 
     @Override
     public Result<Page<BigEventRequest>> findByVersion(QueryByVersionRequest request) {
-        int flag = judgePremission();   //判断查看权限
+        int flag = judgePermission();   //判断查看权限
         if(flag == -1){
-            return Result.<Page<BigEventRequest>>builder().success().data(null).build();
+            List<BigEventRequest> list = Lists.newArrayList();
+            return Result.<Page<BigEventRequest>>builder().success().data(new PageImpl<>(list)).build();
         }
         Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), Sort.Direction.DESC, "createTime");
         Specification<BigEvent> specification = (Specification<BigEvent>) (root, criteriaQuery, criteriaBuilder) -> {
@@ -104,7 +105,7 @@ public class BigEventServiceImpl implements IBigEventService {
             }
             predicates.add(criteriaBuilder.equal(root.get("delete").as(Boolean.class), Boolean.FALSE));
             predicates.add(criteriaBuilder.equal(root.get("available").as(Boolean.class), Boolean.TRUE));
-            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
         Page<BigEvent> all = bigEventRepository.findAll(specification, pageable);
         List<BigEventRequest> list = Lists.newArrayList();
@@ -191,7 +192,7 @@ public class BigEventServiceImpl implements IBigEventService {
     }
 
     //判断权限，1为查看所有，0为仅本园区，-1不能查看
-    private int judgePremission(){
+    private int judgePermission(){
         int flag = -1;
         List<String> roles = tokenUtils.getLoginUserDTO().getRole();
         for(String role : roles){
