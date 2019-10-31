@@ -2,6 +2,7 @@ package com.parkinfo.request.parkCulture;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 
@@ -20,6 +21,7 @@ public class AddBookRequest {
      */
     @ApiModelProperty(value = "书名")
     @NotBlank(message = "书名不能为空")
+    @Length(min = 0,max = 100,message = "评论不能超过100个字符")
     private String name;
 
     /**
@@ -34,6 +36,7 @@ public class AddBookRequest {
      */
     @ApiModelProperty(value = "作者")
     @NotBlank(message = "作者不能为空")
+    @Length(min = 0,max = 100,message = "评论不能超过100个字符")
     private String author;
 
     @ApiModelProperty(value = "分类id")
@@ -44,6 +47,7 @@ public class AddBookRequest {
      * 简介
      */
     @ApiModelProperty(value = "简介")
+    @Length(min = 0,max = 255,message = "评论不能超过255个字符")
     private String summary;
 
     @ApiModelProperty(value = "文件路径")

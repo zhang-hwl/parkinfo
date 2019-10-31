@@ -4,6 +4,7 @@ import com.parkinfo.request.base.PageRequest;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.validator.constraints.Length;
 
 /**
  * When I wrote this, only God and I understood what I was doing
@@ -26,5 +27,6 @@ public class QueryBookListRequest extends PageRequest {
     private String thirdCategoryId;
 
     @ApiModelProperty(value = "书籍名称")
+    @Length(min = 0,max = 100,message = "书籍名称不能超过100个字符")
     private String name;
 }

@@ -2,6 +2,7 @@ package com.parkinfo.request.parkCulture;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -18,6 +19,7 @@ import java.util.List;
 public class GenerateExaminationRequest {
 
     @ApiModelProperty(value = "试卷名称")
+    @Length(min = 0,max = 100,message = "试卷名称不能超过100个字符")
     private String name;
 
     @ApiModelProperty(value = "答题时间（分钟）")

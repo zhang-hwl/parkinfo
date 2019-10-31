@@ -5,6 +5,7 @@ import com.parkinfo.request.base.PageRequest;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 
@@ -26,6 +27,7 @@ public class QueryQuestionListRequest extends PageRequest {
     private QuestionType questionType;
 
     @ApiModelProperty(value = "试题")
+    @Length(min = 0,max = 100,message = "试题不能超过100个字符")
     private String question;
 
 }
