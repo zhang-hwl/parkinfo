@@ -21,6 +21,7 @@ public class SystemNotice {
     private String id;
 
     @ApiModelProperty(value = "封面图")
+    @NotBlank(message = "封面图不能为空")
     private String cover;
 
     @ApiModelProperty(value = "标题")
@@ -28,9 +29,11 @@ public class SystemNotice {
     private String title;
 
     @ApiModelProperty(value = "概要")
+    @NotBlank(message = "概要不能为空")
     private String profile;
 
     @ApiModelProperty(value = "内容")
+    @NotBlank(message = "内容不能为空")
     private String text;
 
     @ApiModelProperty(value = "发布时间")
