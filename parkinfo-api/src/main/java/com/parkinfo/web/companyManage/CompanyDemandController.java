@@ -66,6 +66,7 @@ public class CompanyDemandController {
     @ApiOperation("查询需求详细信息")
     @RequiresPermissions("companyManage:companyInfo:info_query")
     public Result<CompanyDemandResponse> query(@PathVariable("id") String id) {
+
         return companyDemandService.query(id);
     }
 

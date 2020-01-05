@@ -18,4 +18,6 @@ public interface CompanyDemandRepository extends JpaRepository<CompanyDemand,Str
     List<CompanyDemand> findAllByDeleteIsFalseAndAvailableIsTrueAndParkInfo_IdAndIdIsIn(String parkId, List<String> ids);
 
     List<CompanyDemand> findAllByDeleteIsFalseAndAvailableIsTrueAndIdIn(List<String> ids);
+
+
 }

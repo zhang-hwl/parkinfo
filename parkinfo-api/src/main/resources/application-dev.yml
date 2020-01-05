@@ -11,10 +11,10 @@ spring:
     password:
     default-encoding: UTF-8
   redis:
-    #    host: 47.102.207.156
-    host: r-uf6z45ljpjufw6myqspd.redis.rds.aliyuncs.com
-    #    database: 2
-    database: 0
+    host: 47.102.207.156
+    #host: r-uf6z45ljpjufw6myqspd.redis.rds.aliyuncs.com
+    database: 2
+    #database: 0
     port: 6379
     timeout: 5000
     lettuce:
@@ -25,14 +25,14 @@ spring:
         min-idle: 10 #连接池中的最小空闲连接
     password: Lynkbey888
   datasource:
-    url: jdbc:mysql://rm-uf642uoe0h9dx6p25xo.mysql.rds.aliyuncs.com/offer_ehrsip?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&failOverReadOnly=false&zeroDateTimeBehavior=convertToNull&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true
-    #    url: jdbc:mysql://47.102.207.156:3306/parkinfo?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&failOverReadOnly=false&zeroDateTimeBehavior=convertToNull&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true
-    username: ehrsip
-    password: Password@123
+    #url: jdbc:mysql://rm-uf642uoe0h9dx6p25xo.mysql.rds.aliyuncs.com/offer_ehrsip?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&failOverReadOnly=false&zeroDateTimeBehavior=convertToNull&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true
+    url: jdbc:mysql://47.102.207.156:3306/parkinfo?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&failOverReadOnly=false&zeroDateTimeBehavior=convertToNull&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true
+    #username:root
+    #password: 123456
+    #driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: Lynkbey888
     driver-class-name: com.mysql.cj.jdbc.Driver
-  #    username: root
-  #    password: Lynkbey888
-  #    driver-class-name: net.sf.log4jdbc.DriverSpy
   jpa:
     database: mysql
     show-sql: true
